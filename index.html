@@ -324,7 +324,7 @@ ol.steps li::before{content:counter(s);position:absolute;left:6px;top:50%;transf
   <div class="res-block" id="blk-secop1">
     <div class="rb-head">
       <span class="rb-ico">📋</span>
-      <span class="rb-title">SECOP I — Contratos históricos (API real)</span>
+      <span class="rb-title">SECOP Integrado — Contratos adicionales (API real)</span>
       <span class="rb-count none" id="cnt-secop1">—</span>
     </div>
     <div id="body-secop1"><div class="no-data-msg">Consultando API…</div></div>
@@ -607,8 +607,8 @@ async function iniciarARGOS(){
   runS('pep');setP(8,'Consultando PEP — Función Pública…');
   try{
     const url=G.cc
-      ?`https://www.datos.gov.co/resource/3qxn-uc22.json?$where=numero_documento='${G.cc}'&$limit=10`
-      :`https://www.datos.gov.co/resource/3qxn-uc22.json?$where=upper(nombre_pep) like upper('%${G.nm.replace(/'/g,"''")}%')&$limit=10`;
+      ?`https://www.datos.gov.co/resource/3qxn-uc22.json?$where=numero_documento=%27${G.cc}%27&$limit=10`
+      :`https://www.datos.gov.co/resource/3qxn-uc22.json?$where=upper(nombre_pep)%20like%20upper(%27%25${encodeURIComponent(G.nm)}%25%27)&$limit=10`;
     const d=await fetch(url,{signal:AbortSignal.timeout(9000)}).then(r=>r.json());
     G.r.pep=Array.isArray(d)?d:[];
     G.r.pep.length>0?hitS('pep',G.r.pep.length+' registros'):missS('pep','Sin registros');
@@ -618,9 +618,12 @@ async function iniciarARGOS(){
   // ══ API 2: SIRI (Procuraduría) ══
   runS('siri');setP(28,'Consultando SIRI — Procuraduría…');
   try{
+    // SIRI: buscar por cédula (trim) o por apellido separado
+    const partes=G.nm.split(' ').filter(Boolean);
+    const apellido=partes[partes.length-1]||G.nm;
     const url=G.cc
-      ?`https://www.datos.gov.co/resource/iaeu-rcn6.json?$where=trim(numero_identificacion)='${G.cc}'&$limit=10`
-      :`https://www.datos.gov.co/resource/iaeu-rcn6.json?$where=upper(primer_nombre||' '||primer_apellido) like upper('%${G.nm.replace(/'/g,"''")}%')&$limit=10`;
+      ?`https://www.datos.gov.co/resource/iaeu-rcn6.json?$where=trim(numero_identificacion)=%27${G.cc}%27&$limit=10`
+      :`https://www.datos.gov.co/resource/iaeu-rcn6.json?$where=upper(primer_apellido)%20like%20upper(%27%25${encodeURIComponent(apellido)}%25%27)&$limit=10`;
     const d=await fetch(url,{signal:AbortSignal.timeout(9000)}).then(r=>r.json());
     G.r.siri=Array.isArray(d)?d:[];
     G.r.siri.length>0?hitS('siri',G.r.siri.length+' sanciones'):missS('siri','Sin sanciones');
@@ -631,8 +634,8 @@ async function iniciarARGOS(){
   runS('secop2');setP(46,'Consultando SECOP II…');
   try{
     const url=G.cc
-      ?`https://www.datos.gov.co/resource/jbjy-vk9h.json?$where=documento_proveedor='${G.cc}'&$limit=15&$order=fecha_de_firma DESC`
-      :`https://www.datos.gov.co/resource/jbjy-vk9h.json?$where=upper(proveedor_adjudicado) like upper('%${G.nm.replace(/'/g,"''")}%')&$limit=15&$order=fecha_de_firma DESC`;
+      ?`https://www.datos.gov.co/resource/jbjy-vk9h.json?$where=documento_proveedor=%27${G.cc}%27&$limit=15&$order=fecha_de_firma%20DESC`
+      :`https://www.datos.gov.co/resource/jbjy-vk9h.json?$where=upper(proveedor_adjudicado)%20like%20upper(%27%25${encodeURIComponent(G.nm)}%25%27)&$limit=15&$order=fecha_de_firma%20DESC`;
     const d=await fetch(url,{signal:AbortSignal.timeout(9000)}).then(r=>r.json());
     G.r.secop2=Array.isArray(d)?d:[];
     G.r.secop2.length>0?hitS('secop2',G.r.secop2.length+' contratos'):missS('secop2','Sin contratos');
@@ -642,22 +645,23 @@ async function iniciarARGOS(){
   // ══ API 4: SECOP I ══
   runS('secop1');setP(65,'Consultando SECOP I…');
   try{
-    const q2=G.nm||G.q;
+    // SECOP Integrado (rpmr-utcd) — más completo que xvdy-vvsk
     const url=G.cc
-      ?`https://www.datos.gov.co/resource/xvdy-vvsk.json?$where=documento_proveedor='${G.cc}'&$limit=10&$order=fecha_firma DESC`
-      :`https://www.datos.gov.co/resource/xvdy-vvsk.json?$where=upper(nombre_proveedor) like upper('%${q2.replace(/'/g,"''")}%')&$limit=10`;
+      ?`https://www.datos.gov.co/resource/rpmr-utcd.json?$where=documento_proveedor=%27${G.cc}%27&$limit=10`
+      :`https://www.datos.gov.co/resource/rpmr-utcd.json?$where=upper(nom_raz_social_contratista)%20like%20upper(%27%25${encodeURIComponent(G.nm||G.q)}%25%27)&$limit=10`;
     const d=await fetch(url,{signal:AbortSignal.timeout(9000)}).then(r=>r.json());
     G.r.secop1=Array.isArray(d)?d:[];
     G.r.secop1.length>0?hitS('secop1',G.r.secop1.length+' contratos'):missS('secop1','Sin contratos');
+    // Quitar duplicados con SECOP II por documento
+    if(G.cc) G.r.secop1=G.r.secop1.filter(x=>x.numero_del_contrato&&!G.r.secop2.some(y=>y.referencia_del_contrato===x.numero_del_contrato));
   }catch{missS('secop1','Timeout');G.r.secop1=[]}
   setP(76,'SECOP I consultado…');
 
   // ══ API 5: Contraloría ══
   runS('contraloria');setP(80,'Consultando Contraloría…');
   try{
-    const url=G.cc
-      ?`https://www.datos.gov.co/resource/jr8e-e8tu.json?$where=n_mero_de_identificaci_n='${G.cc}'&$limit=10`
-      :`https://www.datos.gov.co/resource/jr8e-e8tu.json?$where=upper(raz_n_social_de_la_entidad) like upper('%${(G.nm||G.q).replace(/'/g,"''")}%')&$limit=10`;
+    // Contraloría: busca por nombre de entidad (no tiene campo cédula individual)
+    const url=`https://www.datos.gov.co/resource/jr8e-e8tu.json?$where=upper(raz_n_social_de_la_entidad)%20like%20upper(%27%25${encodeURIComponent(G.nm||G.q)}%25%27)&$limit=10`;
     const d=await fetch(url,{signal:AbortSignal.timeout(9000)}).then(r=>r.json());
     G.r.contraloria=Array.isArray(d)?d:[];
     G.r.contraloria.length>0?hitS('contraloria',G.r.contraloria.length+' procesos'):missS('contraloria','Sin procesos');
@@ -780,23 +784,44 @@ function buildReport(){
   }
 
   // SECOP II
-  const renderContratos=(arr,suffix)=>arr.map(c=>{
+  // SECOP II
+  const renderSecop2=(arr)=>arr.map(c=>{
     const val=c.valor_del_contrato?fmt(c.valor_del_contrato):'N/D';
-    const fec=(c.fecha_de_firma||c.fecha_firma||'').split('T')[0]||'N/D';
-    const est=c.estado_contrato||c.estado||'N/D';
+    const fec=(c.fecha_de_firma||'').split('T')[0]||'N/D';
+    const est=c.estado_contrato||'N/D';
     const activo=est.toLowerCase().match(/ejecuci|activo|vigente/);
-    const url=c.urlproceso&&(typeof c.urlproceso==='object'?c.urlproceso.url:c.urlproceso);
+    const urlp=c.urlproceso&&(typeof c.urlproceso==='object'?c.urlproceso.url:c.urlproceso);
     return`<div class="dato-card">
-      <div class="dato-title">${esc(c.descripcion_del_proceso||c.objeto_del_contrato||c.nombre_proveedor||'Contrato')}</div>
+      <div class="dato-title">${esc(c.objeto_del_contrato||c.descripcion_del_proceso||'Contrato')}</div>
       <div class="dato-grid">
         <span class="dato-label">Entidad</span><span class="dato-val">${esc(c.nombre_entidad||'—')}</span>
-        <span class="dato-label">Proveedor</span><span class="dato-val">${esc(c.proveedor_adjudicado||c.nombre_proveedor||'—')}</span>
+        <span class="dato-label">Proveedor</span><span class="dato-val">${esc(c.proveedor_adjudicado||'—')}</span>
         <span class="dato-label">Cédula/NIT</span><span class="dato-val">${esc(c.documento_proveedor||'—')}</span>
-        <span class="dato-label">Modalidad</span><span class="dato-val">${esc(c.modalidad_de_contratacion||c.tipo_contrato||'—')}</span>
+        <span class="dato-label">Modalidad</span><span class="dato-val">${esc(c.modalidad_de_contratacion||'—')}</span>
         <span class="dato-label">Fecha firma</span><span class="dato-val">${esc(fec)}</span>
         <span class="dato-label">Estado</span><span class="dato-val"><span class="dato-badge ${activo?'db-g':'db-x'}">${esc(est)}</span></span>
       </div>
-      <div class="dato-money">${val}${url?` <a href="${esc(url)}" target="_blank" rel="noopener" style="font-size:.65rem;font-weight:700;color:var(--red-ll)">→ Ver proceso</a>`:''}</div>
+      <div class="dato-money">${val}${urlp?` <a href="${esc(urlp)}" target="_blank" rel="noopener" style="font-size:.65rem;font-weight:700;color:var(--red-ll)">→ Ver proceso</a>`:''}</div>
+    </div>`;
+  }).join('');
+  // SECOP Integrado (rpmr-utcd) - campos distintos
+  const renderSecopInt=(arr)=>arr.map(c=>{
+    const val=c.valor_contrato?fmt(c.valor_contrato):'N/D';
+    const fec=(c.fecha_de_firma_del_contrato||'').split('T')[0]||'N/D';
+    const est=c.estado_del_proceso||'N/D';
+    const activo=est.toLowerCase().match(/ejecuci|activo|vigente|celebrado/);
+    const urlp=c.url_contrato&&(typeof c.url_contrato==='object'?c.url_contrato.url:c.url_contrato);
+    return`<div class="dato-card">
+      <div class="dato-title">${esc(c.objeto_del_proceso||c.objeto_a_contratar||'Contrato')}</div>
+      <div class="dato-grid">
+        <span class="dato-label">Entidad</span><span class="dato-val">${esc(c.nombre_de_la_entidad||'—')}</span>
+        <span class="dato-label">Contratista</span><span class="dato-val">${esc(c.nom_raz_social_contratista||'—')}</span>
+        <span class="dato-label">Doc. proveedor</span><span class="dato-val">${esc(c.documento_proveedor||'—')}</span>
+        <span class="dato-label">Modalidad</span><span class="dato-val">${esc(c.modalidad_de_contrataci_n||'—')}</span>
+        <span class="dato-label">Fecha firma</span><span class="dato-val">${esc(fec)}</span>
+        <span class="dato-label">Estado</span><span class="dato-val"><span class="dato-badge ${activo?'db-g':'db-x'}">${esc(est)}</span></span>
+      </div>
+      <div class="dato-money">${val}${urlp?` <a href="${esc(urlp)}" target="_blank" rel="noopener" style="font-size:.65rem;font-weight:700;color:var(--red-ll)">→ Ver contrato</a>`:''}</div>
     </div>`;
   }).join('');
 
@@ -804,7 +829,7 @@ function buildReport(){
     document.getElementById('blk-secop2').className='res-block has-data';
     document.getElementById('cnt-secop2').className='rb-count hit';
     document.getElementById('cnt-secop2').textContent=r.secop2.length+' contratos';
-    document.getElementById('body-secop2').innerHTML=renderContratos(r.secop2,'II');
+    document.getElementById('body-secop2').innerHTML=renderSecop2(r.secop2);
   } else {
     document.getElementById('blk-secop2').className='res-block clean';
     document.getElementById('cnt-secop2').className='rb-count ok';
@@ -816,7 +841,7 @@ function buildReport(){
     document.getElementById('blk-secop1').className='res-block has-data';
     document.getElementById('cnt-secop1').className='rb-count hit';
     document.getElementById('cnt-secop1').textContent=r.secop1.length+' contratos';
-    document.getElementById('body-secop1').innerHTML=renderContratos(r.secop1,'I');
+    document.getElementById('body-secop1').innerHTML=renderSecopInt(r.secop1);
   } else {
     document.getElementById('blk-secop1').className='res-block clean';
     document.getElementById('cnt-secop1').className='rb-count ok';
@@ -942,7 +967,7 @@ function copiarInforme(){
     '',
     r.secop2.length>0?`📑 SECOP II — CONTRATOS (${r.secop2.length}):\n`+r.secop2.map(c=>`• ${c.objeto_del_contrato||c.descripcion_del_proceso||'Contrato'} | ${c.nombre_entidad} | ${c.valor_del_contrato?fmt(c.valor_del_contrato):'N/D'} | ${(c.fecha_de_firma||'').split('T')[0]}`).join('\n'):`📑 SECOP II: Sin contratos`,
     '',
-    r.secop1.length>0?`📋 SECOP I — CONTRATOS (${r.secop1.length}):\n`+r.secop1.map(c=>`• ${c.nombre_proveedor||'Contrato'} | ${c.nombre_entidad||'—'} | ${(c.fecha_firma||'').split('T')[0]}`).join('\n'):`📋 SECOP I: Sin contratos`,
+    r.secop1.length>0?`📋 SECOP Integrado — CONTRATOS (${r.secop1.length}):\n`+r.secop1.map(c=>`• ${c.nom_raz_social_contratista||'Contrato'} | ${c.nombre_de_la_entidad||'—'} | ${c.valor_contrato||'N/D'} | ${(c.fecha_de_firma_del_contrato||'').split('T')[0]}`).join('\n'):`📋 SECOP Integrado: Sin contratos`,
     '',
     r.contraloria.length>0?`📊 CONTRALORÍA — PROCESOS FISCALES (${r.contraloria.length}):\n`+r.contraloria.map(c=>`• ${c.raz_n_social_de_la_entidad||'—'} | ${c.fallo||'—'} | ${c.cuant_a_del_fallo_en_primera||'—'}`).join('\n'):`📊 Contraloría: Sin procesos fiscales`,
     '',
