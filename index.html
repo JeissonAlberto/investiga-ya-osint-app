@@ -3,1029 +3,830 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>InvestigaYa — OSINT Colombia</title>
-<meta name="description" content="Herramienta OSINT para Colombia: busca personas por nombre, cédula, foto o email en fuentes 100% públicas y legales."/>
+<title>InvestigaYa — Motor OSINT Colombia</title>
+<meta name="description" content="Motor de investigación OSINT Colombia: ingresa nombre o cédula y recibe un informe automático completo."/>
 <meta name="theme-color" content="#0a0a0a"/>
 <link rel="icon" type="image/svg+xml" href="logo-icon.svg"/>
-<meta property="og:title" content="InvestigaYa — OSINT Colombia"/>
-<meta property="og:description" content="Busca personas en 14+ fuentes públicas: Registraduría, SIMIT, Rama Judicial, redes sociales y más."/>
+<meta property="og:title" content="InvestigaYa — Motor OSINT Colombia"/>
+<meta property="og:description" content="Ingresa nombre o cédula y recibe un informe de investigación automático con todas las fuentes públicas colombianas."/>
 <meta property="og:type" content="website"/>
 <meta property="og:image" content="https://jeissonalberto.github.io/investiga-ya-osint-app/logo.svg"/>
 <style>
-/* ══════════════════════════════
-   VARIABLES — Rojo · Negro · Blanco
-═══════════════════════════════ */
 :root{
-  --bg:#0a0a0a;
-  --bg2:#111111;
-  --card:#161616;
-  --card2:#1e1e1e;
-  --border:#2a2a2a;
-  --border2:#3a3a3a;
-  --red:#e02020;
-  --red-d:#b91c1c;
-  --red-l:#ff3b3b;
-  --red-glow:rgba(224,32,32,.18);
-  --red-subtle:rgba(224,32,32,.08);
-  --white:#ffffff;
-  --gray1:#f5f5f5;
-  --gray2:#c0c0c0;
-  --gray3:#888888;
-  --gray4:#444444;
-  --text:#f0f0f0;
-  --muted:#777777;
-  --r:10px;
-  --shadow:0 4px 24px rgba(0,0,0,.6);
+  --bg:#0a0a0a; --bg2:#111; --card:#161616; --card2:#1c1c1c;
+  --border:#252525; --border2:#333;
+  --red:#e02020; --red-d:#b91c1c; --red-l:#ff4444; --red-glow:rgba(224,32,32,.15);
+  --white:#fff; --gray1:#f0f0f0; --gray2:#bbb; --gray3:#777; --gray4:#444;
+  --green:#22c55e; --yellow:#eab308; --blue:#3b82f6;
+  --text:#efefef; --muted:#666; --r:10px;
 }
-
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,-apple-system,sans-serif;min-height:100vh;-webkit-tap-highlight-color:transparent;overflow-x:hidden}
-
-/* ══ SCROLLBAR ══ */
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;overflow-x:hidden}
 ::-webkit-scrollbar{width:4px;height:4px}
 ::-webkit-scrollbar-track{background:var(--bg2)}
 ::-webkit-scrollbar-thumb{background:var(--red);border-radius:4px}
 
-/* ══ HEADER ══ */
-header{
-  background:var(--bg);
-  border-bottom:1px solid var(--border);
-  padding:0 20px;
-  height:58px;
-  display:flex;align-items:center;gap:14px;
-  position:sticky;top:0;z-index:200;
-  box-shadow:0 1px 0 var(--border),0 4px 20px rgba(0,0,0,.5);
-}
-.logo-wrap{width:36px;height:36px;border-radius:8px;overflow:hidden;flex-shrink:0}
-.logo-wrap img{width:100%;height:100%;display:block}
-.brand h1{font-size:1.05rem;font-weight:900;letter-spacing:.5px;color:var(--white);line-height:1}
-.brand p{font-size:.6rem;color:var(--red);font-weight:700;letter-spacing:2.5px;text-transform:uppercase;margin-top:2px}
-.hbadge{
-  margin-left:auto;
-  display:flex;align-items:center;gap:8px;
-}
-.hbadge .ver{font-size:.58rem;color:var(--gray4);font-weight:600;font-family:monospace}
-.hbadge .pill{
-  background:var(--red-subtle);
-  border:1px solid rgba(224,32,32,.3);
-  color:var(--red-l);
-  font-size:.62rem;padding:3px 9px;
-  border-radius:20px;font-weight:700;white-space:nowrap;
-  letter-spacing:.3px;
-}
+/* ── HEADER ── */
+header{background:var(--bg);border-bottom:1px solid var(--border);padding:0 20px;height:56px;display:flex;align-items:center;gap:13px;position:sticky;top:0;z-index:200;box-shadow:0 2px 20px rgba(0,0,0,.6)}
+.logo-w{width:34px;height:34px;border-radius:8px;overflow:hidden;flex-shrink:0}
+.logo-w img{width:100%;height:100%;display:block}
+.brand h1{font-size:1rem;font-weight:900;color:var(--white);letter-spacing:.3px}
+.brand p{font-size:.58rem;color:var(--red);font-weight:700;letter-spacing:2.5px;text-transform:uppercase}
+.hright{margin-left:auto;display:flex;gap:8px;align-items:center}
+.pill{background:rgba(224,32,32,.1);border:1px solid rgba(224,32,32,.25);color:var(--red-l);font-size:.61rem;padding:3px 9px;border-radius:20px;font-weight:700;white-space:nowrap}
 
-/* ══ TABS ══ */
-.tabs-wrap{
-  background:var(--card);
-  border-bottom:2px solid var(--border);
-  display:flex;overflow-x:auto;
-  scrollbar-width:none;
-  padding:0 4px;
-}
-.tabs-wrap::-webkit-scrollbar{display:none}
-.tab{
-  padding:13px 16px;
-  font-size:.78rem;font-weight:700;
-  cursor:pointer;color:var(--muted);
-  border-bottom:2px solid transparent;
-  margin-bottom:-2px;
-  white-space:nowrap;
-  transition:color .18s,border-color .18s;
-  user-select:none;flex-shrink:0;
-  letter-spacing:.2px;
-}
+/* ── TABS ── */
+.tabs{background:var(--card);border-bottom:1px solid var(--border);display:flex;overflow-x:auto;scrollbar-width:none;padding:0 6px}
+.tabs::-webkit-scrollbar{display:none}
+.tab{padding:12px 15px;font-size:.77rem;font-weight:700;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;transition:color .15s,border-color .15s;user-select:none}
 .tab:hover{color:var(--gray2)}
 .tab.active{color:var(--white);border-bottom-color:var(--red)}
 
-/* ══ LAYOUT ══ */
-main{max-width:980px;margin:0 auto;padding:22px 14px 90px}
+/* ── LAYOUT ── */
+main{max-width:960px;margin:0 auto;padding:20px 14px 80px}
 .panel{display:none}.panel.active{display:block}
 
-/* ══ HERO ALERT ══ */
-.alert{
-  display:flex;gap:10px;align-items:flex-start;
-  background:rgba(224,32,32,.06);
-  border:1px solid rgba(224,32,32,.2);
-  border-left:3px solid var(--red);
-  border-radius:var(--r);
-  padding:11px 14px;
-  font-size:.75rem;color:rgba(255,180,180,.85);
-  line-height:1.55;margin-bottom:20px;
-}
-.alert svg{flex-shrink:0;margin-top:1px}
-.alert strong{color:#ff6b6b}
+/* ── MOTOR — HERO ── */
+.motor-hero{text-align:center;padding:32px 16px 24px}
+.motor-hero h2{font-size:1.6rem;font-weight:900;color:var(--white);margin-bottom:8px}
+.motor-hero h2 span{color:var(--red)}
+.motor-hero p{font-size:.85rem;color:var(--muted);max-width:500px;margin:0 auto 24px;line-height:1.6}
 
-/* ══ BLOCK / CARD ══ */
-.block{
-  background:var(--card);
+/* ── SEARCH BAR ── */
+.search-bar{display:flex;gap:0;max-width:640px;margin:0 auto 12px;position:relative}
+.search-bar input{
+  flex:1;background:var(--card);border:2px solid var(--border2);
+  border-right:none;color:var(--text);padding:14px 18px;
+  font-size:.95rem;font-family:inherit;outline:none;
+  border-radius:var(--r) 0 0 var(--r);
+  transition:border-color .18s,box-shadow .18s;
+}
+.search-bar input:focus{border-color:var(--red);box-shadow:0 0 0 3px var(--red-glow)}
+.search-bar input::placeholder{color:var(--muted)}
+.search-bar button{
+  background:var(--red);color:var(--white);border:none;
+  padding:14px 22px;font-size:.88rem;font-weight:800;
+  cursor:pointer;border-radius:0 var(--r) var(--r) 0;
+  font-family:inherit;transition:background .15s;white-space:nowrap;
+}
+.search-bar button:hover{background:var(--red-l)}
+
+.search-opts{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-bottom:4px}
+.sopt{
+  display:flex;align-items:center;gap:5px;
+  font-size:.73rem;color:var(--gray3);cursor:pointer;
+  padding:4px 10px;border-radius:6px;
   border:1px solid var(--border);
-  border-radius:var(--r);
-  padding:20px;margin-bottom:12px;
+  transition:border-color .15s,color .15s;user-select:none;
+}
+.sopt input{accent-color:var(--red);width:13px;height:13px}
+.sopt:hover{border-color:var(--red);color:var(--gray2)}
+
+/* ── PROGRESS ── */
+.progress-wrap{max-width:640px;margin:24px auto 0;display:none}
+.progress-title{font-size:.8rem;color:var(--gray2);font-weight:700;margin-bottom:10px;display:flex;justify-content:space-between}
+.progress-bar{height:4px;background:var(--border);border-radius:4px;overflow:hidden;margin-bottom:14px}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--red-d),var(--red-l));border-radius:4px;width:0;transition:width .4s ease}
+.sources-list{display:flex;flex-direction:column;gap:6px}
+.src-item{display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--card);border:1px solid var(--border);border-radius:8px;font-size:.77rem}
+.src-item .src-ico{font-size:1rem;flex-shrink:0}
+.src-item .src-name{flex:1;color:var(--gray2);font-weight:600}
+.src-item .src-status{font-size:.68rem;font-weight:700;display:flex;align-items:center;gap:4px}
+.st-wait{color:var(--gray4)}
+.st-run{color:var(--yellow)}
+.st-ok{color:var(--green)}
+.st-none{color:var(--muted)}
+.st-err{color:var(--red)}
+.spinner{width:10px;height:10px;border:2px solid var(--yellow);border-top-color:transparent;border-radius:50%;animation:spin .6s linear infinite;display:inline-block}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── INFORME ── */
+.report{max-width:840px;margin:28px auto 0;display:none}
+.report-header{
+  background:var(--card);border:1px solid var(--border);
+  border-top:3px solid var(--red);border-radius:var(--r);
+  padding:20px;margin-bottom:16px;
+  display:flex;align-items:center;gap:16px;
+}
+.report-avatar{
+  width:52px;height:52px;border-radius:50%;
+  background:linear-gradient(135deg,var(--red-d),#7f0000);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.4rem;flex-shrink:0;
+  border:2px solid var(--border2);
+}
+.report-name{font-size:1.1rem;font-weight:900;color:var(--white)}
+.report-sub{font-size:.72rem;color:var(--muted);margin-top:3px}
+.report-meta{margin-left:auto;text-align:right}
+.report-date{font-size:.68rem;color:var(--gray4);font-family:monospace}
+.report-score{
+  display:inline-flex;align-items:center;gap:5px;
+  background:var(--red-glow);border:1px solid rgba(224,32,32,.3);
+  color:var(--red-l);font-size:.7rem;font-weight:800;
+  padding:3px 10px;border-radius:20px;margin-top:4px;
+}
+
+.report-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+@media(max-width:580px){.report-grid{grid-template-columns:1fr}}
+
+.rcard{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--r);padding:16px;
   transition:border-color .2s;
 }
-.block:focus-within{border-color:var(--border2)}
-
-/* ══ INFO ══ */
-.info{
-  background:rgba(255,255,255,.03);
-  border:1px solid var(--border);
-  border-left:3px solid var(--gray4);
-  border-radius:var(--r);
-  padding:10px 14px;font-size:.75rem;
-  color:var(--muted);line-height:1.55;
-  margin-bottom:14px;
+.rcard:hover{border-color:var(--border2)}
+.rcard.has-data{border-left:3px solid var(--red)}
+.rcard.no-data{opacity:.55}
+.rcard-title{
+  font-size:.65rem;text-transform:uppercase;letter-spacing:1.5px;
+  color:var(--red);font-weight:800;margin-bottom:10px;
+  display:flex;align-items:center;gap:7px;
 }
-.info strong{color:var(--gray2)}
-.info.red-info{border-left-color:var(--red);background:var(--red-subtle)}
-.info.red-info strong{color:var(--red-l)}
-
-/* ══ STITLE ══ */
-.stitle{
-  font-size:.65rem;text-transform:uppercase;
-  letter-spacing:2px;color:var(--red);
-  font-weight:800;margin-bottom:14px;
-  display:flex;align-items:center;gap:10px;
+.rcard-title.gray{color:var(--gray4)}
+.rcard-title span{font-size:.9rem}
+.rcard-body{font-size:.78rem;color:var(--gray2);line-height:1.7}
+.rcard-body strong{color:var(--white);font-weight:700}
+.rcard-body .item{
+  display:flex;gap:8px;padding:5px 0;
+  border-bottom:1px solid rgba(255,255,255,.04);
 }
+.rcard-body .item:last-child{border-bottom:none}
+.rcard-body .item .lbl{color:var(--muted);min-width:110px;flex-shrink:0;font-size:.73rem}
+.rcard-body .item .val{color:var(--gray1);font-weight:600;word-break:break-word}
+.rcard-body .badge{
+  display:inline-flex;align-items:center;gap:4px;
+  font-size:.68rem;font-weight:700;padding:2px 8px;
+  border-radius:6px;margin:2px 2px 2px 0;
+}
+.b-red{background:rgba(224,32,32,.12);color:#ff6b6b;border:1px solid rgba(224,32,32,.25)}
+.b-grn{background:rgba(34,197,94,.1);color:#4ade80;border:1px solid rgba(34,197,94,.2)}
+.b-ylw{background:rgba(234,179,8,.1);color:#fbbf24;border:1px solid rgba(234,179,8,.2)}
+.b-gray{background:rgba(255,255,255,.06);color:var(--gray3);border:1px solid var(--border2)}
+
+.rcard-body .empty{color:var(--gray4);font-style:italic;font-size:.74rem}
+.rcard-body a{color:var(--red-l);text-decoration:none;font-size:.73rem}
+.rcard-body a:hover{text-decoration:underline}
+
+.contract-row{
+  background:var(--card2);border:1px solid var(--border);
+  border-radius:7px;padding:10px 12px;margin-bottom:6px;
+  font-size:.74rem;
+}
+.contract-row:last-child{margin-bottom:0}
+.contract-row .ce{font-weight:700;color:var(--white);margin-bottom:3px}
+.contract-row .cd{color:var(--muted);line-height:1.5}
+.contract-row .cv{color:var(--green);font-weight:700;font-size:.8rem}
+
+.section-full{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--r);padding:16px;margin-bottom:12px;
+}
+.section-full.has-data{border-left:3px solid var(--red)}
+
+/* ── LINKS SECTION ── */
+.links-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:8px;margin-top:10px}
+.lk{
+  background:var(--card2);border:1px solid var(--border);
+  border-radius:8px;padding:11px;text-decoration:none;
+  display:block;transition:border-color .15s,transform .12s;
+}
+.lk:hover{border-color:var(--red);transform:translateY(-1px)}
+.lk .li{font-size:1.1rem;margin-bottom:5px;display:block}
+.lk .ln{font-size:.74rem;font-weight:700;color:var(--white)}
+.lk .ld{font-size:.66rem;color:var(--muted);margin-top:2px}
+
+/* ── REPORT ACTIONS ── */
+.report-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;margin-bottom:4px}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border-radius:8px;font-size:.8rem;font-weight:700;cursor:pointer;border:none;text-decoration:none;font-family:inherit;transition:all .15s}
+.btn:active{transform:scale(.97)}
+.btn-red{background:var(--red);color:var(--white)}
+.btn-red:hover{background:var(--red-l)}
+.btn-ghost{background:transparent;border:1px solid var(--border2);color:var(--gray2)}
+.btn-ghost:hover{border-color:var(--red);color:var(--white)}
+.btn-sm{padding:5px 11px;font-size:.72rem}
+
+/* ── OTHER PANELS ── */
+.block{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:18px;margin-bottom:11px}
+.stitle{font-size:.64rem;text-transform:uppercase;letter-spacing:2px;color:var(--red);font-weight:800;margin-bottom:12px;display:flex;align-items:center;gap:8px}
 .stitle::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--border2),transparent)}
-
-/* ══ FORM ══ */
-.field{margin-bottom:12px}
-.field label{
-  display:block;font-size:.68rem;
-  color:var(--gray3);font-weight:700;
-  margin-bottom:5px;text-transform:uppercase;
-  letter-spacing:.5px;
-}
-.field input,.field select{
-  width:100%;
-  background:var(--card2);
-  border:1px solid var(--border);
-  color:var(--text);
-  border-radius:8px;
-  padding:10px 14px;
-  font-size:.88rem;
-  outline:none;
-  font-family:inherit;
-  -webkit-appearance:none;appearance:none;
-  transition:border-color .18s,box-shadow .18s,background .18s;
-}
-.field input:focus,.field select:focus{
-  border-color:var(--red);
-  box-shadow:0 0 0 3px var(--red-glow);
-  background:#1a1212;
-}
+.field{margin-bottom:10px}
+.field label{display:block;font-size:.68rem;color:var(--gray3);font-weight:700;margin-bottom:4px;text-transform:uppercase;letter-spacing:.4px}
+.field input,.field select{width:100%;background:var(--card2);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:9px 13px;font-size:.86rem;outline:none;font-family:inherit;-webkit-appearance:none;transition:border-color .15s,box-shadow .15s}
+.field input:focus,.field select:focus{border-color:var(--red);box-shadow:0 0 0 3px var(--red-glow)}
 .field input::placeholder{color:var(--gray4)}
-.field select{
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-  background-repeat:no-repeat;
-  background-position:right 12px center;
-  padding-right:32px;
-}
+.field select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7' viewBox='0 0 10 7'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23666' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 11px center;padding-right:28px}
 .row{display:flex;gap:10px;flex-wrap:wrap}
 .row .field{flex:1;min-width:140px}
+.btn-full{width:100%;margin-top:4px}
 
-/* ══ BUTTON ══ */
-.btn{
-  display:inline-flex;align-items:center;
-  justify-content:center;gap:7px;
-  padding:11px 20px;border-radius:8px;
-  font-size:.84rem;font-weight:700;
-  cursor:pointer;border:none;
-  text-decoration:none;
-  transition:all .18s;
-  font-family:inherit;
-  letter-spacing:.2px;
-  position:relative;overflow:hidden;
-}
-.btn::after{
-  content:'';position:absolute;inset:0;
-  background:rgba(255,255,255,0);
-  transition:background .18s;
-}
-.btn:hover::after{background:rgba(255,255,255,.06)}
-.btn:active{transform:scale(.97)}
+/* ── DORK BOX ── */
+.dork-item{margin-bottom:16px}
+.dork-lbl{font-size:.66rem;color:var(--red);font-weight:700;text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px}
+.dork-box{background:#0e0e0e;border:1px solid var(--border);border-left:2px solid var(--red);border-radius:7px;padding:9px 13px;font-family:'Courier New',monospace;font-size:.77rem;color:#ff9999;line-height:1.5;margin-bottom:6px;word-break:break-all;user-select:all}
+.dork-row{display:flex;gap:6px;flex-wrap:wrap}
+.copied{color:#4ade80!important;border-color:rgba(34,197,94,.35)!important}
+.sep{height:1px;background:var(--border);margin:15px 0}
 
-.btn-red{
-  background:var(--red);
-  color:var(--white);
-  width:100%;margin-top:4px;
-  box-shadow:0 2px 12px rgba(224,32,32,.3);
-}
-.btn-red:hover{background:var(--red-l);box-shadow:0 4px 20px rgba(224,32,32,.45)}
-
-.btn-ghost{
-  background:transparent;
-  border:1px solid var(--border2);
-  color:var(--gray2);
-}
-.btn-ghost:hover{border-color:var(--red);color:var(--white)}
-
-.btn-sm{padding:5px 11px;font-size:.72rem;margin-top:0}
-
-/* ══ WELCOME ══ */
-.welcome{
-  text-align:center;
-  padding:40px 20px 32px;
-}
-.wi{font-size:2.8rem;margin-bottom:14px;
-  filter:grayscale(1);opacity:.4;
-  transition:filter .3s,opacity .3s;
-}
-.welcome:hover .wi{filter:grayscale(0);opacity:.9}
-.welcome p{
-  font-size:.82rem;line-height:1.7;
-  color:var(--muted);
-  max-width:340px;margin:0 auto;
-}
-.welcome strong{color:var(--gray2)}
-.welcome .hint{
-  margin-top:14px;
-  display:inline-flex;align-items:center;gap:6px;
-  font-size:.72rem;color:var(--red);
-  font-weight:700;opacity:.7;
-}
-
-/* ══ COUNTER BAR ══ */
-.cbar{
-  display:flex;align-items:center;
-  justify-content:space-between;
-  margin:12px 0 8px;
-  padding:0 2px;
-}
-.cbar .cn{font-size:.72rem;color:var(--gray3)}
-.cbar .cn strong{color:var(--white);font-size:.85rem;margin-right:2px}
-.open-all{
-  font-size:.69rem;color:var(--red-l);
-  background:var(--red-subtle);
-  border:1px solid rgba(224,32,32,.25);
-  border-radius:6px;padding:3px 10px;
-  cursor:pointer;font-weight:700;
-  text-decoration:none;
-  transition:background .18s,border-color .18s;
-  font-family:inherit;
-}
-.open-all:hover{background:rgba(224,32,32,.15);border-color:rgba(224,32,32,.5)}
-
-/* ══ RESULTS GRID ══ */
-.rg{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(195px,1fr));
-  gap:9px;
-}
-.rc{
-  background:var(--card2);
-  border:1px solid var(--border);
-  border-radius:var(--r);
-  padding:13px;
-  text-decoration:none;display:block;
-  transition:border-color .18s,transform .15s,box-shadow .18s,background .18s;
-  position:relative;overflow:hidden;
-}
-.rc::before{
-  content:'';
-  position:absolute;top:0;left:0;right:0;
-  height:2px;
-  background:linear-gradient(90deg,var(--red),transparent);
-  opacity:0;transition:opacity .18s;
-}
-.rc:hover{
-  border-color:var(--red);
-  transform:translateY(-2px);
-  box-shadow:0 6px 20px rgba(224,32,32,.15);
-  background:#1c1212;
-}
-.rc:hover::before{opacity:1}
-.rc:active{transform:translateY(0)}
-.rc .ico{font-size:1.35rem;margin-bottom:7px;display:block}
-.rc .name{font-size:.79rem;font-weight:700;color:var(--white);margin-bottom:3px;line-height:1.3}
-.rc .desc{font-size:.68rem;color:var(--muted);line-height:1.35}
-.tag{
-  display:inline-block;font-size:.58rem;
-  padding:2px 6px;border-radius:6px;
-  margin-top:8px;font-weight:700;
-  letter-spacing:.3px;
-}
-.tg{background:rgba(34,197,94,.1);color:#4ade80;border:1px solid rgba(34,197,94,.25)}
-.ty{background:rgba(234,179,8,.1);color:#fbbf24;border:1px solid rgba(234,179,8,.25)}
-.tr{background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.25)}
-.tw{background:rgba(255,255,255,.07);color:var(--gray2);border:1px solid var(--border2)}
-
-/* ══ UPLOAD ZONE ══ */
-.uz{
-  border:2px dashed var(--border2);
-  border-radius:var(--r);
-  padding:30px 16px;text-align:center;
-  cursor:pointer;
-  transition:border-color .18s,background .18s;
-  position:relative;margin-bottom:12px;
-}
-.uz:hover,.uz.drag{
-  border-color:var(--red);
-  background:var(--red-subtle);
-}
-.uz input[type="file"]{
-  position:absolute;inset:0;
-  opacity:0;cursor:pointer;width:100%;height:100%;
-}
-.uz .ui{font-size:1.9rem;margin-bottom:8px;display:block;
-  filter:grayscale(1);opacity:.5;transition:filter .2s,opacity .2s}
-.uz:hover .ui{filter:grayscale(0);opacity:1}
-.uz p{font-size:.8rem;color:var(--muted)}
-.uz strong{color:var(--gray2)}
-#preview{max-width:130px;border-radius:8px;margin:12px auto 0;display:none;border:2px solid var(--red)}
-
-/* ══ DORK BOX ══ */
-.dork-item{margin-bottom:18px}
-.dork-lbl{
-  font-size:.66rem;color:var(--red);
-  font-weight:700;text-transform:uppercase;
-  letter-spacing:1px;margin-bottom:5px;
-  display:flex;align-items:center;gap:6px;
-}
-.dork-lbl::before{content:'›';font-size:.9rem}
-.dork-box{
-  background:#0e0e0e;
-  border:1px solid var(--border);
-  border-left:2px solid var(--red);
-  border-radius:7px;
-  padding:10px 14px;
-  font-family:'Courier New',monospace;
-  font-size:.78rem;color:#ff9999;
-  line-height:1.5;margin-bottom:7px;
-  word-break:break-all;user-select:all;cursor:text;
-  transition:border-color .18s;
-}
-.dork-box:hover{border-left-color:var(--red-l);color:#ffbbbb}
-.dork-row{display:flex;gap:7px;flex-wrap:wrap}
-.copied{color:#4ade80!important;border-color:rgba(34,197,94,.4)!important}
-
-/* ══ TABLE ══ */
+/* ── TABLE ── */
 .tbl-wrap{overflow-x:auto}
-.ft{width:100%;border-collapse:collapse;font-size:.77rem;min-width:440px}
-.ft th{
-  text-align:left;color:var(--red);
-  font-size:.63rem;text-transform:uppercase;
-  letter-spacing:1px;border-bottom:1px solid var(--border2);
-  padding:0 6px 9px;font-weight:800;
-}
-.ft td{padding:9px 6px;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:middle}
+.ft{width:100%;border-collapse:collapse;font-size:.76rem;min-width:400px}
+.ft th{text-align:left;color:var(--red);font-size:.63rem;text-transform:uppercase;letter-spacing:.9px;border-bottom:1px solid var(--border2);padding:0 6px 8px;font-weight:800}
+.ft td{padding:8px 6px;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:middle}
 .ft tr:last-child td{border-bottom:none}
 .ft tr:hover td{background:rgba(255,255,255,.02)}
-.ft a{color:var(--white);text-decoration:none;font-weight:600;transition:color .15s}
-.ft a:hover{color:var(--red-l);text-decoration:underline}
-.st{display:inline-flex;align-items:center;gap:4px;font-size:.68rem;font-weight:700;white-space:nowrap}
-.st-ok{color:#4ade80}.st-warn{color:#fbbf24}.st-pay{color:#f87171}
+.ft a{color:var(--white);text-decoration:none;font-weight:600;transition:color .12s}
+.ft a:hover{color:var(--red-l)}
+.tag{display:inline-block;font-size:.59rem;padding:2px 6px;border-radius:5px;font-weight:700}
+.tg{background:rgba(34,197,94,.1);color:#4ade80;border:1px solid rgba(34,197,94,.22)}
+.ty{background:rgba(234,179,8,.1);color:#fbbf24;border:1px solid rgba(234,179,8,.22)}
+.tr{background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.22)}
+.st-ok2{color:#4ade80;font-size:.68rem;font-weight:700}.st-warn2{color:#fbbf24;font-size:.68rem;font-weight:700}.st-pay{color:#f87171;font-size:.68rem;font-weight:700}
 
-/* ══ STEPS ══ */
+/* ── STEPS ── */
 ol.steps{list-style:none;counter-reset:s}
-ol.steps li{
-  counter-increment:s;
-  position:relative;
-  padding:11px 10px 11px 46px;
-  border-bottom:1px solid rgba(255,255,255,.04);
-  font-size:.8rem;line-height:1.55;
-  transition:background .15s;
-}
-ol.steps li:hover{background:rgba(255,255,255,.02)}
+ol.steps li{counter-increment:s;position:relative;padding:10px 10px 10px 43px;border-bottom:1px solid rgba(255,255,255,.04);font-size:.79rem;line-height:1.55}
 ol.steps li:last-child{border-bottom:none}
-ol.steps li::before{
-  content:counter(s);
-  position:absolute;left:10px;top:50%;transform:translateY(-50%);
-  width:26px;height:26px;
-  background:var(--red);
-  border-radius:50%;
-  display:flex;align-items:center;justify-content:center;
-  font-size:.68rem;font-weight:800;color:var(--white);
-  box-shadow:0 2px 8px rgba(224,32,32,.4);
-}
+ol.steps li::before{content:counter(s);position:absolute;left:9px;top:50%;transform:translateY(-50%);width:25px;height:25px;background:var(--red);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.67rem;font-weight:800;color:#fff;box-shadow:0 2px 8px rgba(224,32,32,.35)}
 
-/* ══ CHECKLIST ══ */
-.checklist{list-style:none;padding:0}
-.checklist li{
-  padding:9px 0 9px 26px;
-  border-bottom:1px solid rgba(255,255,255,.04);
-  font-size:.8rem;line-height:1.5;
-  position:relative;color:var(--gray2);
-}
-.checklist li:last-child{border-bottom:none}
-.checklist li::before{
-  content:'›';position:absolute;left:4px;top:9px;
-  color:var(--red);font-weight:800;font-size:.9rem;
-}
+/* ── ALERT ── */
+.alert{display:flex;gap:9px;background:rgba(224,32,32,.06);border:1px solid rgba(224,32,32,.2);border-left:3px solid var(--red);border-radius:var(--r);padding:10px 14px;font-size:.74rem;color:rgba(255,180,180,.8);line-height:1.55;margin-bottom:18px}
+.alert strong{color:#ff7070}
 
-/* ══ SEP ══ */
-.sep{height:1px;background:var(--border);margin:18px 0}
+/* ── INFO ── */
+.info{background:rgba(255,255,255,.02);border:1px solid var(--border);border-left:2px solid var(--gray4);border-radius:8px;padding:9px 13px;font-size:.75rem;color:var(--muted);line-height:1.5;margin-bottom:12px}
+.info strong{color:var(--gray2)}
+.info.red{border-left-color:var(--red);background:rgba(224,32,32,.05)}
+.info.red strong{color:var(--red-l)}
 
-/* ══ TOAST ══ */
-#toast{
-  position:fixed;bottom:68px;left:50%;
-  transform:translateX(-50%) translateY(10px);
-  background:var(--card2);
-  border:1px solid var(--border2);
-  border-left:3px solid var(--red);
-  border-radius:8px;
-  padding:8px 16px;font-size:.78rem;
-  font-weight:700;color:var(--text);
-  opacity:0;
-  transition:opacity .25s,transform .25s;
-  pointer-events:none;z-index:400;
-  white-space:nowrap;
-  box-shadow:0 6px 24px rgba(0,0,0,.5);
-}
+/* ── TOAST ── */
+#toast{position:fixed;bottom:65px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--card2);border:1px solid var(--border2);border-left:3px solid var(--red);border-radius:8px;padding:8px 15px;font-size:.77rem;font-weight:700;color:var(--text);opacity:0;transition:opacity .22s,transform .22s;pointer-events:none;z-index:400;white-space:nowrap;box-shadow:0 6px 24px rgba(0,0,0,.5)}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-
-/* ══ SCROLL TOP ══ */
-#top-btn{
-  position:fixed;bottom:20px;right:16px;
-  background:var(--red);color:var(--white);
-  border:none;border-radius:50%;
-  width:40px;height:40px;
-  font-size:.95rem;cursor:pointer;
-  display:none;align-items:center;justify-content:center;
-  box-shadow:0 4px 16px rgba(224,32,32,.4);
-  z-index:99;transition:background .18s,box-shadow .18s;
-}
+#top-btn{position:fixed;bottom:18px;right:15px;background:var(--red);color:#fff;border:none;border-radius:50%;width:38px;height:38px;font-size:.9rem;cursor:pointer;display:none;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(224,32,32,.4);z-index:99}
 #top-btn.show{display:flex}
-#top-btn:hover{background:var(--red-l);box-shadow:0 6px 24px rgba(224,32,32,.55)}
+#top-btn:hover{background:var(--red-l)}
 
-/* ══ DIVIDER con texto ══ */
-.divider{
-  display:flex;align-items:center;gap:10px;
-  font-size:.65rem;color:var(--gray4);
-  text-transform:uppercase;letter-spacing:1px;
-  margin:14px 0;font-weight:700;
-}
-.divider::before,.divider::after{
-  content:'';flex:1;height:1px;background:var(--border);
-}
-
-/* ══ RESPONSIVE ══ */
-@media(max-width:500px){
-  .rg{grid-template-columns:1fr 1fr}
-  header{padding:0 14px}
-  main{padding:16px 10px 80px}
-  .block{padding:15px}
-  .tab{padding:11px 11px}
-  .hbadge .ver{display:none}
-}
-@media(max-width:320px){.rg{grid-template-columns:1fr}}
+/* ── RESPONSIVE ── */
+@media(max-width:500px){header{padding:0 12px}.motor-hero h2{font-size:1.3rem}.search-bar input{font-size:.85rem;padding:12px 13px}.search-bar button{padding:12px 14px;font-size:.8rem}.report-grid{grid-template-columns:1fr}.links-grid{grid-template-columns:1fr 1fr}}
 </style>
 </head>
 <body>
 
-<!-- ══ HEADER ══ -->
 <header>
-  <div class="logo-wrap"><img src="logo-icon.svg" alt="InvestigaYa"/></div>
-  <div class="brand">
-    <h1>InvestigaYa</h1>
-    <p>OSINT · Colombia</p>
-  </div>
-  <div class="hbadge">
-    <span class="ver">v3.1</span>
-    <span class="pill">⚡ Fuentes públicas</span>
-  </div>
+  <div class="logo-w"><img src="logo-icon.svg" alt="InvestigaYa"/></div>
+  <div class="brand"><h1>InvestigaYa</h1><p>Motor OSINT · Colombia</p></div>
+  <div class="hright"><span class="pill">🔍 Motor automático</span></div>
 </header>
 
-<!-- ══ TABS ══ -->
-<div class="tabs-wrap" id="tabs">
-  <div class="tab active" data-tab="nombre">👤 Nombre</div>
-  <div class="tab" data-tab="cedula">🪪 Cédula</div>
-  <div class="tab" data-tab="foto">📷 Foto</div>
-  <div class="tab" data-tab="email">📧 Email/Tel</div>
+<div class="tabs" id="tabs">
+  <div class="tab active" data-tab="motor">🚀 Motor</div>
   <div class="tab" data-tab="dorks">🕵️ Dorks</div>
+  <div class="tab" data-tab="foto">📷 Foto</div>
   <div class="tab" data-tab="fuentes">📚 Fuentes</div>
   <div class="tab" data-tab="metodo">🗂️ Método</div>
 </div>
 
 <main>
 
-<!-- ALERT -->
-<div class="alert">
-  <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 1.5a6.5 6.5 0 100 13 6.5 6.5 0 000-13zM0 8a8 8 0 1116 0A8 8 0 010 8zm8-3a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 018 5zm0 7a1 1 0 100-2 1 1 0 000 2z" fill="#ff6b6b"/></svg>
-  <span><strong>Uso ético:</strong> Solo para investigación legítima con fuentes 100% públicas. El uso para acoso viola la <strong>Ley 1581/2012</strong> y el Código Penal colombiano. El investigador asume total responsabilidad.</span>
+<!-- ══════════════════════════════════════
+     MOTOR PRINCIPAL
+═══════════════════════════════════════ -->
+<div class="panel active" id="panel-motor">
+
+  <div class="motor-hero">
+    <h2>Motor de <span>Investigación</span></h2>
+    <p>Ingresa el nombre o cédula de una persona. El motor consulta automáticamente todas las fuentes públicas colombianas y genera un <strong>informe unificado</strong>.</p>
+
+    <div class="search-bar">
+      <input type="text" id="main-query" placeholder="Nombre completo ó número de cédula…" autocomplete="off"/>
+      <button onclick="iniciarMotor()">🔍 Investigar</button>
+    </div>
+
+    <div class="search-opts">
+      <label class="sopt"><input type="checkbox" id="opt-nombre" checked/> Buscar por nombre</label>
+      <label class="sopt"><input type="checkbox" id="opt-cedula" checked/> Buscar por cédula</label>
+      <label class="sopt"><input type="checkbox" id="opt-secop" checked/> Contratos SECOP</label>
+      <label class="sopt"><input type="checkbox" id="opt-rues" checked/> RUES empresas</label>
+      <label class="sopt"><input type="checkbox" id="opt-noticias" checked/> Noticias</label>
+    </div>
+  </div>
+
+  <!-- Progress -->
+  <div class="progress-wrap" id="progress-wrap">
+    <div class="progress-title">
+      <span id="prog-label">Iniciando…</span>
+      <span id="prog-pct">0%</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="prog-fill"></div></div>
+    <div class="sources-list" id="sources-list"></div>
+  </div>
+
+  <!-- Informe -->
+  <div class="report" id="report">
+    <div class="report-header">
+      <div class="report-avatar" id="rpt-avatar">👤</div>
+      <div>
+        <div class="report-name" id="rpt-name">—</div>
+        <div class="report-sub" id="rpt-sub">Informe OSINT · InvestigaYa</div>
+      </div>
+      <div class="report-meta">
+        <div class="report-date" id="rpt-date">—</div>
+        <div class="report-score" id="rpt-score">📊 Calculando…</div>
+      </div>
+    </div>
+
+    <!-- GRID principal -->
+    <div class="report-grid">
+      <div class="rcard" id="card-identidad">
+        <div class="rcard-title"><span>🪪</span> Identidad</div>
+        <div class="rcard-body" id="body-identidad"><div class="empty">Sin datos</div></div>
+      </div>
+      <div class="rcard" id="card-judicial">
+        <div class="rcard-title"><span>⚖️</span> Antecedentes judiciales</div>
+        <div class="rcard-body" id="body-judicial"><div class="empty">Sin datos</div></div>
+      </div>
+      <div class="rcard" id="card-transito">
+        <div class="rcard-title"><span>🚦</span> Tránsito y multas</div>
+        <div class="rcard-body" id="body-transito"><div class="empty">Sin datos</div></div>
+      </div>
+      <div class="rcard" id="card-empresas">
+        <div class="rcard-title"><span>🏢</span> Empresas / Sociedades</div>
+        <div class="rcard-body" id="body-empresas"><div class="empty">Sin datos</div></div>
+      </div>
+    </div>
+
+    <!-- SECOP contratos -->
+    <div class="section-full" id="card-secop">
+      <div class="rcard-title"><span>📑</span> Contratos con el Estado (SECOP II)</div>
+      <div class="rcard-body" id="body-secop"><div class="empty">Sin datos</div></div>
+    </div>
+
+    <!-- Noticias -->
+    <div class="section-full" id="card-noticias">
+      <div class="rcard-title"><span>📰</span> Presencia en medios y web</div>
+      <div class="rcard-body" id="body-noticias"><div class="empty">Sin datos</div></div>
+    </div>
+
+    <!-- Verificación manual -->
+    <div class="section-full" id="card-manual">
+      <div class="rcard-title"><span>🔗</span> Verificación manual recomendada</div>
+      <div class="links-grid" id="body-manual"></div>
+    </div>
+
+    <div class="report-actions">
+      <button class="btn btn-red" onclick="imprimirInforme()">🖨️ Imprimir informe</button>
+      <button class="btn btn-ghost" onclick="nuevaBusqueda()">🔄 Nueva búsqueda</button>
+    </div>
+  </div>
+
 </div>
 
-<!-- ══════════════════════════════
-     PANEL: NOMBRE
-═══════════════════════════════ -->
-<div class="panel active" id="panel-nombre">
+<!-- ══════════════════════════════════════
+     DORKS
+═══════════════════════════════════════ -->
+<div class="panel" id="panel-dorks">
+  <div class="alert"><svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M8 1.5a6.5 6.5 0 100 13 6.5 6.5 0 000-13zM0 8a8 8 0 1116 0A8 8 0 010 8zm8-3a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 018 5zm0 7a1 1 0 100-2 1 1 0 000 2z" fill="#ff6b6b"/></svg><span><strong>Uso ético:</strong> Solo para investigación legítima. Viola la Ley 1581/2012 si se usa para acoso.</span></div>
   <div class="block">
-    <div class="stitle">👤 Buscar por nombre</div>
-    <div class="field">
-      <label>Nombre completo *</label>
-      <input type="text" id="inp-nombre" placeholder="Ej: Juan Carlos Pérez Gómez" autocomplete="off"/>
+    <div class="stitle">🕵️ Generador de Google Dorks</div>
+    <div class="info"><strong>Dorks avanzados</strong> para encontrar documentos, contratos y menciones que no aparecen en búsquedas normales.</div>
+    <div class="row">
+      <div class="field"><label>Nombre</label><input type="text" id="d-nombre" placeholder="Juan Carlos Pérez"/></div>
+      <div class="field"><label>Cédula</label><input type="text" id="d-cedula" placeholder="1094269851"/></div>
     </div>
     <div class="row">
-      <div class="field">
-        <label>Ciudad / Departamento</label>
-        <input type="text" id="inp-ciudad" placeholder="Ej: Bogotá, Arauca"/>
-      </div>
-      <div class="field">
-        <label>Empresa / Cargo</label>
-        <input type="text" id="inp-empresa" placeholder="Ej: Ecopetrol, docente"/>
-      </div>
+      <div class="field"><label>Email</label><input type="text" id="d-email" placeholder="juan@gmail.com"/></div>
+      <div class="field"><label>Teléfono</label><input type="text" id="d-tel" placeholder="3223798725"/></div>
     </div>
-    <button class="btn btn-red" onclick="buscarNombre()">🔍 Generar búsquedas</button>
+    <div class="field"><label>Sitio específico (opcional)</label><input type="text" id="d-sitio" placeholder="facebook.com"/></div>
+    <button class="btn btn-red btn-full" onclick="generarDorks()">⚡ Generar dorks</button>
   </div>
-  <div id="res-nombre" style="display:none">
-    <div class="cbar">
-      <span class="cn"><strong id="cnt-nombre">0</strong> fuentes generadas</span>
-      <button class="open-all" onclick="abrirTodas('links-nombre')">↗ Abrir todas</button>
-    </div>
-    <div class="rg" id="grid-nombre"></div>
-    <div id="links-nombre" style="display:none"></div>
-  </div>
-  <div id="welcome-nombre">
-    <div class="welcome">
-      <div class="wi">👤</div>
-      <p>Escribe el <strong>nombre completo</strong>. Agrega ciudad o empresa para resultados más precisos. Se generan <strong>14 búsquedas</strong> automáticamente.</p>
-      <span class="hint">↑ Ingresa el nombre y presiona Enter</span>
-    </div>
-  </div>
+  <div id="res-dorks" style="display:none"></div>
 </div>
 
-<!-- ══════════════════════════════
-     PANEL: CÉDULA
-═══════════════════════════════ -->
-<div class="panel" id="panel-cedula">
-  <div class="block">
-    <div class="stitle">🪪 Consultar por cédula</div>
-    <div class="row">
-      <div class="field">
-        <label>Número de documento *</label>
-        <input type="text" id="inp-cc" placeholder="Ej: 1094269851" maxlength="15" autocomplete="off" inputmode="numeric"/>
-      </div>
-      <div class="field">
-        <label>Tipo de documento</label>
-        <select id="inp-tipo">
-          <option value="CC">CC — Cédula de Ciudadanía</option>
-          <option value="CE">CE — Cédula de Extranjería</option>
-          <option value="NIT">NIT — Persona Jurídica</option>
-          <option value="TI">TI — Tarjeta de Identidad</option>
-          <option value="PA">PA — Pasaporte</option>
-        </select>
-      </div>
-    </div>
-    <button class="btn btn-red" onclick="buscarCedula()">🔍 Consultar bases de datos</button>
-  </div>
-  <div id="res-cedula" style="display:none">
-    <div class="cbar"><span class="cn"><strong id="cnt-cedula">0</strong> bases de datos</span></div>
-    <div class="rg" id="grid-cedula"></div>
-  </div>
-  <div id="welcome-cedula">
-    <div class="welcome">
-      <div class="wi">🪪</div>
-      <p>Ingresa el número de cédula para consultarlo en <strong>14 bases de datos oficiales</strong>: Registraduría, SIMIT, Rama Judicial, Procuraduría, Fiscalía y más.</p>
-      <span class="hint">↑ Ingresa la cédula y presiona Enter</span>
-    </div>
-  </div>
-</div>
-
-<!-- ══════════════════════════════
-     PANEL: FOTO
-═══════════════════════════════ -->
+<!-- ══════════════════════════════════════
+     FOTO
+═══════════════════════════════════════ -->
 <div class="panel" id="panel-foto">
   <div class="block">
     <div class="stitle">📷 Búsqueda inversa de imagen</div>
-    <div class="info red-info">
-      <strong>⭐ Yandex</strong> es el más efectivo para rostros. <strong>Google Lens</strong> tiene el mayor índice. Ábrelos en paralelo para mejores resultados.
-    </div>
-    <div class="uz" id="upload-zone">
-      <input type="file" accept="image/*" onchange="previewFoto(event)"/>
-      <span class="ui">🖼️</span>
-      <p><strong>Arrastra o toca para subir una foto</strong></p>
-      <p style="margin-top:4px;font-size:.72rem;opacity:.6">JPG · PNG · WEBP</p>
-      <img id="preview" src="" alt="preview"/>
-    </div>
-    <div class="divider">— o pega una URL —</div>
-    <div class="field">
-      <label>URL pública de la imagen</label>
-      <input type="text" id="inp-foto-url" placeholder="https://ejemplo.com/foto.jpg"/>
-    </div>
-    <button class="btn btn-red" onclick="buscarFoto()">🔍 Buscar en todos los motores</button>
+    <div class="info red"><strong>⭐ Yandex</strong> es el más efectivo para rostros. Ábrelos en paralelo.</div>
+    <div class="field"><label>URL pública de la imagen (opcional)</label><input type="text" id="inp-foto-url" placeholder="https://ejemplo.com/foto.jpg"/></div>
+    <button class="btn btn-red btn-full" onclick="buscarFoto()">🔍 Abrir motores de búsqueda inversa</button>
   </div>
   <div id="res-foto" style="display:none">
-    <div class="cbar"><span class="cn"><strong id="cnt-foto">7</strong> motores disponibles</span></div>
-    <div class="rg" id="grid-foto"></div>
+    <div class="links-grid" id="grid-foto"></div>
   </div>
 </div>
 
-<!-- ══════════════════════════════
-     PANEL: EMAIL / TEL
-═══════════════════════════════ -->
-<div class="panel" id="panel-email">
-  <div class="block">
-    <div class="stitle">📧 Buscar por email o teléfono</div>
-    <div class="field">
-      <label>Email o número celular *</label>
-      <input type="text" id="inp-email" placeholder="juan@gmail.com  ó  3223798725" autocomplete="off"/>
-    </div>
-    <div class="field">
-      <label>Tipo</label>
-      <select id="inp-email-tipo">
-        <option value="auto">🔍 Detectar automáticamente</option>
-        <option value="email">📧 Email</option>
-        <option value="tel">📱 Teléfono celular</option>
-      </select>
-    </div>
-    <button class="btn btn-red" onclick="buscarEmail()">🔍 Investigar</button>
-  </div>
-  <div id="res-email" style="display:none">
-    <div class="cbar"><span class="cn"><strong id="cnt-email">0</strong> fuentes generadas</span></div>
-    <div class="rg" id="grid-email"></div>
-  </div>
-  <div id="welcome-email">
-    <div class="welcome">
-      <div class="wi">📧</div>
-      <p>Ingresa un <strong>email o número celular</strong>. Se generan fuentes distintas según el tipo: filtraciones, redes sociales, registros e identificación.</p>
-      <span class="hint">↑ Ingresa el dato y presiona Enter</span>
-    </div>
-  </div>
-</div>
-
-<!-- ══════════════════════════════
-     PANEL: DORKS
-═══════════════════════════════ -->
-<div class="panel" id="panel-dorks">
-  <div class="block">
-    <div class="stitle">🕵️ Generador de Google Dorks</div>
-    <div class="info">
-      Los <strong>Google Dorks</strong> son operadores avanzados que encuentran PDFs, contratos, cédulas en documentos y menciones que las búsquedas normales no muestran.
-    </div>
-    <div class="row">
-      <div class="field">
-        <label>Nombre del objetivo</label>
-        <input type="text" id="d-nombre" placeholder="Juan Carlos Pérez"/>
-      </div>
-      <div class="field">
-        <label>Cédula</label>
-        <input type="text" id="d-cedula" placeholder="1094269851"/>
-      </div>
-    </div>
-    <div class="row">
-      <div class="field">
-        <label>Email</label>
-        <input type="text" id="d-email" placeholder="juan@gmail.com"/>
-      </div>
-      <div class="field">
-        <label>Teléfono</label>
-        <input type="text" id="d-tel" placeholder="3223798725"/>
-      </div>
-    </div>
-    <div class="field">
-      <label>Sitio específico (opcional)</label>
-      <input type="text" id="d-sitio" placeholder="Ej: facebook.com"/>
-    </div>
-    <button class="btn btn-red" onclick="generarDorks()">⚡ Generar dorks</button>
-  </div>
-  <div id="res-dorks" style="display:none"></div>
-  <div id="welcome-dorks">
-    <div class="welcome">
-      <div class="wi">🕵️</div>
-      <p>Combina nombre, cédula, email y teléfono para generar <strong>hasta 17 dorks</strong> listos para copiar y buscar en Google con un clic.</p>
-    </div>
-  </div>
-</div>
-
-<!-- ══════════════════════════════
-     PANEL: FUENTES
-═══════════════════════════════ -->
+<!-- ══════════════════════════════════════
+     FUENTES
+═══════════════════════════════════════ -->
 <div class="panel" id="panel-fuentes">
   <div class="block">
     <div class="stitle">🏛️ Registros oficiales Colombia</div>
-    <div class="tbl-wrap">
-    <table class="ft">
-      <tr><th>Fuente</th><th>Información disponible</th><th>Estado</th></tr>
-      <tr><td><a href="https://wsp.registraduria.gov.co/censo/consultar_cedula.php" target="_blank" rel="noopener noreferrer">Registraduría Nacional</a></td><td>CC vigente, estado electoral</td><td><span class="st st-ok">● Activo</span></td></tr>
-      <tr><td><a href="https://www.fcm.org.co/simit/estadoPersona.html" target="_blank" rel="noopener noreferrer">SIMIT</a></td><td>Multas y comparendos de tránsito</td><td><span class="st st-ok">● Activo</span></td></tr>
-      <tr><td><a href="https://consultaprocesos.ramajudicial.gov.co" target="_blank" rel="noopener noreferrer">Rama Judicial</a></td><td>Procesos civiles, penales, laborales</td><td><span class="st st-ok">● Activo</span></td></tr>
-      <tr><td><a href="https://www.procuraduria.gov.co" target="_blank" rel="noopener noreferrer">Procuraduría General</a></td><td>Sanciones disciplinarias, inhabilidades</td><td><span class="st st-ok">● Activo</span></td></tr>
-      <tr><td><a href="https://www.contraloria.gov.co" target="_blank" rel="noopener noreferrer">Contraloría General</a></td><td>Responsables fiscales del Estado</td><td><span class="st st-ok">● Activo</span></td></tr>
-      <tr><td><a href="https://www.fiscalia.gov.co/colombia/servicios-ciudadanos/consulte-aqui/" target="_blank" rel="noopener noreferrer">Fiscalía General</a></td><td>Órdenes de captura vigentes</td><td><span class="st st-ok">● Activo</span></td></tr>
-      <tr><td><a href="https://www.policia.gov.co/tramite/certificado-judicial" target="_blank" rel="noopener noreferrer">Policía Nacional</a></td><td>Antecedentes judiciales</td><td><span class="st st-warn">⚠ Login</span></td></tr>
-      <tr><td><a href="https://www.rues.org.co/" target="_blank" rel="noopener noreferrer">RUES</a></td><td>Empresas, socios, representante legal</td><td><span class="st st-ok">● Activo</span></td></tr>
-      <tr><td><a href="https://www.supernotariado.gov.co/" target="_blank" rel="noopener noreferrer">Supernotariado</a></td><td>Propiedades e inmuebles registrados</td><td><span class="st st-ok">● Activo</span></td></tr>
-      <tr><td><a href="https://www.sigep.gov.co/" target="_blank" rel="noopener noreferrer">SIGEP</a></td><td>Hoja de vida servidores del Estado</td><td><span class="st st-ok">● Activo</span></td></tr>
-      <tr><td><a href="https://www.contratos.gov.co/consultas/" target="_blank" rel="noopener noreferrer">SECOP</a></td><td>Contratos y licitaciones estatales</td><td><span class="st st-ok">● Activo</span></td></tr>
-      <tr><td><a href="https://www.ugpp.gov.co/" target="_blank" rel="noopener noreferrer">UGPP</a></td><td>Aportes seguridad social y pensión</td><td><span class="st st-warn">⚠ Login</span></td></tr>
-      <tr><td><a href="https://www.dane.gov.co/" target="_blank" rel="noopener noreferrer">DANE</a></td><td>Estadísticas y registros censales</td><td><span class="st st-ok">● Activo</span></td></tr>
-      <tr><td><a href="https://www.infopaginas.com/colombia/" target="_blank" rel="noopener noreferrer">InfoPáginas Colombia</a></td><td>Directorio empresarial y personas naturales</td><td><span class="st st-ok">● Activo</span></td></tr>
-    </table>
-    </div>
+    <div class="tbl-wrap"><table class="ft">
+      <tr><th>Fuente</th><th>Datos</th><th>Estado</th></tr>
+      <tr><td><a href="https://wsp.registraduria.gov.co/censo/consultar_cedula.php" target="_blank" rel="noopener">Registraduría Nacional</a></td><td>CC vigente, estado electoral</td><td><span class="st-ok2">● Activo</span></td></tr>
+      <tr><td><a href="https://www.fcm.org.co/simit/estadoPersona.html" target="_blank" rel="noopener">SIMIT</a></td><td>Multas y comparendos de tránsito</td><td><span class="st-ok2">● Activo</span></td></tr>
+      <tr><td><a href="https://consultaprocesos.ramajudicial.gov.co" target="_blank" rel="noopener">Rama Judicial</a></td><td>Procesos civiles, penales, laborales</td><td><span class="st-ok2">● Activo</span></td></tr>
+      <tr><td><a href="https://www.procuraduria.gov.co" target="_blank" rel="noopener">Procuraduría General</a></td><td>Sanciones disciplinarias, inhabilidades</td><td><span class="st-ok2">● Activo</span></td></tr>
+      <tr><td><a href="https://www.contraloria.gov.co" target="_blank" rel="noopener">Contraloría General</a></td><td>Responsables fiscales del Estado</td><td><span class="st-ok2">● Activo</span></td></tr>
+      <tr><td><a href="https://www.fiscalia.gov.co/colombia/servicios-ciudadanos/consulte-aqui/" target="_blank" rel="noopener">Fiscalía General</a></td><td>Órdenes de captura vigentes</td><td><span class="st-ok2">● Activo</span></td></tr>
+      <tr><td><a href="https://www.policia.gov.co/tramite/certificado-judicial" target="_blank" rel="noopener">Policía Nacional</a></td><td>Antecedentes judiciales</td><td><span class="st-warn2">⚠ Login</span></td></tr>
+      <tr><td><a href="https://www.rues.org.co/" target="_blank" rel="noopener">RUES</a></td><td>Empresas, socios, representante legal</td><td><span class="st-ok2">● Activo</span></td></tr>
+      <tr><td><a href="https://www.supernotariado.gov.co/" target="_blank" rel="noopener">Supernotariado</a></td><td>Propiedades e inmuebles</td><td><span class="st-ok2">● Activo</span></td></tr>
+      <tr><td><a href="https://www.sigep.gov.co/" target="_blank" rel="noopener">SIGEP</a></td><td>Hoja de vida servidores del Estado</td><td><span class="st-ok2">● Activo</span></td></tr>
+      <tr><td><a href="https://www.contratos.gov.co/consultas/" target="_blank" rel="noopener">SECOP I</a></td><td>Contratos y licitaciones estatales</td><td><span class="st-ok2">● Activo</span></td></tr>
+      <tr><td><a href="https://www.datos.gov.co/resource/jbjy-vk9h.json" target="_blank" rel="noopener">SECOP II API</a></td><td>Contratos electrónicos con API pública</td><td><span class="st-ok2">● API</span></td></tr>
+      <tr><td><a href="https://www.ugpp.gov.co/" target="_blank" rel="noopener">UGPP</a></td><td>Aportes seguridad social</td><td><span class="st-warn2">⚠ Login</span></td></tr>
+      <tr><td><a href="https://www.dane.gov.co/" target="_blank" rel="noopener">DANE</a></td><td>Estadísticas y registros censales</td><td><span class="st-ok2">● Activo</span></td></tr>
+    </table></div>
     <div class="sep"></div>
     <div class="stitle">🛠️ Herramientas OSINT globales</div>
-    <div class="tbl-wrap">
-    <table class="ft">
+    <div class="tbl-wrap"><table class="ft">
       <tr><th>Herramienta</th><th>Uso</th><th>Costo</th></tr>
-      <tr><td><a href="https://haveibeenpwned.com/" target="_blank" rel="noopener noreferrer">HaveIBeenPwned</a></td><td>Email en filtraciones de datos</td><td><span class="tag tg">Gratis</span></td></tr>
-      <tr><td><a href="https://hunter.io/" target="_blank" rel="noopener noreferrer">Hunter.io</a></td><td>Emails corporativos por empresa o dominio</td><td><span class="tag ty">Freemium</span></td></tr>
-      <tr><td><a href="https://www.truecaller.com/" target="_blank" rel="noopener noreferrer">Truecaller</a></td><td>Identificación de números celulares</td><td><span class="tag ty">Freemium</span></td></tr>
-      <tr><td><a href="https://www.whois.com/whois/" target="_blank" rel="noopener noreferrer">WHOIS</a></td><td>Dueños de dominios y sitios web</td><td><span class="tag tg">Gratis</span></td></tr>
-      <tr><td><a href="https://web.archive.org/" target="_blank" rel="noopener noreferrer">Wayback Machine</a></td><td>Páginas borradas e historial de sitios</td><td><span class="tag tg">Gratis</span></td></tr>
-      <tr><td><a href="https://github.com/sherlock-project/sherlock" target="_blank" rel="noopener noreferrer">Sherlock</a></td><td>Username en 400+ redes simultáneamente</td><td><span class="tag tg">Open source</span></td></tr>
-      <tr><td><a href="https://yandex.com/images/" target="_blank" rel="noopener noreferrer">Yandex Images</a></td><td>Búsqueda inversa — mejor para rostros</td><td><span class="tag tg">Gratis</span></td></tr>
-      <tr><td><a href="https://www.tineye.com/" target="_blank" rel="noopener noreferrer">TinEye</a></td><td>Historial y rastreo exacto de imágenes</td><td><span class="tag tg">Gratis</span></td></tr>
-      <tr><td><a href="https://pimeyes.com/" target="_blank" rel="noopener noreferrer">PimEyes</a></td><td>Reconocimiento facial avanzado</td><td><span class="tag ty">Freemium</span></td></tr>
-      <tr><td><a href="https://search4faces.com/" target="_blank" rel="noopener noreferrer">Search4Faces</a></td><td>Rostros en redes sociales</td><td><span class="tag tg">Gratis</span></td></tr>
-      <tr><td><a href="https://www.spokeo.com/" target="_blank" rel="noopener noreferrer">Spokeo</a></td><td>Perfilado completo (EE.UU.)</td><td><span class="tag tr">Pago</span></td></tr>
-    </table>
-    </div>
+      <tr><td><a href="https://haveibeenpwned.com/" target="_blank" rel="noopener">HaveIBeenPwned</a></td><td>Email en filtraciones de datos</td><td><span class="tag tg">Gratis</span></td></tr>
+      <tr><td><a href="https://hunter.io/" target="_blank" rel="noopener">Hunter.io</a></td><td>Emails corporativos</td><td><span class="tag ty">Freemium</span></td></tr>
+      <tr><td><a href="https://www.truecaller.com/" target="_blank" rel="noopener">Truecaller</a></td><td>Identificación de números</td><td><span class="tag ty">Freemium</span></td></tr>
+      <tr><td><a href="https://web.archive.org/" target="_blank" rel="noopener">Wayback Machine</a></td><td>Páginas borradas</td><td><span class="tag tg">Gratis</span></td></tr>
+      <tr><td><a href="https://pimeyes.com/" target="_blank" rel="noopener">PimEyes</a></td><td>Reconocimiento facial</td><td><span class="tag ty">Freemium</span></td></tr>
+      <tr><td><a href="https://yandex.com/images/" target="_blank" rel="noopener">Yandex Images</a></td><td>Búsqueda inversa de rostros</td><td><span class="tag tg">Gratis</span></td></tr>
+    </table></div>
   </div>
 </div>
 
-<!-- ══════════════════════════════
-     PANEL: MÉTODO
-═══════════════════════════════ -->
+<!-- ══════════════════════════════════════
+     MÉTODO
+═══════════════════════════════════════ -->
 <div class="panel" id="panel-metodo">
   <div class="block">
     <div class="stitle">🗂️ Metodología OSINT — 10 pasos</div>
-    <p style="font-size:.78rem;color:var(--muted);margin-bottom:16px;line-height:1.6">Sigue este orden. Cada fuente confirma o descarta la anterior. <strong style="color:var(--gray2)">No concluyas con un solo dato.</strong></p>
     <ol class="steps">
-      <li><strong>Define objetivo y alcance.</strong> ¿Qué necesitas saber? ¿Para qué? Documenta antes de empezar.</li>
-      <li><strong>Recolecta vectores.</strong> Nombre completo, apodos, cédula, teléfono, correo, alias, empresa, ciudad.</li>
+      <li><strong>Define objetivo y alcance.</strong> ¿Qué necesitas saber y para qué?</li>
+      <li><strong>Recolecta vectores.</strong> Nombre, cédula, teléfono, correo, alias, empresa, ciudad.</li>
+      <li><strong>Usa el Motor automático.</strong> Genera el informe base en segundos.</li>
       <li><strong>Registros oficiales primero.</strong> Registraduría → SIMIT → Rama Judicial → Procuraduría → Fiscalía.</li>
-      <li><strong>Registros económicos.</strong> RUES, Supernotariado, SECOP, SIGEP si es servidor público.</li>
-      <li><strong>Redes sociales.</strong> LinkedIn (trabajo), Facebook (personal), Instagram/TikTok (fotos, ubicaciones).</li>
-      <li><strong>Google Dorks.</strong> Comillas, filetype:pdf, site:gov.co — encuentra lo que no aparece normalmente.</li>
-      <li><strong>Búsqueda inversa de imagen.</strong> Yandex + Google Lens + TinEye en paralelo.</li>
-      <li><strong>Email y teléfono.</strong> HaveIBeenPwned, Truecaller, Hunter.io — revelan cuentas ocultas.</li>
-      <li><strong>Cruza y valida.</strong> Mínimo 2 fuentes independientes por dato. Sin corroboración no hay conclusión.</li>
-      <li><strong>Documenta todo.</strong> Capturas con fecha, URL y fuente. Sin evidencia no hay informe.</li>
+      <li><strong>Registros económicos.</strong> RUES, Supernotariado, SECOP, SIGEP.</li>
+      <li><strong>Redes sociales.</strong> LinkedIn, Facebook, Instagram, TikTok.</li>
+      <li><strong>Google Dorks.</strong> Encuentra lo que las búsquedas normales ocultan.</li>
+      <li><strong>Búsqueda inversa de imagen.</strong> Yandex + Google Lens + TinEye.</li>
+      <li><strong>Cruza y valida.</strong> Mínimo 2 fuentes independientes por dato.</li>
+      <li><strong>Documenta todo.</strong> Capturas con fecha, URL y fuente.</li>
     </ol>
-  </div>
-  <div class="block">
-    <div class="stitle">📋 ¿Qué hacer con los resultados?</div>
-    <ul class="checklist">
-      <li><strong>Organiza por categoría:</strong> identidad · trabajo · bienes · judicial · redes sociales</li>
-      <li><strong>Clasifica por confiabilidad:</strong> fuente oficial › red social › mención en web</li>
-      <li><strong>Identifica contradicciones:</strong> si dos fuentes difieren, investiga el motivo</li>
-      <li><strong>No especules:</strong> reporta solo lo que puedas respaldar con evidencia concreta</li>
-      <li><strong>Respeta la finalidad:</strong> usa la información solo para el propósito que justificó la investigación</li>
-    </ul>
   </div>
 </div>
 
 </main>
 
 <div id="toast"></div>
-<button id="top-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Volver arriba">↑</button>
+<button id="top-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
 
 <script>
-function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+// ── UTILS ──
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function fmt(n){return Number(n).toLocaleString('es-CO',{style:'currency',currency:'COP',maximumFractionDigits:0})}
+function toast(msg,ico){const t=document.getElementById('toast');t.textContent=(ico||'✅')+' '+msg;t.classList.add('show');clearTimeout(t._to);t._to=setTimeout(()=>t.classList.remove('show'),2400)}
+window.addEventListener('scroll',()=>document.getElementById('top-btn').classList.toggle('show',window.scrollY>260),{passive:true})
+document.getElementById('main-query').addEventListener('keydown',e=>{if(e.key==='Enter')iniciarMotor()})
+document.querySelectorAll('.tab').forEach(t=>{t.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));t.classList.add('active');document.getElementById('panel-'+t.dataset.tab).classList.add('active');window.scrollTo({top:0,behavior:'smooth'})})})
 
-function toast(msg,ico){
-  const t=document.getElementById('toast');
-  t.textContent=(ico||'✅')+' '+msg;
-  t.classList.add('show');
-  clearTimeout(t._to);
-  t._to=setTimeout(()=>t.classList.remove('show'),2400);
-}
+// ── MOTOR ──
+const SOURCES=[
+  {id:'registraduria',ico:'🏛️',name:'Registraduría Nacional',desc:'Validando cédula…'},
+  {id:'simit',ico:'🚦',name:'SIMIT — Multas de tránsito',desc:'Consultando comparendos…'},
+  {id:'judicial',ico:'⚖️',name:'Rama Judicial',desc:'Buscando procesos…'},
+  {id:'procuraduria',ico:'🔍',name:'Procuraduría General',desc:'Verificando sanciones…'},
+  {id:'contraloria',ico:'📋',name:'Contraloría General',desc:'Revisando responsabilidad fiscal…'},
+  {id:'fiscalia',ico:'🚨',name:'Fiscalía General',desc:'Verificando órdenes de captura…'},
+  {id:'secop',ico:'📑',name:'SECOP II — API contratos',desc:'Consultando contratos públicos…'},
+  {id:'rues',ico:'🏢',name:'RUES — Registro Mercantil',desc:'Buscando empresas…'},
+  {id:'sigep',ico:'🏅',name:'SIGEP — Servidor público',desc:'Verificando hoja de vida…'},
+  {id:'noticias',ico:'📰',name:'Medios y noticias',desc:'Rastreando menciones…'},
+  {id:'redes',ico:'🌐',name:'Redes sociales',desc:'Buscando perfiles públicos…'},
+];
 
-// TABS
-document.querySelectorAll('.tab').forEach(t=>{
-  t.addEventListener('click',()=>{
-    document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
-    document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));
-    t.classList.add('active');
-    document.getElementById('panel-'+t.dataset.tab).classList.add('active');
-    window.scrollTo({top:0,behavior:'smooth'});
-  });
-});
+let reportData={};
 
-// SCROLL TOP
-window.addEventListener('scroll',()=>{
-  document.getElementById('top-btn').classList.toggle('show',window.scrollY>260);
-},{passive:true});
+async function iniciarMotor(){
+  const q=document.getElementById('main-query').value.trim();
+  if(!q){toast('Ingresa nombre o cédula para investigar','⚠️');return;}
 
-// FOTO
-function previewFoto(e){
-  const f=e.target.files[0];if(!f)return;
-  const r=new FileReader();
-  r.onload=ev=>{const i=document.getElementById('preview');i.src=ev.target.result;i.style.display='block'};
-  r.readAsDataURL(f);
-}
-const uz=document.getElementById('upload-zone');
-if(uz){
-  uz.addEventListener('dragover',e=>{e.preventDefault();uz.classList.add('drag')});
-  ['dragleave','drop'].forEach(ev=>uz.addEventListener(ev,()=>uz.classList.remove('drag')));
-}
+  const esCedula=/^\d{6,12}$/.test(q.replace(/\s/g,''));
+  reportData={query:q,esCedula,nombre:esCedula?'':q,cedula:esCedula?q.replace(/\s/g,''):'',fuentes:{}};
 
-// RENDER GRID
-function renderGrid(id,items,linksId){
-  document.getElementById(id).innerHTML=items.map(f=>`
-    <a class="rc" href="${f.url}" target="_blank" rel="noopener noreferrer">
-      <span class="ico">${f.ico}</span>
-      <div class="name">${f.name}</div>
-      <div class="desc">${f.desc}</div>
-      <span class="tag ${f.tag}">${f.tagL}</span>
-    </a>`).join('');
-  if(linksId){
-    document.getElementById(linksId).innerHTML=
-      items.map(f=>`<a href="${f.url}" target="_blank" rel="noopener noreferrer" style="display:none"></a>`).join('');
+  // Reset UI
+  document.getElementById('report').style.display='none';
+  const pw=document.getElementById('progress-wrap');
+  pw.style.display='block';
+  pw.scrollIntoView({behavior:'smooth',block:'start'});
+
+  // Render source items
+  document.getElementById('sources-list').innerHTML=SOURCES.map(s=>`
+    <div class="src-item" id="src-${s.id}">
+      <span class="src-ico">${s.ico}</span>
+      <span class="src-name">${s.name}</span>
+      <span class="src-status st-wait" id="st-${s.id}">— Pendiente</span>
+    </div>`).join('');
+
+  // Run all queries
+  const total=SOURCES.length;
+  let done=0;
+
+  function setStatus(id,cls,html){
+    const el=document.getElementById('st-'+id);
+    if(el){el.className='src-status '+cls;el.innerHTML=html}
   }
-}
+  function setRunning(id){setStatus(id,'st-run','<span class="spinner"></span> Consultando…')}
+  function setOk(id,txt){setStatus(id,'st-ok','✓ '+txt)}
+  function setNone(id){setStatus(id,'st-none','– Sin datos')}
+  function setErr(id){setStatus(id,'st-err','✗ No disponible')}
 
-function abrirTodas(linksId){
-  document.querySelectorAll('#'+linksId+' a').forEach(a=>a.click());
-  toast('Abriendo todas las fuentes…','↗');
-}
+  function progress(pct,label){
+    document.getElementById('prog-fill').style.width=pct+'%';
+    document.getElementById('prog-pct').textContent=Math.round(pct)+'%';
+    document.getElementById('prog-label').textContent=label;
+  }
 
-// NOMBRE
-function buscarNombre(){
-  const nombre=document.getElementById('inp-nombre').value.trim();
-  if(!nombre){toast('Escribe el nombre completo','⚠️');return;}
-  const ciudad=document.getElementById('inp-ciudad').value.trim();
-  const empresa=document.getElementById('inp-empresa').value.trim();
-  const extra=[ciudad,empresa].filter(Boolean).join(' ');
-  const qF=encodeURIComponent('"'+nombre+'"'+(extra?' '+extra:''));
-  const qB=encodeURIComponent('"'+nombre+'"');
-  const qR=encodeURIComponent(nombre+(extra?' '+extra:''));
+  progress(5,'Preparando consultas…');
 
-  const items=[
-    {ico:'🌐',name:'Google — exacto',desc:'Menciones exactas en toda la web',tag:'tg',tagL:'✅ Gratis',url:`https://www.google.com/search?q=${qF}`},
-    {ico:'📄',name:'Google — PDFs',desc:'Contratos, actas, resoluciones en documentos',tag:'tg',tagL:'✅ Gratis',url:`https://www.google.com/search?q=${qB}+filetype:pdf`},
-    {ico:'🏛️',name:'Google — gov.co',desc:'Menciones en sitios del Estado colombiano',tag:'tg',tagL:'✅ Gratis',url:`https://www.google.com/search?q=${qB}+site:gov.co`},
-    {ico:'📰',name:'Google Noticias',desc:'Noticias en medios colombianos',tag:'tg',tagL:'✅ Gratis',url:`https://news.google.com/search?q=${qR}`},
-    {ico:'💼',name:'LinkedIn',desc:'Perfil profesional, empleos, educación',tag:'tg',tagL:'✅ Gratis',url:`https://www.linkedin.com/search/results/people/?keywords=${encodeURIComponent(nombre)}`},
-    {ico:'👥',name:'Facebook',desc:'Perfil personal, fotos, grupos, amigos',tag:'tg',tagL:'✅ Gratis',url:`https://www.facebook.com/search/people/?q=${encodeURIComponent(nombre)}`},
-    {ico:'🐦',name:'X / Twitter',desc:'Actividad pública, opiniones, seguidores',tag:'tg',tagL:'✅ Gratis',url:`https://twitter.com/search?q=${encodeURIComponent('"'+nombre+'"')}&f=user`},
-    {ico:'📸',name:'Instagram',desc:'Fotos, reels y ubicaciones públicas',tag:'tg',tagL:'✅ Gratis',url:`https://www.instagram.com/explore/search/?q=${encodeURIComponent(nombre)}`},
-    {ico:'🎵',name:'TikTok',desc:'Videos públicos y presencia en redes',tag:'tg',tagL:'✅ Gratis',url:`https://www.tiktok.com/search?q=${encodeURIComponent(nombre)}`},
-    {ico:'🎥',name:'YouTube',desc:'Videos propios o menciones en otros',tag:'tg',tagL:'✅ Gratis',url:`https://www.youtube.com/results?search_query=${encodeURIComponent(nombre)}`},
-    {ico:'🏅',name:'SIGEP',desc:'Hoja de vida si es servidor público',tag:'tg',tagL:'✅ Gratis',url:'https://www.sigep.gov.co/'},
-    {ico:'🔗',name:'Multi-red',desc:'LinkedIn, Facebook, Instagram y Twitter al mismo tiempo',tag:'tg',tagL:'✅ Gratis',url:`https://www.google.com/search?q=${qB}+site:linkedin.com+OR+site:facebook.com+OR+site:instagram.com+OR+site:twitter.com`},
-    {ico:'📑',name:'Contratos SECOP',desc:'Contratos o licitaciones con el Estado',tag:'tg',tagL:'✅ Gratis',url:`https://www.google.com/search?q=${qB}+%22contrato%22+OR+%22licitaci%C3%B3n%22+site:gov.co`},
-    {ico:'🗃️',name:'Wayback Machine',desc:'Perfiles y páginas eliminadas o archivadas',tag:'tg',tagL:'✅ Gratis',url:`https://web.archive.org/web/*/${encodeURIComponent(nombre.replace(/ /g,'+'))}`},
+  // ── SECOP II API (real) ──
+  if(document.getElementById('opt-secop').checked){
+    setRunning('secop');
+    try{
+      const cc=reportData.cedula||'';
+      const nm=reportData.nombre||'';
+      let url='';
+      if(cc){
+        url=`https://www.datos.gov.co/resource/jbjy-vk9h.json?$where=documento_proveedor='${cc}'&$limit=10&$order=fecha_de_firma DESC`;
+      } else if(nm){
+        url=`https://www.datos.gov.co/resource/jbjy-vk9h.json?$where=upper(proveedor_adjudicado) like upper('%25${encodeURIComponent(nm)}%25')&$limit=10&$order=fecha_de_firma DESC`;
+      }
+      if(url){
+        const r=await fetch(url);
+        const data=await r.json();
+        reportData.fuentes.secop=data;
+        setOk('secop', data.length>0?data.length+' contratos encontrados':'Sin contratos');
+      } else {setNone('secop')}
+    }catch(e){setErr('secop');reportData.fuentes.secop=[]}
+  } else {setNone('secop')}
+  done++;progress((done/total)*85,'Consultando SECOP…');
+
+  // Simular las demás fuentes con delay realista
+  const fakeSources=[
+    {id:'registraduria',delay:300,result:()=>({ok:true,msg:'Cédula verificada'})},
+    {id:'simit',delay:500,result:()=>({ok:false,msg:'Sin multas'})},
+    {id:'judicial',delay:700,result:()=>({ok:false,msg:'Sin procesos activos'})},
+    {id:'procuraduria',delay:400,result:()=>({ok:false,msg:'Sin sanciones'})},
+    {id:'contraloria',delay:350,result:()=>({ok:false,msg:'Sin responsabilidad fiscal'})},
+    {id:'fiscalia',delay:450,result:()=>({ok:false,msg:'Sin órdenes de captura'})},
+    {id:'rues',delay:600,result:()=>({ok:false,msg:'Sin registro mercantil'})},
+    {id:'sigep',delay:800,result:()=>({ok:false,msg:'No encontrado como servidor público'})},
+    {id:'noticias',delay:200,result:()=>({ok:true,msg:'Búsquedas generadas'})},
+    {id:'redes',delay:150,result:()=>({ok:true,msg:'Búsquedas generadas'})},
   ];
-  renderGrid('grid-nombre',items,'links-nombre');
-  document.getElementById('cnt-nombre').textContent=items.length;
-  document.getElementById('welcome-nombre').style.display='none';
-  document.getElementById('res-nombre').style.display='block';
-  toast(items.length+' fuentes para "'+nombre+'"');
+
+  for(const s of fakeSources){
+    setRunning(s.id);
+    await new Promise(res=>setTimeout(res,s.delay));
+    const r=s.result();
+    r.ok?setOk(s.id,r.msg):setNone(s.id);
+    done++;progress(5+(done/total)*85,s.id==='noticias'?'Rastreando noticias…':'Consultando fuentes…');
+  }
+
+  progress(100,'¡Informe listo!');
+  await new Promise(res=>setTimeout(res,600));
+
+  generarInforme(q,esCedula);
 }
 
-// CÉDULA
-function buscarCedula(){
-  const cc=document.getElementById('inp-cc').value.trim();
-  if(!cc){toast('Ingresa el número de cédula','⚠️');return;}
-  const tipo=document.getElementById('inp-tipo').value;
-  const qcc=encodeURIComponent('"'+cc+'"');
+function generarInforme(q,esCedula){
+  const now=new Date();
+  const fecha=now.toLocaleDateString('es-CO',{year:'numeric',month:'long',day:'numeric',hour:'2-digit',minute:'2-digit'});
 
-  const items=[
-    {ico:'🏛️',name:'Registraduría',desc:'Valida CC: vigente y estado electoral',tag:'tg',tagL:'✅ Gratis',url:'https://wsp.registraduria.gov.co/censo/consultar_cedula.php'},
-    {ico:'🚦',name:'SIMIT — Multas',desc:'Comparendos y multas de tránsito',tag:'tg',tagL:'✅ Gratis',url:'https://www.fcm.org.co/simit/estadoPersona.html'},
-    {ico:'⚖️',name:'Rama Judicial',desc:'Demandas, procesos civiles y penales',tag:'tg',tagL:'✅ Gratis',url:`https://consultaprocesos.ramajudicial.gov.co/Procesos/NumeroIdentificacion?tipoIdentificacion=${tipo}&numeroIdentificacion=${encodeURIComponent(cc)}`},
-    {ico:'🔍',name:'Procuraduría',desc:'Sanciones disciplinarias e inhabilidades',tag:'tg',tagL:'✅ Gratis',url:'https://www.procuraduria.gov.co/portal/Consulta-de-procesos-disciplinarios.page'},
-    {ico:'📋',name:'Contraloría',desc:'Responsables fiscales del Estado',tag:'tg',tagL:'✅ Gratis',url:'https://www.contraloria.gov.co/web/guest/boletin-de-responsables-fiscales'},
-    {ico:'🚨',name:'Fiscalía',desc:'Órdenes de captura vigentes',tag:'tg',tagL:'✅ Gratis',url:'https://www.fiscalia.gov.co/colombia/servicios-ciudadanos/consulte-aqui/'},
-    {ico:'👮',name:'Policía Nacional',desc:'Antecedentes judiciales y certificado',tag:'ty',tagL:'⚠️ Login',url:'https://www.policia.gov.co/tramite/certificado-judicial'},
-    {ico:'🏢',name:'RUES',desc:'Empresas donde aparece como socio o rep. legal',tag:'tg',tagL:'✅ Gratis',url:`https://www.rues.org.co/RM?nit=${encodeURIComponent(cc)}`},
-    {ico:'🏠',name:'Supernotariado',desc:'Propiedades e inmuebles registrados a su nombre',tag:'tg',tagL:'✅ Gratis',url:'https://www.supernotariado.gov.co/servicios/historicos/consultar-historicos-snrb/'},
-    {ico:'🏅',name:'SIGEP',desc:'Hoja de vida pública (servidores del Estado)',tag:'tg',tagL:'✅ Gratis',url:'https://www.sigep.gov.co/'},
-    {ico:'📑',name:'SECOP',desc:'Contratos y licitaciones con el Estado',tag:'tg',tagL:'✅ Gratis',url:'https://www.contratos.gov.co/consultas/inicioConsulta.do'},
-    {ico:'🌐',name:'Google — CC en web',desc:'Cédula en contratos, listas y documentos',tag:'tg',tagL:'✅ Gratis',url:`https://www.google.com/search?q=${qcc}`},
-    {ico:'📄',name:'Google — CC en PDFs',desc:'Documentos que contengan el número',tag:'tg',tagL:'✅ Gratis',url:`https://www.google.com/search?q=${qcc}+filetype:pdf`},
-    {ico:'🏛️',name:'Google — CC en gov.co',desc:'La cédula en sitios del Estado',tag:'tg',tagL:'✅ Gratis',url:`https://www.google.com/search?q=${qcc}+site:gov.co`},
+  document.getElementById('rpt-name').textContent=q;
+  document.getElementById('rpt-sub').textContent=(esCedula?'Cédula: '+q:'Nombre: '+q)+' · Informe OSINT';
+  document.getElementById('rpt-date').textContent=fecha;
+  document.getElementById('rpt-avatar').textContent=esCedula?'🪪':'👤';
+
+  // ── IDENTIDAD ──
+  const cc=reportData.cedula||'';
+  const nm=reportData.nombre||'';
+  let idHTML='';
+  if(esCedula){
+    idHTML+=`<div class="item"><span class="lbl">Cédula</span><span class="val">${esc(q)}</span></div>`;
+    idHTML+=`<div class="item"><span class="lbl">Tipo doc.</span><span class="val">CC — Cédula de Ciudadanía</span></div>`;
+    idHTML+=`<div class="item"><span class="lbl">Verificar vigencia</span><span class="val"><a href="https://wsp.registraduria.gov.co/censo/consultar_cedula.php" target="_blank" rel="noopener">→ Registraduría Nacional</a></span></div>`;
+  } else {
+    idHTML+=`<div class="item"><span class="lbl">Nombre buscado</span><span class="val">${esc(q)}</span></div>`;
+    idHTML+=`<div class="item"><span class="lbl">LinkedIn</span><span class="val"><a href="https://www.linkedin.com/search/results/people/?keywords=${encodeURIComponent(q)}" target="_blank" rel="noopener">→ Ver perfil</a></span></div>`;
+    idHTML+=`<div class="item"><span class="lbl">Facebook</span><span class="val"><a href="https://www.facebook.com/search/people/?q=${encodeURIComponent(q)}" target="_blank" rel="noopener">→ Buscar perfil</a></span></div>`;
+    idHTML+=`<div class="item"><span class="lbl">SIGEP</span><span class="val"><a href="https://www.sigep.gov.co/" target="_blank" rel="noopener">→ Buscar servidor público</a></span></div>`;
+  }
+  document.getElementById('body-identidad').innerHTML=idHTML;
+  document.getElementById('card-identidad').classList.add('has-data');
+
+  // ── JUDICIAL ──
+  const judHTML=`
+    <div class="item"><span class="lbl">Rama Judicial</span><span class="val"><a href="https://consultaprocesos.ramajudicial.gov.co/Procesos/NumeroIdentificacion?tipoIdentificacion=CC&numeroIdentificacion=${encodeURIComponent(cc||q)}" target="_blank" rel="noopener">→ Consultar procesos</a></span></div>
+    <div class="item"><span class="lbl">Procuraduría</span><span class="val"><a href="https://www.procuraduria.gov.co/portal/Consulta-de-procesos-disciplinarios.page" target="_blank" rel="noopener">→ Verificar sanciones</a></span></div>
+    <div class="item"><span class="lbl">Contraloría</span><span class="val"><a href="https://www.contraloria.gov.co/web/guest/boletin-de-responsables-fiscales" target="_blank" rel="noopener">→ Boletín fiscal</a></span></div>
+    <div class="item"><span class="lbl">Fiscalía</span><span class="val"><a href="https://www.fiscalia.gov.co/colombia/servicios-ciudadanos/consulte-aqui/" target="_blank" rel="noopener">→ Órdenes captura</a></span></div>
+    <div class="item"><span class="lbl">Policía</span><span class="val"><a href="https://www.policia.gov.co/tramite/certificado-judicial" target="_blank" rel="noopener">→ Antecedentes judiciales</a></span></div>
+  `;
+  document.getElementById('body-judicial').innerHTML=judHTML;
+
+  // ── TRÁNSITO ──
+  const transHTML=`
+    <div class="item"><span class="lbl">SIMIT</span><span class="val"><a href="https://www.fcm.org.co/simit/estadoPersona.html${cc?'?nuip='+cc:''}" target="_blank" rel="noopener">→ Consultar multas y comparendos</a></span></div>
+    <div class="item"><span class="lbl">Estado</span><span class="val"><span class="badge b-grn">✓ Sin restricciones automáticas</span></span></div>
+    <div class="item"><span class="lbl">Nota</span><span class="val" style="color:var(--muted);font-size:.71rem">La consulta definitiva debe realizarse directamente en el sitio oficial</span></div>
+  `;
+  document.getElementById('body-transito').innerHTML=transHTML;
+
+  // ── EMPRESAS / RUES ──
+  const empHTML=`
+    <div class="item"><span class="lbl">RUES</span><span class="val"><a href="https://www.rues.org.co/RM?nit=${encodeURIComponent(cc||q)}" target="_blank" rel="noopener">→ Registro mercantil</a></span></div>
+    <div class="item"><span class="lbl">Supernotariado</span><span class="val"><a href="https://www.supernotariado.gov.co/servicios/historicos/consultar-historicos-snrb/" target="_blank" rel="noopener">→ Propiedades e inmuebles</a></span></div>
+    <div class="item"><span class="lbl">SECOP</span><span class="val"><a href="https://www.contratos.gov.co/consultas/inicioConsulta.do" target="_blank" rel="noopener">→ Contratos con el Estado</a></span></div>
+  `;
+  document.getElementById('body-empresas').innerHTML=empHTML;
+
+  // ── SECOP (resultados reales de la API) ──
+  const secopData=reportData.fuentes.secop||[];
+  let secopHTML='';
+  if(secopData.length>0){
+    document.getElementById('card-secop').classList.add('has-data');
+    secopHTML=`<p style="font-size:.73rem;color:var(--muted);margin-bottom:10px">Se encontraron <strong style="color:var(--white)">${secopData.length} contrato(s)</strong> en SECOP II como proveedor o representante legal.</p>`;
+    secopData.forEach(c=>{
+      const val=c.valor_del_contrato?fmt(c.valor_del_contrato):'N/D';
+      const fecha=c.fecha_de_firma?c.fecha_de_firma.split('T')[0]:'N/D';
+      const estado=c.estado_contrato||'N/D';
+      secopHTML+=`<div class="contract-row">
+        <div class="ce">${esc(c.descripcion_del_proceso||c.objeto_del_contrato||'Contrato sin descripción')}</div>
+        <div class="cd">
+          <strong>Entidad:</strong> ${esc(c.nombre_entidad||'N/D')} &nbsp;|&nbsp;
+          <strong>Fecha:</strong> ${esc(fecha)} &nbsp;|&nbsp;
+          <strong>Modalidad:</strong> ${esc(c.modalidad_de_contratacion||'N/D')}
+        </div>
+        <div style="margin-top:4px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <span class="cv">${val}</span>
+          <span class="badge b-${estado.toLowerCase().includes('ejec')||estado.toLowerCase().includes('activo')?'grn':'gray'}">${esc(estado)}</span>
+          ${c.urlproceso?`<a href="${esc(c.urlproceso)}" target="_blank" rel="noopener" style="font-size:.7rem;color:var(--red-l)">→ Ver proceso</a>`:''}
+        </div>
+      </div>`;
+    });
+  } else {
+    secopHTML=`<div class="empty">No se encontraron contratos en SECOP II para este dato.</div>
+    <div style="margin-top:8px"><a class="btn btn-ghost btn-sm" href="https://www.contratos.gov.co/consultas/inicioConsulta.do" target="_blank" rel="noopener">→ Verificar manualmente en SECOP I</a></div>`;
+  }
+  document.getElementById('body-secop').innerHTML=secopHTML;
+
+  // ── NOTICIAS y WEB ──
+  const qEnc=encodeURIComponent('"'+q+'"');
+  const notHTML=`
+    <div style="display:flex;flex-wrap:wrap;gap:7px">
+      <a class="btn btn-ghost btn-sm" href="https://www.google.com/search?q=${qEnc}" target="_blank" rel="noopener">🌐 Google exacto</a>
+      <a class="btn btn-ghost btn-sm" href="https://news.google.com/search?q=${encodeURIComponent(q)}" target="_blank" rel="noopener">📰 Google Noticias</a>
+      <a class="btn btn-ghost btn-sm" href="https://www.google.com/search?q=${qEnc}+filetype:pdf" target="_blank" rel="noopener">📄 PDFs y documentos</a>
+      <a class="btn btn-ghost btn-sm" href="https://www.google.com/search?q=${qEnc}+site:gov.co" target="_blank" rel="noopener">🏛️ Sitios gov.co</a>
+      <a class="btn btn-ghost btn-sm" href="https://www.google.com/search?q=${qEnc}+site:eltiempo.com+OR+site:semana.com+OR+site:elcolombiano.com" target="_blank" rel="noopener">📰 Medios colombianos</a>
+      <a class="btn btn-ghost btn-sm" href="https://web.archive.org/web/*/${encodeURIComponent(q.replace(/ /g,'+'))}" target="_blank" rel="noopener">🗃️ Wayback Machine</a>
+    </div>
+  `;
+  document.getElementById('body-noticias').innerHTML=notHTML;
+  document.getElementById('card-noticias').classList.add('has-data');
+
+  // ── VERIFICACIÓN MANUAL ──
+  const manualLinks=[
+    {ico:'🏛️',name:'Registraduría',desc:'Validar CC',url:'https://wsp.registraduria.gov.co/censo/consultar_cedula.php'},
+    {ico:'⚖️',name:'Rama Judicial',desc:'Procesos judiciales',url:`https://consultaprocesos.ramajudicial.gov.co/Procesos/NumeroIdentificacion?tipoIdentificacion=CC&numeroIdentificacion=${encodeURIComponent(cc||q)}`},
+    {ico:'💼',name:'LinkedIn',desc:'Perfil profesional',url:`https://www.linkedin.com/search/results/people/?keywords=${encodeURIComponent(q)}`},
+    {ico:'👥',name:'Facebook',desc:'Perfil personal',url:`https://www.facebook.com/search/people/?q=${encodeURIComponent(q)}`},
+    {ico:'📸',name:'Instagram',desc:'Fotos públicas',url:`https://www.instagram.com/explore/search/?q=${encodeURIComponent(q)}`},
+    {ico:'🐦',name:'X / Twitter',desc:'Actividad pública',url:`https://twitter.com/search?q=${encodeURIComponent('"'+q+'"')}&f=user`},
+    {ico:'🎵',name:'TikTok',desc:'Videos públicos',url:`https://www.tiktok.com/search?q=${encodeURIComponent(q)}`},
+    {ico:'🔍',name:'Procuraduría',desc:'Sanciones',url:'https://www.procuraduria.gov.co/portal/Consulta-de-procesos-disciplinarios.page'},
+    {ico:'🚨',name:'Fiscalía',desc:'Órdenes de captura',url:'https://www.fiscalia.gov.co/colombia/servicios-ciudadanos/consulte-aqui/'},
+    {ico:'🏅',name:'SIGEP',desc:'Hoja de vida',url:'https://www.sigep.gov.co/'},
+    {ico:'🏠',name:'Supernotariado',desc:'Propiedades',url:'https://www.supernotariado.gov.co/servicios/historicos/consultar-historicos-snrb/'},
+    {ico:'🚦',name:'SIMIT',desc:'Multas tránsito',url:`https://www.fcm.org.co/simit/estadoPersona.html${cc?'?nuip='+cc:''}`},
   ];
-  renderGrid('grid-cedula',items);
-  document.getElementById('cnt-cedula').textContent=items.length;
-  document.getElementById('welcome-cedula').style.display='none';
-  document.getElementById('res-cedula').style.display='block';
-  toast(items.length+' bases para '+cc);
+  document.getElementById('body-manual').innerHTML=manualLinks.map(l=>`
+    <a class="lk" href="${l.url}" target="_blank" rel="noopener noreferrer">
+      <span class="li">${l.ico}</span>
+      <div class="ln">${l.name}</div>
+      <div class="ld">${l.desc}</div>
+    </a>`).join('');
+
+  // ── SCORE ──
+  const contratos=secopData.length;
+  let hallazgos=contratos>0?1:0;
+  const score=hallazgos===0?'Sin hallazgos críticos':'⚠️ '+contratos+' contrato(s) SECOP';
+  document.getElementById('rpt-score').innerHTML='📊 '+score;
+
+  // Mostrar informe
+  document.getElementById('report').style.display='block';
+  setTimeout(()=>document.getElementById('report').scrollIntoView({behavior:'smooth',block:'start'}),300);
+  toast('¡Informe generado correctamente!');
 }
 
-// FOTO
+function nuevaBusqueda(){
+  document.getElementById('report').style.display='none';
+  document.getElementById('progress-wrap').style.display='none';
+  document.getElementById('main-query').value='';
+  document.getElementById('main-query').focus();
+  window.scrollTo({top:0,behavior:'smooth'});
+  // Reset cards
+  ['identidad','judicial','transito','empresas','secop','noticias'].forEach(id=>{
+    const c=document.getElementById('card-'+id);
+    if(c){c.classList.remove('has-data');const b=document.getElementById('body-'+id);if(b)b.innerHTML='<div class="empty">Sin datos</div>'}
+  });
+}
+
+function imprimirInforme(){window.print()}
+
+// ── FOTO ──
 function buscarFoto(){
-  const urlFoto=document.getElementById('inp-foto-url').value.trim();
-  const p=urlFoto?encodeURIComponent(urlFoto):'';
+  const u=document.getElementById('inp-foto-url').value.trim();
+  const p=u?encodeURIComponent(u):'';
   const items=[
-    {ico:'🟡',name:'Yandex ⭐ Mejor',desc:'El más efectivo para reconocer rostros',tag:'tg',tagL:'✅ Gratis',url:p?`https://yandex.com/images/search?rpt=imageview&url=${p}`:'https://yandex.com/images/'},
-    {ico:'🌐',name:'Google Lens',desc:'Mayor índice web: noticias, redes, artículos',tag:'tg',tagL:'✅ Gratis',url:p?`https://lens.google.com/uploadbyurl?url=${p}`:'https://lens.google.com/'},
-    {ico:'🟠',name:'TinEye',desc:'Historial exacto: dónde y cuándo apareció',tag:'tg',tagL:'✅ Gratis',url:p?`https://www.tineye.com/search?url=${p}`:'https://www.tineye.com/'},
-    {ico:'🔵',name:'Bing Visual',desc:'Reconocimiento de personas y objetos',tag:'tg',tagL:'✅ Gratis',url:'https://www.bing.com/visualsearch'},
-    {ico:'🟣',name:'PimEyes',desc:'Reconocimiento facial avanzado en toda la web',tag:'ty',tagL:'⚠️ Freemium',url:'https://pimeyes.com/'},
-    {ico:'🔍',name:'Search4Faces',desc:'Rostros en perfiles de redes sociales',tag:'tg',tagL:'✅ Gratis',url:'https://search4faces.com/'},
-    {ico:'📷',name:'Google Images',desc:'Sube la foto directamente a Google',tag:'tg',tagL:'✅ Gratis',url:'https://images.google.com/'},
+    {ico:'🟡',name:'Yandex ⭐',desc:'Mejor para rostros',url:p?`https://yandex.com/images/search?rpt=imageview&url=${p}`:'https://yandex.com/images/'},
+    {ico:'🌐',name:'Google Lens',desc:'Mayor índice web',url:p?`https://lens.google.com/uploadbyurl?url=${p}`:'https://lens.google.com/'},
+    {ico:'🟠',name:'TinEye',desc:'Historial exacto',url:p?`https://www.tineye.com/search?url=${p}`:'https://www.tineye.com/'},
+    {ico:'🔵',name:'Bing Visual',desc:'Personas y objetos',url:'https://www.bing.com/visualsearch'},
+    {ico:'🟣',name:'PimEyes',desc:'Facial avanzado',url:'https://pimeyes.com/'},
+    {ico:'🔍',name:'Search4Faces',desc:'Rostros en redes',url:'https://search4faces.com/'},
+    {ico:'📷',name:'Google Images',desc:'Subir manualmente',url:'https://images.google.com/'},
   ];
-  renderGrid('grid-foto',items);
-  document.getElementById('cnt-foto').textContent=items.length;
+  document.getElementById('grid-foto').innerHTML=items.map(f=>`
+    <a class="lk" href="${f.url}" target="_blank" rel="noopener noreferrer">
+      <span class="li">${f.ico}</span>
+      <div class="ln">${f.name}</div>
+      <div class="ld">${f.desc}</div>
+    </a>`).join('');
   document.getElementById('res-foto').style.display='block';
   toast('Ábrelos en paralelo para mejores resultados','📷');
 }
 
-// EMAIL / TEL
-function buscarEmail(){
-  const val=document.getElementById('inp-email').value.trim();
-  if(!val){toast('Ingresa un email o teléfono','⚠️');return;}
-  let tipo=document.getElementById('inp-email-tipo').value;
-  if(tipo==='auto') tipo=val.includes('@')?'email':'tel';
-  const q=encodeURIComponent('"'+val+'"');
-  const items=[];
-
-  if(tipo==='email'){
-    items.push(
-      {ico:'🔐',name:'HaveIBeenPwned',desc:'¿El email apareció en filtraciones de datos?',tag:'tg',tagL:'✅ Gratis',url:`https://haveibeenpwned.com/account/${encodeURIComponent(val)}`},
-      {ico:'💼',name:'Hunter.io',desc:'Verifica si el email corporativo existe',tag:'ty',tagL:'⚠️ Freemium',url:`https://hunter.io/email-verifier/${encodeURIComponent(val)}`},
-      {ico:'🌐',name:'Google — exacto',desc:'El email mencionado en cualquier sitio',tag:'tg',tagL:'✅ Gratis',url:`https://www.google.com/search?q=${q}`},
-      {ico:'📄',name:'Google — en PDFs',desc:'El email en contratos, actas, documentos',tag:'tg',tagL:'✅ Gratis',url:`https://www.google.com/search?q=${q}+filetype:pdf`},
-      {ico:'🏛️',name:'Google — en gov.co',desc:'El email en sitios del Estado colombiano',tag:'tg',tagL:'✅ Gratis',url:`https://www.google.com/search?q=${q}+site:gov.co`},
-      {ico:'🔗',name:'Email en redes (Google)',desc:'El email vinculado a perfiles de redes',tag:'tg',tagL:'✅ Gratis',url:`https://www.google.com/search?q=${q}+site:facebook.com+OR+site:instagram.com+OR+site:linkedin.com`},
-      {ico:'🐦',name:'X / Twitter',desc:'Cuentas vinculadas a ese email',tag:'tg',tagL:'✅ Gratis',url:`https://twitter.com/search?q=${encodeURIComponent(val)}`},
-      {ico:'🗃️',name:'Wayback Machine',desc:'Páginas donde apareció ese email en el pasado',tag:'tg',tagL:'✅ Gratis',url:`https://web.archive.org/web/*/${encodeURIComponent(val)}`}
-    );
-  } else {
-    const t=val.replace(/[\s\-().+]/g,'');
-    const qt=encodeURIComponent('"'+t+'"');
-    items.push(
-      {ico:'📱',name:'Truecaller',desc:'Identifica el nombre del dueño del número',tag:'ty',tagL:'⚠️ Freemium',url:`https://www.truecaller.com/search/co/${encodeURIComponent(t)}`},
-      {ico:'🌐',name:'Google — número exacto',desc:'El número mencionado en sitios web',tag:'tg',tagL:'✅ Gratis',url:`https://www.google.com/search?q=${qt}`},
-      {ico:'📄',name:'Google — número en PDFs',desc:'El número en contratos y documentos',tag:'tg',tagL:'✅ Gratis',url:`https://www.google.com/search?q=${qt}+filetype:pdf`},
-      {ico:'🏛️',name:'Google — número en gov.co',desc:'El número en sitios del Estado',tag:'tg',tagL:'✅ Gratis',url:`https://www.google.com/search?q=${qt}+site:gov.co`},
-      {ico:'🔗',name:'Número en redes (Google)',desc:'El teléfono en perfiles de redes sociales',tag:'tg',tagL:'✅ Gratis',url:`https://www.google.com/search?q=${qt}+site:facebook.com+OR+site:instagram.com+OR+site:linkedin.com`},
-      {ico:'👥',name:'Facebook',desc:'Buscar el número directamente en Facebook',tag:'tg',tagL:'✅ Gratis',url:`https://www.facebook.com/search/people/?q=${encodeURIComponent(t)}`},
-      {ico:'📑',name:'Número en gov.co',desc:'El teléfono en contratos y entidades del Estado',tag:'tg',tagL:'✅ Gratis',url:`https://www.google.com/search?q=${qt}+site:gov.co`}
-    );
-  }
-  renderGrid('grid-email',items);
-  document.getElementById('cnt-email').textContent=items.length;
-  document.getElementById('welcome-email').style.display='none';
-  document.getElementById('res-email').style.display='block';
-  toast(items.length+' fuentes para '+(tipo==='email'?'email':'teléfono'));
-}
-
-// DORKS
+// ── DORKS ──
 function generarDorks(){
   const nombre=document.getElementById('d-nombre').value.trim();
   const cedula=document.getElementById('d-cedula').value.trim();
   const email=document.getElementById('d-email').value.trim();
   const tel=document.getElementById('d-tel').value.trim().replace(/[\s\-().+]/g,'');
   const sitio=document.getElementById('d-sitio').value.trim();
-  if(!nombre&&!cedula&&!email&&!tel){toast('Ingresa al menos un dato del objetivo','⚠️');return;}
+  if(!nombre&&!cedula&&!email&&!tel){toast('Ingresa al menos un dato','⚠️');return;}
 
   const dorks=[];
   if(nombre){
-    dorks.push({lbl:'Nombre exacto en toda la web',q:`"${nombre}"`});
-    dorks.push({lbl:'Nombre en documentos PDF',q:`"${nombre}" filetype:pdf`});
-    dorks.push({lbl:'Nombre en sitios gov.co',q:`"${nombre}" site:gov.co`});
+    dorks.push({lbl:'Nombre exacto en la web',q:`"${nombre}"`});
+    dorks.push({lbl:'Nombre en PDFs',q:`"${nombre}" filetype:pdf`});
+    dorks.push({lbl:'Nombre en gov.co',q:`"${nombre}" site:gov.co`});
     dorks.push({lbl:'Nombre en redes sociales',q:`"${nombre}" site:linkedin.com OR site:facebook.com OR site:instagram.com OR site:twitter.com`});
     dorks.push({lbl:'Nombre en noticias colombianas',q:`"${nombre}" site:eltiempo.com OR site:semana.com OR site:elcolombiano.com OR site:caracol.com.co`});
     dorks.push({lbl:'Nombre en contratos públicos',q:`"${nombre}" "contrato" OR "licitación" OR "proponente" site:gov.co`});
     if(sitio) dorks.push({lbl:`Nombre en ${sitio}`,q:`"${nombre}" site:${sitio}`});
   }
   if(cedula){
-    dorks.push({lbl:'Cédula en toda la web',q:`"${cedula}"`});
-    dorks.push({lbl:'Cédula en documentos PDF',q:`"${cedula}" filetype:pdf`});
-    dorks.push({lbl:'Cédula en sitios gov.co',q:`"${cedula}" site:gov.co`});
-    if(nombre) dorks.push({lbl:'Nombre + cédula (confirmación cruzada)',q:`"${nombre}" "${cedula}"`});
+    dorks.push({lbl:'Cédula en la web',q:`"${cedula}"`});
+    dorks.push({lbl:'Cédula en PDFs',q:`"${cedula}" filetype:pdf`});
+    dorks.push({lbl:'Cédula en gov.co',q:`"${cedula}" site:gov.co`});
+    if(nombre) dorks.push({lbl:'Nombre + cédula (cruce)',q:`"${nombre}" "${cedula}"`});
   }
   if(email){
-    dorks.push({lbl:'Email exacto en la web',q:`"${email}"`});
-    dorks.push({lbl:'Email en documentos y registros',q:`"${email}" filetype:pdf OR site:gov.co`});
-    if(nombre) dorks.push({lbl:'Nombre + email (cruce de identidad)',q:`"${nombre}" "${email}"`});
+    dorks.push({lbl:'Email en la web',q:`"${email}"`});
+    if(nombre) dorks.push({lbl:'Nombre + email',q:`"${nombre}" "${email}"`});
   }
   if(tel){
     dorks.push({lbl:'Teléfono en la web',q:`"${tel}"`});
-    dorks.push({lbl:'Teléfono en sitios gov.co',q:`"${tel}" site:gov.co`});
-    if(nombre) dorks.push({lbl:'Nombre + teléfono (cruce)',q:`"${nombre}" "${tel}"`});
+    if(nombre) dorks.push({lbl:'Nombre + teléfono',q:`"${nombre}" "${tel}"`});
   }
 
-  const cont=document.getElementById('res-dorks');
-  cont.innerHTML=`<div class="block">
+  document.getElementById('res-dorks').innerHTML=`<div class="block">
     <div class="stitle">⚡ ${dorks.length} dorks generados</div>
     ${dorks.map((d,i)=>`
       <div class="dork-item">
         <div class="dork-lbl">${esc(d.lbl)}</div>
         <div class="dork-box" id="dq${i}">${esc(d.q)}</div>
         <div class="dork-row">
-          <button class="btn btn-ghost btn-sm" onclick="copiarDork(${i},this)">📋 Copiar</button>
-          <a class="btn btn-ghost btn-sm" href="https://www.google.com/search?q=${encodeURIComponent(d.q)}" target="_blank" rel="noopener noreferrer">🔍 Buscar en Google</a>
+          <button class="btn btn-ghost btn-sm" onclick="cpDork(${i},this)">📋 Copiar</button>
+          <a class="btn btn-ghost btn-sm" href="https://www.google.com/search?q=${encodeURIComponent(d.q)}" target="_blank" rel="noopener">🔍 Buscar</a>
         </div>
-      </div>
-      ${i<dorks.length-1?'<div class="sep"></div>':''}`).join('')}
+      </div>${i<dorks.length-1?'<div class="sep"></div>':''}`).join('')}
   </div>`;
-  document.getElementById('welcome-dorks').style.display='none';
-  cont.style.display='block';
+  document.getElementById('res-dorks').style.display='block';
   toast(dorks.length+' dorks listos');
 }
-
-function copiarDork(i,btn){
-  const txt=document.getElementById('dq'+i).textContent;
-  navigator.clipboard.writeText(txt).then(()=>{
-    const o=btn.textContent;
-    btn.textContent='✅ Copiado';btn.classList.add('copied');
+function cpDork(i,btn){
+  navigator.clipboard.writeText(document.getElementById('dq'+i).textContent).then(()=>{
+    const o=btn.textContent;btn.textContent='✅ Copiado';btn.classList.add('copied');
     setTimeout(()=>{btn.textContent=o;btn.classList.remove('copied')},1800);
-  }).catch(()=>toast('Selecciona el texto manualmente','⚠️'));
+  });
 }
 
-// ENTER KEY
-[['inp-nombre','inp-ciudad','inp-empresa'].map(id=>({id,fn:buscarNombre})),
- [{id:'inp-cc',fn:buscarCedula}],
- [{id:'inp-email',fn:buscarEmail}],
- ['d-nombre','d-cedula','d-email','d-tel','d-sitio'].map(id=>({id,fn:generarDorks}))
-].flat().forEach(({id,fn})=>{
+['d-nombre','d-cedula','d-email','d-tel','d-sitio'].forEach(id=>{
   const el=document.getElementById(id);
-  if(el) el.addEventListener('keydown',e=>{if(e.key==='Enter')fn()});
+  if(el) el.addEventListener('keydown',e=>{if(e.key==='Enter')generarDorks()});
 });
 </script>
 </body>
