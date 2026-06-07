@@ -256,13 +256,13 @@ ol.steps li::before{content:counter(s);position:absolute;left:6px;top:50%;transf
   <div class="hist-chips" id="hist-chips"></div>
 </div>
 
-<div class="progress-wrap" id="progress-wrap">
+<div class="progress-wrap" id="progress-wrap" style="display:none">
   <div class="ph"><span class="plbl" id="plbl">Iniciando…</span><span class="ppct" id="ppct">0%</span></div>
   <div class="pbar"><div class="pfill" id="pfill"></div></div>
   <div class="src-grid" id="src-grid"></div>
 </div>
 
-<div class="cert-wrap" id="cert-wrap">
+<div class="cert-wrap" id="cert-wrap" style="display:none">
   <div class="cert-ring">
     <svg width="120" height="120" viewBox="0 0 120 120">
       <circle class="c-bg" cx="60" cy="60" r="50"/>
@@ -277,7 +277,7 @@ ol.steps li::before{content:counter(s);position:absolute;left:6px;top:50%;transf
   <div class="cert-pills" id="cert-pills"></div>
 </div>
 
-<div class="report" id="report">
+<div class="report" id="report" style="display:none">
   <!-- PERFIL -->
   <div class="prof-card">
     <div class="prof-av" id="rpt-av">👤</div>
@@ -609,7 +609,7 @@ async function iniciarARGOS(){
     const url=G.cc
       ?`https://www.datos.gov.co/resource/3qxn-uc22.json?$where=numero_documento=%27${G.cc}%27&$limit=10`
       :`https://www.datos.gov.co/resource/3qxn-uc22.json?$where=upper(nombre_pep)%20like%20upper(%27%25${encodeURIComponent(G.nm)}%25%27)&$limit=10`;
-    const d=await fetch(url,{signal:AbortSignal.timeout(9000)}).then(r=>r.json());
+    const d=await fetch(url,{signal:(() => { const c=new AbortController(); setTimeout(()=>c.abort(),9000); return c.signal; })()}).then(r=>r.json());
     G.r.pep=Array.isArray(d)?d:[];
     G.r.pep.length>0?hitS('pep',G.r.pep.length+' registros'):missS('pep','Sin registros');
   }catch{missS('pep','Timeout');G.r.pep=[]}
@@ -624,7 +624,7 @@ async function iniciarARGOS(){
     const url=G.cc
       ?`https://www.datos.gov.co/resource/iaeu-rcn6.json?$where=trim(numero_identificacion)=%27${G.cc}%27&$limit=10`
       :`https://www.datos.gov.co/resource/iaeu-rcn6.json?$where=upper(primer_apellido)%20like%20upper(%27%25${encodeURIComponent(apellido)}%25%27)&$limit=10`;
-    const d=await fetch(url,{signal:AbortSignal.timeout(9000)}).then(r=>r.json());
+    const d=await fetch(url,{signal:(() => { const c=new AbortController(); setTimeout(()=>c.abort(),9000); return c.signal; })()}).then(r=>r.json());
     G.r.siri=Array.isArray(d)?d:[];
     G.r.siri.length>0?hitS('siri',G.r.siri.length+' sanciones'):missS('siri','Sin sanciones');
   }catch{missS('siri','Timeout');G.r.siri=[]}
@@ -636,7 +636,7 @@ async function iniciarARGOS(){
     const url=G.cc
       ?`https://www.datos.gov.co/resource/jbjy-vk9h.json?$where=documento_proveedor=%27${G.cc}%27&$limit=15&$order=fecha_de_firma%20DESC`
       :`https://www.datos.gov.co/resource/jbjy-vk9h.json?$where=upper(proveedor_adjudicado)%20like%20upper(%27%25${encodeURIComponent(G.nm)}%25%27)&$limit=15&$order=fecha_de_firma%20DESC`;
-    const d=await fetch(url,{signal:AbortSignal.timeout(9000)}).then(r=>r.json());
+    const d=await fetch(url,{signal:(() => { const c=new AbortController(); setTimeout(()=>c.abort(),9000); return c.signal; })()}).then(r=>r.json());
     G.r.secop2=Array.isArray(d)?d:[];
     G.r.secop2.length>0?hitS('secop2',G.r.secop2.length+' contratos'):missS('secop2','Sin contratos');
   }catch{missS('secop2','Timeout');G.r.secop2=[]}
@@ -649,7 +649,7 @@ async function iniciarARGOS(){
     const url=G.cc
       ?`https://www.datos.gov.co/resource/rpmr-utcd.json?$where=documento_proveedor=%27${G.cc}%27&$limit=10`
       :`https://www.datos.gov.co/resource/rpmr-utcd.json?$where=upper(nom_raz_social_contratista)%20like%20upper(%27%25${encodeURIComponent(G.nm||G.q)}%25%27)&$limit=10`;
-    const d=await fetch(url,{signal:AbortSignal.timeout(9000)}).then(r=>r.json());
+    const d=await fetch(url,{signal:(() => { const c=new AbortController(); setTimeout(()=>c.abort(),9000); return c.signal; })()}).then(r=>r.json());
     G.r.secop1=Array.isArray(d)?d:[];
     G.r.secop1.length>0?hitS('secop1',G.r.secop1.length+' contratos'):missS('secop1','Sin contratos');
     // Quitar duplicados con SECOP II por documento
@@ -662,7 +662,7 @@ async function iniciarARGOS(){
   try{
     // Contraloría: busca por nombre de entidad (no tiene campo cédula individual)
     const url=`https://www.datos.gov.co/resource/jr8e-e8tu.json?$where=upper(raz_n_social_de_la_entidad)%20like%20upper(%27%25${encodeURIComponent(G.nm||G.q)}%25%27)&$limit=10`;
-    const d=await fetch(url,{signal:AbortSignal.timeout(9000)}).then(r=>r.json());
+    const d=await fetch(url,{signal:(() => { const c=new AbortController(); setTimeout(()=>c.abort(),9000); return c.signal; })()}).then(r=>r.json());
     G.r.contraloria=Array.isArray(d)?d:[];
     G.r.contraloria.length>0?hitS('contraloria',G.r.contraloria.length+' procesos'):missS('contraloria','Sin procesos');
   }catch{missS('contraloria','Timeout');G.r.contraloria=[]}
