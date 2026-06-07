@@ -510,6 +510,7 @@ ol.steps li::before{content:counter(s);position:absolute;left:6px;top:50%;transf
 <script>
 // ═══ UTILS ═══
 const esc=s=>String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const H=(l,v)=>'<div class="ri"><span class="rl">'+esc(l)+'</span><span class="rv">'+v+'</span></div>';
 const fmt=n=>{try{return Number(n).toLocaleString('es-CO',{style:'currency',currency:'COP',maximumFractionDigits:0})}catch{return n}};
 const delay=ms=>new Promise(r=>setTimeout(r,ms));
 function toast(m,i='✅'){const t=document.getElementById('toast');t.textContent=i+' '+m;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2800)}
@@ -849,74 +850,78 @@ function buildReport(){
     document.getElementById('body-secop1').innerHTML=`<div class="clean-msg">✓ Sin contratos en SECOP I.</div>`;
   }
 
-  // JUDICIAL (manual link)
-  const jUrl=`https://consultaprocesos.ramajudicial.gov.co/Procesos/NumeroIdentificacion?tipoIdentificacion=CC&numeroIdentificacion=${encodeURIComponent(cc||q)}`;
-  document.getElementById('body-judicial').innerHTML=`
-    <div class="ri"><span class="rl">Rama Judicial</span><span class="rv"><a href="${jUrl}" target="_blank" rel="noopener">→ Consultar procesos (CC: ${esc(cc||q)})</a></span></div>
-    <div class="ri"><span class="rl">Fiscalía</span><span class="rv"><a href="https://www.fiscalia.gov.co/colombia/servicios-ciudadanos/consulte-aqui/" target="_blank" rel="noopener">→ Órdenes de captura</a></span></div>
-    <div class="ri"><span class="rl">Policía</span><span class="rv"><a href="https://www.policia.gov.co/tramite/certificado-judicial" target="_blank" rel="noopener">→ Antecedentes judiciales</a></span></div>`;
+  // JUDICIAL
+  const jUrl='https://consultaprocesos.ramajudicial.gov.co/Procesos/NumeroIdentificacion?tipoIdentificacion=CC&numeroIdentificacion='+encodeURIComponent(cc||q);
+  document.getElementById('body-judicial').innerHTML=
+    H('Rama Judicial','<a href="'+jUrl+'" target="_blank" rel="noopener">→ Consultar procesos (CC: '+esc(cc||q)+')</a>')
+    +H('Fiscalia','<a href="https://www.fiscalia.gov.co/colombia/servicios-ciudadanos/consulte-aqui/" target="_blank" rel="noopener">→ Ordenes de captura</a>')
+    +H('Policia','<a href="https://www.policia.gov.co/tramite/certificado-judicial" target="_blank" rel="noopener">→ Antecedentes judiciales</a>');
   document.getElementById('cnt-jud').textContent='Manual';
 
   // IDENTIDAD
+  var simitUrl='https://www.fcm.org.co/simit/estadoPersona.html'+(cc?'?nuip='+cc:'');
   document.getElementById('body-identidad').innerHTML=
-    (esCedula?`<div class="ri"><span class="rl">Cédula CC</span><span class="rv">${esc(cc)}</span></div>`:'')
-    +`<div class="ri"><span class="rl">Registraduría</span><span class="rv"><a href="https://wsp.registraduria.gov.co/censo/consultar_cedula.php" target="_blank" rel="noopener">→ Verificar vigencia</a></span></div>
-    <div class="ri"><span class="rl">SIMIT</span><span class="rv"><a href="https://www.fcm.org.co/simit/estadoPersona.html${cc?'?nuip='+cc:''}" target="_blank" rel="noopener">→ Consultar multas</a></span></div>`;
+    (esCedula?H('Cedula CC',esc(cc)):'')
+    +H('Registraduria','<a href="https://wsp.registraduria.gov.co/censo/consultar_cedula.php" target="_blank" rel="noopener">→ Verificar vigencia</a>')
+    +H('SIMIT','<a href="'+simitUrl+'" target="_blank" rel="noopener">→ Consultar multas</a>');
 
-  // EDUCACIÓN
-  document.getElementById('body-educacion').innerHTML=`
-    <div class="ri"><span class="rl">SENA</span><span class="rv"><a href="https://certificados.sena.edu.co/" target="_blank" rel="noopener">→ Certificados</a></span></div>
-    <div class="ri"><span class="rl">ICFES</span><span class="rv"><a href="https://resultados.icfes.edu.co/resultados-saber2016-web/pages/publicacionResultados/autenticacion/consultaSnp.jsf" target="_blank" rel="noopener">→ Saber 11</a></span></div>
-    <div class="ri"><span class="rl">SNIES</span><span class="rv"><a href="https://snies.mineducacion.gov.co/" target="_blank" rel="noopener">→ Títulos universitarios</a></span></div>
-    <div class="ri"><span class="rl">RETHUS</span><span class="rv"><a href="https://www.sispro.gov.co/central-prestadores-de-servicios/Pages/ReTHUS-Registro-de-Talento-Humano-en-Salud.aspx" target="_blank" rel="noopener">→ Profesional salud</a></span></div>`;
+  // EDUCACION
+  document.getElementById('body-educacion').innerHTML=
+    H('SENA','<a href="https://certificados.sena.edu.co/" target="_blank" rel="noopener">→ Certificados y diplomas</a>')
+    +H('SENA SEP','<a href="https://sep.sena.edu.co/Certificados.aspx" target="_blank" rel="noopener">→ Consultar por cedula</a>')
+    +H('ICFES Saber 11','<a href="https://resultados.icfes.edu.co/resultados-saber2016-web/pages/publicacionResultados/autenticacion/consultaSnp.jsf" target="_blank" rel="noopener">→ Resultados</a>')
+    +H('SNIES Titulos','<a href="https://snies.mineducacion.gov.co/" target="_blank" rel="noopener">→ Titulos universitarios</a>')
+    +H('RETHUS','<a href="https://www.sispro.gov.co/central-prestadores-de-servicios/Pages/ReTHUS-Registro-de-Talento-Humano-en-Salud.aspx" target="_blank" rel="noopener">→ Profesional salud</a>');
 
   // FINANCIERO
-  document.getElementById('body-financiero').innerHTML=`
-    <div style="font-size:.63rem;color:var(--muted);margin-bottom:5px">⚠ Centrales de riesgo requieren autorización titular (Ley 1266/2008)</div>
-    <div class="ri"><span class="rl">Datacrédito</span><span class="rv"><a href="https://www.midatacredito.com/" target="_blank" rel="noopener">→ Historia crediticia</a></span></div>
-    <div class="ri"><span class="rl">Sistecrédito</span><span class="rv"><a href="https://www.sistecredito.com/" target="_blank" rel="noopener">→ Crédito retail</a></span></div>
-    <div class="ri"><span class="rl">Superfinanciera</span><span class="rv"><a href="https://www.superfinanciera.gov.co/" target="_blank" rel="noopener">→ Sanciones públicas</a></span></div>`;
+  document.getElementById('body-financiero').innerHTML=
+    '<div style="font-size:.63rem;color:var(--muted);margin-bottom:5px">⚠ Centrales de riesgo requieren autorizacion titular (Ley 1266/2008)</div>'
+    +H('Datacredito','<a href="https://www.midatacredito.com/" target="_blank" rel="noopener">→ Historia crediticia</a>')
+    +H('Sistecredito','<a href="https://www.sistecredito.com/" target="_blank" rel="noopener">→ Credito retail</a>')
+    +H('Superfinanciera','<a href="https://www.superfinanciera.gov.co/" target="_blank" rel="noopener">→ Sanciones publicas</a>');
 
   // LABORAL
-  document.getElementById('body-laboral').innerHTML=`
-    <div class="ri"><span class="rl">Compensar</span><span class="rv"><a href="https://www.compensar.com/" target="_blank" rel="noopener">→ Consultar afiliación</a></span></div>
-    <div class="ri"><span class="rl">Colsubsidio</span><span class="rv"><a href="https://www.colsubsidio.com/" target="_blank" rel="noopener">→ Consultar afiliación</a></span></div>
-    <div class="ri"><span class="rl">Cafam</span><span class="rv"><a href="https://www.cafam.com.co/" target="_blank" rel="noopener">→ Consultar afiliación</a></span></div>
-    <div class="ri"><span class="rl">Comfama</span><span class="rv"><a href="https://www.comfama.com/" target="_blank" rel="noopener">→ Consultar afiliación</a></span></div>
-    <div class="ri"><span class="rl">UGPP</span><span class="rv"><a href="https://www.ugpp.gov.co/" target="_blank" rel="noopener">→ Aportes parafiscales</a></span></div>`;
+  document.getElementById('body-laboral').innerHTML=
+    H('Compensar','<a href="https://www.compensar.com/" target="_blank" rel="noopener">→ Consultar afiliacion</a>')
+    +H('Colsubsidio','<a href="https://www.colsubsidio.com/" target="_blank" rel="noopener">→ Consultar afiliacion</a>')
+    +H('Cafam','<a href="https://www.cafam.com.co/" target="_blank" rel="noopener">→ Consultar afiliacion</a>')
+    +H('Comfama','<a href="https://www.comfama.com/" target="_blank" rel="noopener">→ Consultar afiliacion</a>')
+    +H('UGPP','<a href="https://www.ugpp.gov.co/" target="_blank" rel="noopener">→ Aportes parafiscales</a>');
 
   // EMPRESAS
-  document.getElementById('body-empresas').innerHTML=`
-    <div class="ri"><span class="rl">RUES</span><span class="rv"><a href="https://www.rues.org.co/RM?nit=${encodeURIComponent(cc||q)}" target="_blank" rel="noopener">→ Empresas y registro</a></span></div>
-    <div class="ri"><span class="rl">VUR</span><span class="rv"><a href="https://www.vur.gov.co/" target="_blank" rel="noopener">→ Inmuebles</a></span></div>
-    <div class="ri"><span class="rl">Supersociedades</span><span class="rv"><a href="https://www.supersociedades.gov.co/nuestra_entidad/servicios-en-linea/Paginas/consultar-informacion-empresa.aspx" target="_blank" rel="noopener">→ Insolvencias</a></span></div>`;
+  var ruesUrl='https://www.rues.org.co/RM?nit='+encodeURIComponent(cc||q);
+  document.getElementById('body-empresas').innerHTML=
+    H('RUES','<a href="'+ruesUrl+'" target="_blank" rel="noopener">→ Empresas y registro</a>')
+    +H('VUR','<a href="https://www.vur.gov.co/" target="_blank" rel="noopener">→ Inmuebles</a>')
+    +H('Supersociedades','<a href="https://www.supersociedades.gov.co/nuestra_entidad/servicios-en-linea/Paginas/consultar-informacion-empresa.aspx" target="_blank" rel="noopener">→ Insolvencias</a>');
 
   // REDES
-  const qe=encodeURIComponent(q);
-  document.getElementById('body-redes').innerHTML=`<div style="display:flex;flex-wrap:wrap;gap:5px">
-    <a class="btn btn-ghost btn-sm" href="https://www.linkedin.com/search/results/people/?keywords=${qe}" target="_blank" rel="noopener">💼 LinkedIn</a>
-    <a class="btn btn-ghost btn-sm" href="https://www.facebook.com/search/people/?q=${qe}" target="_blank" rel="noopener">👥 Facebook</a>
-    <a class="btn btn-ghost btn-sm" href="https://twitter.com/search?q=${encodeURIComponent('"'+q+'"')}&f=user" target="_blank" rel="noopener">🐦 Twitter/X</a>
-    <a class="btn btn-ghost btn-sm" href="https://www.instagram.com/explore/search/?q=${qe}" target="_blank" rel="noopener">📸 Instagram</a>
-    <a class="btn btn-ghost btn-sm" href="https://www.tiktok.com/search?q=${qe}" target="_blank" rel="noopener">🎵 TikTok</a>
-    <a class="btn btn-ghost btn-sm" href="https://scholar.google.com/scholar?q=${qe}" target="_blank" rel="noopener">🎓 Scholar</a>
-    <a class="btn btn-ghost btn-sm" href="https://www.youtube.com/results?search_query=${qe}" target="_blank" rel="noopener">▶️ YouTube</a>
-  </div>`;
+  var qe=encodeURIComponent(q);
+  document.getElementById('body-redes').innerHTML=
+    '<div style="display:flex;flex-wrap:wrap;gap:5px">'
+    +'<a class="btn btn-ghost btn-sm" href="https://www.linkedin.com/search/results/people/?keywords='+qe+'" target="_blank" rel="noopener">💼 LinkedIn</a>'
+    +'<a class="btn btn-ghost btn-sm" href="https://www.facebook.com/search/people/?q='+qe+'" target="_blank" rel="noopener">👥 Facebook</a>'
+    +'<a class="btn btn-ghost btn-sm" href="https://twitter.com/search?q='+encodeURIComponent('"'+q+'"')+'&f=user" target="_blank" rel="noopener">🐦 Twitter/X</a>'
+    +'<a class="btn btn-ghost btn-sm" href="https://www.instagram.com/explore/search/?q='+qe+'" target="_blank" rel="noopener">📸 Instagram</a>'
+    +'<a class="btn btn-ghost btn-sm" href="https://www.tiktok.com/search?q='+qe+'" target="_blank" rel="noopener">🎵 TikTok</a>'
+    +'<a class="btn btn-ghost btn-sm" href="https://scholar.google.com/scholar?q='+qe+'" target="_blank" rel="noopener">🎓 Scholar</a>'
+    +'</div>';
 
   // NOTICIAS
-  const qq=encodeURIComponent('"'+q+'"');
-  document.getElementById('body-noticias').innerHTML=`<div style="display:flex;flex-wrap:wrap;gap:5px">
-    <a class="btn btn-ghost btn-sm" href="https://www.google.com/search?q=${qq}" target="_blank" rel="noopener">🌐 Google exacto</a>
-    <a class="btn btn-ghost btn-sm" href="https://news.google.com/search?q=${qe}" target="_blank" rel="noopener">📰 Google News</a>
-    <a class="btn btn-ghost btn-sm" href="https://www.google.com/search?q=${qq}+filetype:pdf" target="_blank" rel="noopener">📄 PDFs</a>
-    <a class="btn btn-ghost btn-sm" href="https://www.google.com/search?q=${qq}+site:gov.co" target="_blank" rel="noopener">🏛️ gov.co</a>
-    <a class="btn btn-ghost btn-sm" href="https://www.google.com/search?q=${qq}+site:eltiempo.com+OR+site:semana.com+OR+site:elespectador.com" target="_blank" rel="noopener">📰 Medios CO</a>
-    <a class="btn btn-ghost btn-sm" href="https://www.verdadabierta.com/?s=${qe}" target="_blank" rel="noopener">🔍 Verdad Abierta</a>
-    <a class="btn btn-ghost btn-sm" href="https://colombiacheck.com/?s=${qe}" target="_blank" rel="noopener">✅ ColombiaCheck</a>
-    <a class="btn btn-ghost btn-sm" href="https://web.archive.org/web/*/${qe}" target="_blank" rel="noopener">🗃️ Wayback</a>
-  </div>`;
+  var qq=encodeURIComponent('"'+q+'"');
+  document.getElementById('body-noticias').innerHTML=
+    '<div style="display:flex;flex-wrap:wrap;gap:5px">'
+    +'<a class="btn btn-ghost btn-sm" href="https://www.google.com/search?q='+qq+'" target="_blank" rel="noopener">🌐 Google exacto</a>'
+    +'<a class="btn btn-ghost btn-sm" href="https://news.google.com/search?q='+qe+'" target="_blank" rel="noopener">📰 Google News</a>'
+    +'<a class="btn btn-ghost btn-sm" href="https://www.google.com/search?q='+qq+'+filetype:pdf" target="_blank" rel="noopener">📄 PDFs</a>'
+    +'<a class="btn btn-ghost btn-sm" href="https://www.google.com/search?q='+qq+'+site:gov.co" target="_blank" rel="noopener">🏛️ gov.co</a>'
+    +'<a class="btn btn-ghost btn-sm" href="https://www.google.com/search?q='+qq+'+site:eltiempo.com+OR+site:semana.com" target="_blank" rel="noopener">📰 Medios CO</a>'
+    +'<a class="btn btn-ghost btn-sm" href="https://www.verdadabierta.com/?s='+qe+'" target="_blank" rel="noopener">🔍 Verdad Abierta</a>'
+    +'<a class="btn btn-ghost btn-sm" href="https://colombiacheck.com/?s='+qe+'" target="_blank" rel="noopener">✅ ColombiaCheck</a>'
+    +'<a class="btn btn-ghost btn-sm" href="https://web.archive.org/web/*/'+qe+'" target="_blank" rel="noopener">🗃️ Wayback</a>'
+    +'</div>';
 
-  // IMAGEN
+    // IMAGEN
   document.getElementById('img-engines').innerHTML=[
     {ico:'🟡',n:'Yandex ⭐',d:'Mejor para rostros',url:'https://yandex.com/images/'},
     {ico:'🟣',n:'PimEyes ⭐',d:'Facial avanzado',url:'https://pimeyes.com/'},
