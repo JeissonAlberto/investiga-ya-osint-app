@@ -6,6 +6,7 @@
   <title>InvestigaYa — OSINT Colombia</title>
   <meta name="description" content="Herramienta OSINT para Colombia: busca personas por nombre, cédula, foto o email en fuentes 100% públicas." />
   <meta name="theme-color" content="#07101e" />
+  <link rel="icon" type="image/svg+xml" href="logo-icon.svg" />
   <style>
     :root {
       --bg:#07101e; --card:#0e1d30; --card2:#132238; --border:#1c3450;
@@ -17,7 +18,8 @@
 
     /* HEADER */
     header{background:linear-gradient(135deg,#07101e,#0a1c36);border-bottom:1px solid var(--border);padding:13px 18px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:100}
-    .logo{width:40px;height:40px;background:linear-gradient(135deg,#00cffc,#8b5cf6);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0}
+    .logo{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden}
+    .logo img{width:40px;height:40px;border-radius:10px;display:block}
     header h1{font-size:1.15rem;font-weight:800}
     header .sub{font-size:.65rem;color:var(--accent);font-weight:700;letter-spacing:2px;text-transform:uppercase}
     .pill{margin-left:auto;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.35);color:var(--green);font-size:.65rem;padding:3px 9px;border-radius:20px;font-weight:700;white-space:nowrap}
@@ -140,7 +142,7 @@
 <body>
 
 <header>
-  <div class="logo">🔍</div>
+  <div class="logo"><img src="logo-icon.svg" alt="InvestigaYa logo" /></div>
   <div>
     <h1>InvestigaYa</h1>
     <div class="sub">OSINT · Colombia</div>
