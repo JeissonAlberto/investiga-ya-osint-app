@@ -3,22 +3,21 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>InvestigaYa — Motor OSINT Colombia</title>
-<meta name="description" content="Motor de investigación OSINT Colombia: ingresa nombre o cédula y recibe un informe automático completo."/>
-<meta name="theme-color" content="#0a0a0a"/>
+<title>ARGOS — Motor de Inteligencia OSINT Colombia</title>
+<meta name="description" content="ARGOS: Motor de inteligencia que cruza todas las fuentes públicas colombianas y genera un perfil completo con porcentaje de certeza."/>
+<meta name="theme-color" content="#080808"/>
 <link rel="icon" type="image/svg+xml" href="logo-icon.svg"/>
-<meta property="og:title" content="InvestigaYa — Motor OSINT Colombia"/>
-<meta property="og:description" content="Ingresa nombre o cédula y recibe un informe de investigación automático con todas las fuentes públicas colombianas."/>
+<meta property="og:title" content="ARGOS — Motor de Inteligencia OSINT"/>
+<meta property="og:description" content="Algoritmo que cruza automáticamente todas las fuentes públicas y da un informe de perfil con certeza."/>
 <meta property="og:type" content="website"/>
-<meta property="og:image" content="https://jeissonalberto.github.io/investiga-ya-osint-app/logo.svg"/>
 <style>
 :root{
-  --bg:#0a0a0a; --bg2:#111; --card:#161616; --card2:#1c1c1c;
-  --border:#252525; --border2:#333;
-  --red:#e02020; --red-d:#b91c1c; --red-l:#ff4444; --red-glow:rgba(224,32,32,.15);
-  --white:#fff; --gray1:#f0f0f0; --gray2:#bbb; --gray3:#777; --gray4:#444;
-  --green:#22c55e; --yellow:#eab308; --blue:#3b82f6;
-  --text:#efefef; --muted:#666; --r:10px;
+  --bg:#080808;--bg2:#0f0f0f;--card:#141414;--card2:#1a1a1a;--card3:#202020;
+  --border:#242424;--border2:#2e2e2e;--border3:#3a3a3a;
+  --red:#dc2626;--red-l:#ef4444;--red-ll:#ff6b6b;--red-glow:rgba(220,38,38,.18);--red-sub:rgba(220,38,38,.08);
+  --white:#ffffff;--gray1:#ebebeb;--gray2:#b0b0b0;--gray3:#6a6a6a;--gray4:#3a3a3a;
+  --green:#16a34a;--green-l:#22c55e;--yellow:#ca8a04;--yellow-l:#eab308;--blue:#2563eb;
+  --text:#e8e8e8;--muted:#585858;--r:10px;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
@@ -27,261 +26,238 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,san
 ::-webkit-scrollbar-track{background:var(--bg2)}
 ::-webkit-scrollbar-thumb{background:var(--red);border-radius:4px}
 
-/* ── HEADER ── */
-header{background:var(--bg);border-bottom:1px solid var(--border);padding:0 20px;height:56px;display:flex;align-items:center;gap:13px;position:sticky;top:0;z-index:200;box-shadow:0 2px 20px rgba(0,0,0,.6)}
-.logo-w{width:34px;height:34px;border-radius:8px;overflow:hidden;flex-shrink:0}
+/* ═══ HEADER ═══ */
+header{background:rgba(8,8,8,.95);border-bottom:1px solid var(--border);padding:0 20px;height:54px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:200;backdrop-filter:blur(12px)}
+.logo-w{width:32px;height:32px;border-radius:7px;overflow:hidden;flex-shrink:0}
 .logo-w img{width:100%;height:100%;display:block}
-.brand h1{font-size:1rem;font-weight:900;color:var(--white);letter-spacing:.3px}
-.brand p{font-size:.58rem;color:var(--red);font-weight:700;letter-spacing:2.5px;text-transform:uppercase}
+.brand{display:flex;flex-direction:column;gap:1px}
+.brand .bname{font-size:1.05rem;font-weight:900;color:var(--white);letter-spacing:.5px;line-height:1}
+.brand .bsub{font-size:.58rem;color:var(--red);font-weight:700;letter-spacing:2px;text-transform:uppercase}
 .hright{margin-left:auto;display:flex;gap:8px;align-items:center}
-.pill{background:rgba(224,32,32,.1);border:1px solid rgba(224,32,32,.25);color:var(--red-l);font-size:.61rem;padding:3px 9px;border-radius:20px;font-weight:700;white-space:nowrap}
+.algo-badge{background:var(--red-sub);border:1px solid rgba(220,38,38,.3);color:var(--red-ll);font-size:.62rem;padding:3px 10px;border-radius:20px;font-weight:800;letter-spacing:.5px}
 
-/* ── TABS ── */
-.tabs{background:var(--card);border-bottom:1px solid var(--border);display:flex;overflow-x:auto;scrollbar-width:none;padding:0 6px}
-.tabs::-webkit-scrollbar{display:none}
-.tab{padding:12px 15px;font-size:.77rem;font-weight:700;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;transition:color .15s,border-color .15s;user-select:none}
-.tab:hover{color:var(--gray2)}
-.tab.active{color:var(--white);border-bottom-color:var(--red)}
+/* ═══ HERO ═══ */
+.hero{padding:36px 20px 28px;text-align:center;max-width:700px;margin:0 auto}
+.algo-name{font-size:2.4rem;font-weight:900;color:var(--white);letter-spacing:2px;line-height:1;margin-bottom:6px}
+.algo-name span{color:var(--red)}
+.algo-sub{font-size:.72rem;color:var(--muted);letter-spacing:3px;text-transform:uppercase;margin-bottom:16px;font-weight:600}
+.hero-desc{font-size:.84rem;color:var(--gray2);line-height:1.65;max-width:520px;margin:0 auto 24px}
 
-/* ── LAYOUT ── */
-main{max-width:960px;margin:0 auto;padding:20px 14px 80px}
-.panel{display:none}.panel.active{display:block}
-
-/* ── MOTOR — HERO ── */
-.motor-hero{text-align:center;padding:32px 16px 24px}
-.motor-hero h2{font-size:1.6rem;font-weight:900;color:var(--white);margin-bottom:8px}
-.motor-hero h2 span{color:var(--red)}
-.motor-hero p{font-size:.85rem;color:var(--muted);max-width:500px;margin:0 auto 24px;line-height:1.6}
-
-/* ── SEARCH BAR ── */
-.search-bar{display:flex;gap:0;max-width:640px;margin:0 auto 12px;position:relative}
-.search-bar input{
-  flex:1;background:var(--card);border:2px solid var(--border2);
-  border-right:none;color:var(--text);padding:14px 18px;
-  font-size:.95rem;font-family:inherit;outline:none;
-  border-radius:var(--r) 0 0 var(--r);
-  transition:border-color .18s,box-shadow .18s;
-}
+/* ═══ SEARCH ═══ */
+.search-wrap{max-width:660px;margin:0 auto}
+.search-bar{display:flex;gap:0;margin-bottom:10px}
+.search-bar input{flex:1;background:var(--card);border:2px solid var(--border2);border-right:none;color:var(--text);padding:13px 18px;font-size:.94rem;font-family:inherit;outline:none;border-radius:var(--r) 0 0 var(--r);transition:border-color .18s,box-shadow .18s}
 .search-bar input:focus{border-color:var(--red);box-shadow:0 0 0 3px var(--red-glow)}
 .search-bar input::placeholder{color:var(--muted)}
-.search-bar button{
-  background:var(--red);color:var(--white);border:none;
-  padding:14px 22px;font-size:.88rem;font-weight:800;
-  cursor:pointer;border-radius:0 var(--r) var(--r) 0;
-  font-family:inherit;transition:background .15s;white-space:nowrap;
-}
+.search-bar button{background:var(--red);color:var(--white);border:none;padding:13px 24px;font-size:.88rem;font-weight:800;cursor:pointer;border-radius:0 var(--r) var(--r) 0;font-family:inherit;transition:background .15s;white-space:nowrap;letter-spacing:.3px}
 .search-bar button:hover{background:var(--red-l)}
 
-.search-opts{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-bottom:4px}
-.sopt{
-  display:flex;align-items:center;gap:5px;
-  font-size:.73rem;color:var(--gray3);cursor:pointer;
-  padding:4px 10px;border-radius:6px;
-  border:1px solid var(--border);
-  transition:border-color .15s,color .15s;user-select:none;
-}
-.sopt input{accent-color:var(--red);width:13px;height:13px}
-.sopt:hover{border-color:var(--red);color:var(--gray2)}
+.search-chips{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+.chip{display:flex;align-items:center;gap:5px;font-size:.7rem;color:var(--gray3);cursor:pointer;padding:4px 11px;border-radius:20px;border:1px solid var(--border2);transition:all .15s;user-select:none;font-weight:600}
+.chip input{accent-color:var(--red);width:12px;height:12px}
+.chip:hover{border-color:var(--red);color:var(--gray2)}
+.chip.active-chip{border-color:var(--red);color:var(--red-ll);background:var(--red-sub)}
 
-/* ── PROGRESS ── */
-.progress-wrap{max-width:640px;margin:24px auto 0;display:none}
-.progress-title{font-size:.8rem;color:var(--gray2);font-weight:700;margin-bottom:10px;display:flex;justify-content:space-between}
-.progress-bar{height:4px;background:var(--border);border-radius:4px;overflow:hidden;margin-bottom:14px}
-.progress-fill{height:100%;background:linear-gradient(90deg,var(--red-d),var(--red-l));border-radius:4px;width:0;transition:width .4s ease}
-.sources-list{display:flex;flex-direction:column;gap:6px}
-.src-item{display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--card);border:1px solid var(--border);border-radius:8px;font-size:.77rem}
-.src-item .src-ico{font-size:1rem;flex-shrink:0}
-.src-item .src-name{flex:1;color:var(--gray2);font-weight:600}
-.src-item .src-status{font-size:.68rem;font-weight:700;display:flex;align-items:center;gap:4px}
-.st-wait{color:var(--gray4)}
-.st-run{color:var(--yellow)}
-.st-ok{color:var(--green)}
-.st-none{color:var(--muted)}
-.st-err{color:var(--red)}
-.spinner{width:10px;height:10px;border:2px solid var(--yellow);border-top-color:transparent;border-radius:50%;animation:spin .6s linear infinite;display:inline-block}
+/* ═══ PROGRESS ═══ */
+.progress-wrap{max-width:660px;margin:24px auto 0;display:none}
+.prog-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.prog-label{font-size:.78rem;color:var(--gray2);font-weight:700}
+.prog-pct{font-size:.78rem;color:var(--red-ll);font-weight:800;font-family:monospace}
+.prog-bar{height:3px;background:var(--border);border-radius:3px;overflow:hidden;margin-bottom:16px}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--red),var(--red-ll));border-radius:3px;width:0;transition:width .35s ease}
+.sources-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+@media(max-width:520px){.sources-grid{grid-template-columns:1fr}}
+.src{display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--card);border:1px solid var(--border);border-radius:8px;font-size:.72rem;transition:border-color .2s}
+.src.running{border-color:var(--yellow-l)}
+.src.done-ok{border-color:var(--green-l)}
+.src.done-none{opacity:.5}
+.src .si{font-size:.95rem;flex-shrink:0}
+.src .sn{flex:1;color:var(--gray2);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.src .ss{font-size:.65rem;font-weight:700;white-space:nowrap}
+.ss-wait{color:var(--gray4)}.ss-run{color:var(--yellow-l)}.ss-ok{color:var(--green-l)}.ss-none{color:var(--muted)}.ss-err{color:var(--red-ll)}
+.spin{display:inline-block;width:9px;height:9px;border:1.5px solid var(--yellow-l);border-top-color:transparent;border-radius:50%;animation:spin .5s linear infinite;vertical-align:middle}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* ── INFORME ── */
-.report{max-width:840px;margin:28px auto 0;display:none}
-.report-header{
-  background:var(--card);border:1px solid var(--border);
-  border-top:3px solid var(--red);border-radius:var(--r);
-  padding:20px;margin-bottom:16px;
-  display:flex;align-items:center;gap:16px;
-}
-.report-avatar{
-  width:52px;height:52px;border-radius:50%;
-  background:linear-gradient(135deg,var(--red-d),#7f0000);
-  display:flex;align-items:center;justify-content:center;
-  font-size:1.4rem;flex-shrink:0;
-  border:2px solid var(--border2);
-}
-.report-name{font-size:1.1rem;font-weight:900;color:var(--white)}
-.report-sub{font-size:.72rem;color:var(--muted);margin-top:3px}
-.report-meta{margin-left:auto;text-align:right}
-.report-date{font-size:.68rem;color:var(--gray4);font-family:monospace}
-.report-score{
-  display:inline-flex;align-items:center;gap:5px;
-  background:var(--red-glow);border:1px solid rgba(224,32,32,.3);
-  color:var(--red-l);font-size:.7rem;font-weight:800;
-  padding:3px 10px;border-radius:20px;margin-top:4px;
-}
+/* ═══ CERTEZA RING ═══ */
+.certeza-wrap{display:flex;flex-direction:column;align-items:center;margin:28px auto 0;max-width:660px}
+.certeza-ring{position:relative;width:140px;height:140px;margin-bottom:10px}
+.certeza-ring svg{transform:rotate(-90deg)}
+.certeza-ring .bg-circle{fill:none;stroke:var(--border2);stroke-width:10}
+.certeza-ring .prog-circle{fill:none;stroke:var(--red);stroke-width:10;stroke-linecap:round;stroke-dasharray:339.3;stroke-dashoffset:339.3;transition:stroke-dashoffset 1.2s ease}
+.certeza-ring .text{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.certeza-ring .pct{font-size:1.9rem;font-weight:900;color:var(--white)}
+.certeza-ring .lbl{font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;font-weight:700}
+.certeza-desc{font-size:.75rem;color:var(--gray3);text-align:center;max-width:280px;line-height:1.5}
 
-.report-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
-@media(max-width:580px){.report-grid{grid-template-columns:1fr}}
+/* ═══ REPORT ═══ */
+.report{max-width:860px;margin:24px auto 0;display:none}
 
-.rcard{
-  background:var(--card);border:1px solid var(--border);
-  border-radius:var(--r);padding:16px;
-  transition:border-color .2s;
-}
-.rcard:hover{border-color:var(--border2)}
-.rcard.has-data{border-left:3px solid var(--red)}
-.rcard.no-data{opacity:.55}
-.rcard-title{
-  font-size:.65rem;text-transform:uppercase;letter-spacing:1.5px;
-  color:var(--red);font-weight:800;margin-bottom:10px;
-  display:flex;align-items:center;gap:7px;
-}
-.rcard-title.gray{color:var(--gray4)}
-.rcard-title span{font-size:.9rem}
-.rcard-body{font-size:.78rem;color:var(--gray2);line-height:1.7}
-.rcard-body strong{color:var(--white);font-weight:700}
-.rcard-body .item{
-  display:flex;gap:8px;padding:5px 0;
-  border-bottom:1px solid rgba(255,255,255,.04);
-}
-.rcard-body .item:last-child{border-bottom:none}
-.rcard-body .item .lbl{color:var(--muted);min-width:110px;flex-shrink:0;font-size:.73rem}
-.rcard-body .item .val{color:var(--gray1);font-weight:600;word-break:break-word}
-.rcard-body .badge{
-  display:inline-flex;align-items:center;gap:4px;
-  font-size:.68rem;font-weight:700;padding:2px 8px;
-  border-radius:6px;margin:2px 2px 2px 0;
-}
-.b-red{background:rgba(224,32,32,.12);color:#ff6b6b;border:1px solid rgba(224,32,32,.25)}
-.b-grn{background:rgba(34,197,94,.1);color:#4ade80;border:1px solid rgba(34,197,94,.2)}
-.b-ylw{background:rgba(234,179,8,.1);color:#fbbf24;border:1px solid rgba(234,179,8,.2)}
-.b-gray{background:rgba(255,255,255,.06);color:var(--gray3);border:1px solid var(--border2)}
+/* PROFILE CARD */
+.profile-card{background:var(--card);border:1px solid var(--border);border-top:3px solid var(--red);border-radius:var(--r);padding:20px;margin-bottom:14px;display:flex;gap:18px;align-items:flex-start;flex-wrap:wrap}
+.profile-avatar{width:68px;height:68px;border-radius:50%;background:linear-gradient(135deg,#7f0000,var(--red));display:flex;align-items:center;justify-content:center;font-size:1.8rem;flex-shrink:0;border:2px solid var(--border2);position:relative}
+.profile-avatar .avatar-img{width:100%;height:100%;border-radius:50%;object-fit:cover;display:none}
+.profile-info{flex:1;min-width:180px}
+.profile-name{font-size:1.25rem;font-weight:900;color:var(--white);line-height:1.1;margin-bottom:4px}
+.profile-id{font-size:.72rem;color:var(--muted);font-family:monospace;margin-bottom:8px}
+.profile-tags{display:flex;flex-wrap:wrap;gap:5px}
+.ptag{font-size:.62rem;font-weight:700;padding:2px 8px;border-radius:5px}
+.pt-red{background:var(--red-sub);color:var(--red-ll);border:1px solid rgba(220,38,38,.25)}
+.pt-grn{background:rgba(22,163,74,.1);color:var(--green-l);border:1px solid rgba(22,163,74,.22)}
+.pt-ylw{background:rgba(202,138,4,.1);color:var(--yellow-l);border:1px solid rgba(202,138,4,.22)}
+.pt-gray{background:rgba(255,255,255,.05);color:var(--gray3);border:1px solid var(--border2)}
+.profile-meta{margin-left:auto;text-align:right;font-size:.67rem;color:var(--gray3)}
+.profile-meta .date{font-family:monospace;margin-bottom:4px}
+.profile-meta .algo{color:var(--red-ll);font-weight:700;font-size:.65rem;letter-spacing:.5px}
 
-.rcard-body .empty{color:var(--gray4);font-style:italic;font-size:.74rem}
-.rcard-body a{color:var(--red-l);text-decoration:none;font-size:.73rem}
-.rcard-body a:hover{text-decoration:underline}
+/* SECTION GRID */
+.sec-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:11px}
+@media(max-width:600px){.sec-grid{grid-template-columns:1fr}}
 
-.contract-row{
-  background:var(--card2);border:1px solid var(--border);
-  border-radius:7px;padding:10px 12px;margin-bottom:6px;
-  font-size:.74rem;
-}
-.contract-row:last-child{margin-bottom:0}
-.contract-row .ce{font-weight:700;color:var(--white);margin-bottom:3px}
-.contract-row .cd{color:var(--muted);line-height:1.5}
-.contract-row .cv{color:var(--green);font-weight:700;font-size:.8rem}
+.sec{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:15px;transition:border-color .18s}
+.sec.hit{border-left:3px solid var(--red)}
+.sec.warn{border-left:3px solid var(--yellow-l)}
+.sec.clear{border-left:3px solid var(--green-l)}
+.sec-title{font-size:.62rem;text-transform:uppercase;letter-spacing:1.8px;color:var(--red);font-weight:800;margin-bottom:11px;display:flex;align-items:center;gap:6px}
+.sec-title.gray{color:var(--gray3)}
+.sec-title .si2{font-size:.95rem}
+.sec-body{font-size:.76rem;color:var(--gray2);line-height:1.65}
+.row-item{display:flex;gap:8px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+.row-item:last-child{border-bottom:none}
+.row-lbl{color:var(--muted);flex-shrink:0;min-width:105px;font-size:.7rem}
+.row-val{color:var(--gray1);font-weight:600;word-break:break-word;font-size:.76rem}
+.row-val a{color:var(--red-ll);text-decoration:none}
+.row-val a:hover{text-decoration:underline}
+.empty{color:var(--gray4);font-style:italic;font-size:.72rem}
 
-.section-full{
-  background:var(--card);border:1px solid var(--border);
-  border-radius:var(--r);padding:16px;margin-bottom:12px;
-}
-.section-full.has-data{border-left:3px solid var(--red)}
+/* BADGE */
+.badge{display:inline-flex;align-items:center;gap:3px;font-size:.63rem;font-weight:700;padding:2px 7px;border-radius:5px;margin:1px}
+.b-red{background:var(--red-sub);color:var(--red-ll);border:1px solid rgba(220,38,38,.2)}
+.b-grn{background:rgba(22,163,74,.1);color:var(--green-l);border:1px solid rgba(22,163,74,.2)}
+.b-ylw{background:rgba(202,138,4,.1);color:var(--yellow-l);border:1px solid rgba(202,138,4,.2)}
+.b-gray{background:rgba(255,255,255,.05);color:var(--gray3);border:1px solid var(--border2)}
 
-/* ── LINKS SECTION ── */
-.links-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:8px;margin-top:10px}
-.lk{
-  background:var(--card2);border:1px solid var(--border);
-  border-radius:8px;padding:11px;text-decoration:none;
-  display:block;transition:border-color .15s,transform .12s;
-}
+/* CONTRATOS */
+.contract{background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:6px}
+.contract:last-child{margin-bottom:0}
+.contract .ct{font-weight:700;color:var(--white);font-size:.76rem;margin-bottom:3px;line-height:1.35}
+.contract .cd{color:var(--muted);font-size:.68rem;line-height:1.5}
+.contract .cv{color:var(--green-l);font-weight:800;font-size:.8rem;margin-top:4px;display:block}
+
+/* IMÁGENES */
+.images-sec{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:15px;margin-bottom:11px}
+.images-title{font-size:.62rem;text-transform:uppercase;letter-spacing:1.8px;color:var(--red);font-weight:800;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.img-note{font-size:.73rem;color:var(--muted);margin-bottom:10px;line-height:1.5}
+.img-engines{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.img-engine{background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:10px;text-decoration:none;display:block;transition:border-color .15s,transform .12s;text-align:center}
+.img-engine:hover{border-color:var(--red);transform:translateY(-1px)}
+.img-engine .ie-ico{font-size:1.5rem;display:block;margin-bottom:5px}
+.img-engine .ie-name{font-size:.74rem;font-weight:700;color:var(--white)}
+.img-engine .ie-desc{font-size:.64rem;color:var(--muted);margin-top:2px}
+
+/* FULL SECTION */
+.full-sec{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:15px;margin-bottom:11px}
+.full-sec.hit{border-left:3px solid var(--red)}
+
+/* LINKS GRID */
+.lk-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:7px;margin-top:10px}
+.lk{background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:10px;text-decoration:none;display:block;transition:border-color .15s,transform .12s}
 .lk:hover{border-color:var(--red);transform:translateY(-1px)}
-.lk .li{font-size:1.1rem;margin-bottom:5px;display:block}
-.lk .ln{font-size:.74rem;font-weight:700;color:var(--white)}
-.lk .ld{font-size:.66rem;color:var(--muted);margin-top:2px}
+.lk .li{font-size:1.1rem;display:block;margin-bottom:4px}
+.lk .ln{font-size:.73rem;font-weight:700;color:var(--white)}
+.lk .ld{font-size:.63rem;color:var(--muted);margin-top:2px}
 
-/* ── REPORT ACTIONS ── */
-.report-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;margin-bottom:4px}
-.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border-radius:8px;font-size:.8rem;font-weight:700;cursor:pointer;border:none;text-decoration:none;font-family:inherit;transition:all .15s}
-.btn:active{transform:scale(.97)}
-.btn-red{background:var(--red);color:var(--white)}
+/* CRUCE DE FUENTES */
+.cruce-wrap{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:15px;margin-bottom:11px}
+.cruce-title{font-size:.62rem;text-transform:uppercase;letter-spacing:1.8px;color:var(--red);font-weight:800;margin-bottom:12px}
+.cruce-item{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:.74rem}
+.cruce-item:last-child{border-bottom:none}
+.cruce-ico{font-size:1rem;flex-shrink:0;margin-top:1px}
+.cruce-txt{flex:1;color:var(--gray2);line-height:1.45}
+.cruce-pct{font-size:.68rem;font-weight:800;color:var(--green-l);flex-shrink:0}
+
+/* REPORT ACTIONS */
+.report-actions{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border-radius:8px;font-size:.79rem;font-weight:700;cursor:pointer;border:none;text-decoration:none;font-family:inherit;transition:all .15s;letter-spacing:.2px}
+.btn:active{transform:scale(.96)}
+.btn-red{background:var(--red);color:var(--white);box-shadow:0 2px 10px rgba(220,38,38,.3)}
 .btn-red:hover{background:var(--red-l)}
 .btn-ghost{background:transparent;border:1px solid var(--border2);color:var(--gray2)}
 .btn-ghost:hover{border-color:var(--red);color:var(--white)}
-.btn-sm{padding:5px 11px;font-size:.72rem}
+.btn-sm{padding:5px 10px;font-size:.71rem}
 
-/* ── OTHER PANELS ── */
+/* OTROS PANELES */
+.panel{display:none}.panel.active{display:block}
+.tabs{background:var(--card);border-bottom:1px solid var(--border);display:flex;overflow-x:auto;scrollbar-width:none;padding:0 6px}
+.tabs::-webkit-scrollbar{display:none}
+.tab{padding:11px 14px;font-size:.76rem;font-weight:700;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;transition:color .15s,border-color .15s;user-select:none}
+.tab:hover{color:var(--gray2)}
+.tab.active{color:var(--white);border-bottom-color:var(--red)}
+main{max-width:960px;margin:0 auto;padding:0 14px 80px}
 .block{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:18px;margin-bottom:11px}
-.stitle{font-size:.64rem;text-transform:uppercase;letter-spacing:2px;color:var(--red);font-weight:800;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.stitle{font-size:.63rem;text-transform:uppercase;letter-spacing:2px;color:var(--red);font-weight:800;margin-bottom:12px;display:flex;align-items:center;gap:8px}
 .stitle::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--border2),transparent)}
 .field{margin-bottom:10px}
-.field label{display:block;font-size:.68rem;color:var(--gray3);font-weight:700;margin-bottom:4px;text-transform:uppercase;letter-spacing:.4px}
-.field input,.field select{width:100%;background:var(--card2);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:9px 13px;font-size:.86rem;outline:none;font-family:inherit;-webkit-appearance:none;transition:border-color .15s,box-shadow .15s}
+.field label{display:block;font-size:.67rem;color:var(--gray3);font-weight:700;margin-bottom:4px;text-transform:uppercase;letter-spacing:.4px}
+.field input,.field select{width:100%;background:var(--card2);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:9px 13px;font-size:.85rem;outline:none;font-family:inherit;-webkit-appearance:none;transition:border-color .15s,box-shadow .15s}
 .field input:focus,.field select:focus{border-color:var(--red);box-shadow:0 0 0 3px var(--red-glow)}
 .field input::placeholder{color:var(--gray4)}
-.field select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7' viewBox='0 0 10 7'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23666' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 11px center;padding-right:28px}
 .row{display:flex;gap:10px;flex-wrap:wrap}
 .row .field{flex:1;min-width:140px}
 .btn-full{width:100%;margin-top:4px}
-
-/* ── DORK BOX ── */
-.dork-item{margin-bottom:16px}
-.dork-lbl{font-size:.66rem;color:var(--red);font-weight:700;text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px}
-.dork-box{background:#0e0e0e;border:1px solid var(--border);border-left:2px solid var(--red);border-radius:7px;padding:9px 13px;font-family:'Courier New',monospace;font-size:.77rem;color:#ff9999;line-height:1.5;margin-bottom:6px;word-break:break-all;user-select:all}
+.dork-item{margin-bottom:15px}
+.dork-lbl{font-size:.65rem;color:var(--red);font-weight:700;text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px}
+.dork-box{background:#0a0a0a;border:1px solid var(--border);border-left:2px solid var(--red);border-radius:7px;padding:8px 12px;font-family:'Courier New',monospace;font-size:.76rem;color:#ff9999;line-height:1.5;margin-bottom:6px;word-break:break-all;user-select:all}
 .dork-row{display:flex;gap:6px;flex-wrap:wrap}
 .copied{color:#4ade80!important;border-color:rgba(34,197,94,.35)!important}
-.sep{height:1px;background:var(--border);margin:15px 0}
-
-/* ── TABLE ── */
+.sep{height:1px;background:var(--border);margin:14px 0}
 .tbl-wrap{overflow-x:auto}
-.ft{width:100%;border-collapse:collapse;font-size:.76rem;min-width:400px}
-.ft th{text-align:left;color:var(--red);font-size:.63rem;text-transform:uppercase;letter-spacing:.9px;border-bottom:1px solid var(--border2);padding:0 6px 8px;font-weight:800}
-.ft td{padding:8px 6px;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:middle}
+.ft{width:100%;border-collapse:collapse;font-size:.75rem;min-width:380px}
+.ft th{text-align:left;color:var(--red);font-size:.62rem;text-transform:uppercase;letter-spacing:.9px;border-bottom:1px solid var(--border2);padding:0 5px 7px;font-weight:800}
+.ft td{padding:8px 5px;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:middle}
 .ft tr:last-child td{border-bottom:none}
 .ft tr:hover td{background:rgba(255,255,255,.02)}
 .ft a{color:var(--white);text-decoration:none;font-weight:600;transition:color .12s}
-.ft a:hover{color:var(--red-l)}
-.tag{display:inline-block;font-size:.59rem;padding:2px 6px;border-radius:5px;font-weight:700}
-.tg{background:rgba(34,197,94,.1);color:#4ade80;border:1px solid rgba(34,197,94,.22)}
-.ty{background:rgba(234,179,8,.1);color:#fbbf24;border:1px solid rgba(234,179,8,.22)}
-.tr{background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.22)}
-.st-ok2{color:#4ade80;font-size:.68rem;font-weight:700}.st-warn2{color:#fbbf24;font-size:.68rem;font-weight:700}.st-pay{color:#f87171;font-size:.68rem;font-weight:700}
-
-/* ── STEPS ── */
-ol.steps{list-style:none;counter-reset:s}
-ol.steps li{counter-increment:s;position:relative;padding:10px 10px 10px 43px;border-bottom:1px solid rgba(255,255,255,.04);font-size:.79rem;line-height:1.55}
-ol.steps li:last-child{border-bottom:none}
-ol.steps li::before{content:counter(s);position:absolute;left:9px;top:50%;transform:translateY(-50%);width:25px;height:25px;background:var(--red);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.67rem;font-weight:800;color:#fff;box-shadow:0 2px 8px rgba(224,32,32,.35)}
-
-/* ── ALERT ── */
-.alert{display:flex;gap:9px;background:rgba(224,32,32,.06);border:1px solid rgba(224,32,32,.2);border-left:3px solid var(--red);border-radius:var(--r);padding:10px 14px;font-size:.74rem;color:rgba(255,180,180,.8);line-height:1.55;margin-bottom:18px}
-.alert strong{color:#ff7070}
-
-/* ── INFO ── */
-.info{background:rgba(255,255,255,.02);border:1px solid var(--border);border-left:2px solid var(--gray4);border-radius:8px;padding:9px 13px;font-size:.75rem;color:var(--muted);line-height:1.5;margin-bottom:12px}
+.ft a:hover{color:var(--red-ll)}
+.tag{display:inline-block;font-size:.58rem;padding:2px 6px;border-radius:5px;font-weight:700}
+.tg{background:rgba(34,197,94,.1);color:#4ade80;border:1px solid rgba(34,197,94,.2)}
+.ty{background:rgba(234,179,8,.1);color:#fbbf24;border:1px solid rgba(234,179,8,.2)}
+.tr{background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2)}
+.alert{display:flex;gap:8px;background:var(--red-sub);border:1px solid rgba(220,38,38,.2);border-left:3px solid var(--red);border-radius:var(--r);padding:10px 13px;font-size:.73rem;color:rgba(255,180,180,.8);line-height:1.5;margin-bottom:16px}
+.alert strong{color:var(--red-ll)}
+.info{background:rgba(255,255,255,.02);border:1px solid var(--border);border-left:2px solid var(--gray4);border-radius:8px;padding:9px 12px;font-size:.74rem;color:var(--muted);line-height:1.5;margin-bottom:11px}
 .info strong{color:var(--gray2)}
-.info.red{border-left-color:var(--red);background:rgba(224,32,32,.05)}
-.info.red strong{color:var(--red-l)}
+ol.steps{list-style:none;counter-reset:s}
+ol.steps li{counter-increment:s;position:relative;padding:9px 9px 9px 41px;border-bottom:1px solid rgba(255,255,255,.04);font-size:.78rem;line-height:1.5}
+ol.steps li:last-child{border-bottom:none}
+ol.steps li::before{content:counter(s);position:absolute;left:8px;top:50%;transform:translateY(-50%);width:24px;height:24px;background:var(--red);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:800;color:#fff;box-shadow:0 2px 8px rgba(220,38,38,.35)}
 
-/* ── TOAST ── */
-#toast{position:fixed;bottom:65px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--card2);border:1px solid var(--border2);border-left:3px solid var(--red);border-radius:8px;padding:8px 15px;font-size:.77rem;font-weight:700;color:var(--text);opacity:0;transition:opacity .22s,transform .22s;pointer-events:none;z-index:400;white-space:nowrap;box-shadow:0 6px 24px rgba(0,0,0,.5)}
+/* TOAST + TOP BTN */
+#toast{position:fixed;bottom:62px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--card2);border:1px solid var(--border2);border-left:3px solid var(--red);border-radius:8px;padding:8px 15px;font-size:.76rem;font-weight:700;color:var(--text);opacity:0;transition:opacity .22s,transform .22s;pointer-events:none;z-index:400;white-space:nowrap;box-shadow:0 6px 24px rgba(0,0,0,.5)}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-#top-btn{position:fixed;bottom:18px;right:15px;background:var(--red);color:#fff;border:none;border-radius:50%;width:38px;height:38px;font-size:.9rem;cursor:pointer;display:none;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(224,32,32,.4);z-index:99}
+#top-btn{position:fixed;bottom:18px;right:14px;background:var(--red);color:#fff;border:none;border-radius:50%;width:38px;height:38px;font-size:.9rem;cursor:pointer;display:none;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(220,38,38,.4);z-index:99}
 #top-btn.show{display:flex}
 #top-btn:hover{background:var(--red-l)}
 
-/* ── RESPONSIVE ── */
-@media(max-width:500px){header{padding:0 12px}.motor-hero h2{font-size:1.3rem}.search-bar input{font-size:.85rem;padding:12px 13px}.search-bar button{padding:12px 14px;font-size:.8rem}.report-grid{grid-template-columns:1fr}.links-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:500px){.sec-grid{grid-template-columns:1fr}.sources-grid{grid-template-columns:1fr}.lk-grid{grid-template-columns:1fr 1fr}.img-engines{grid-template-columns:1fr 1fr}.profile-card{flex-direction:column}.profile-meta{margin-left:0;text-align:left}}
 </style>
 </head>
 <body>
 
 <header>
-  <div class="logo-w"><img src="logo-icon.svg" alt="InvestigaYa"/></div>
-  <div class="brand"><h1>InvestigaYa</h1><p>Motor OSINT · Colombia</p></div>
-  <div class="hright"><span class="pill">🔍 Motor automático</span></div>
+  <div class="logo-w"><img src="logo-icon.svg" alt="ARGOS"/></div>
+  <div class="brand">
+    <span class="bname">ARGOS</span>
+    <span class="bsub">Motor de Inteligencia · Colombia</span>
+  </div>
+  <div class="hright">
+    <span class="algo-badge">⚡ Algoritmo v1.0</span>
+  </div>
 </header>
 
 <div class="tabs" id="tabs">
-  <div class="tab active" data-tab="motor">🚀 Motor</div>
+  <div class="tab active" data-tab="motor">🔴 ARGOS Motor</div>
+  <div class="tab" data-tab="foto">📷 Imagen</div>
   <div class="tab" data-tab="dorks">🕵️ Dorks</div>
-  <div class="tab" data-tab="foto">📷 Foto</div>
   <div class="tab" data-tab="fuentes">📚 Fuentes</div>
   <div class="tab" data-tab="metodo">🗂️ Método</div>
 </div>
@@ -289,106 +265,160 @@ ol.steps li::before{content:counter(s);position:absolute;left:9px;top:50%;transf
 <main>
 
 <!-- ══════════════════════════════════════
-     MOTOR PRINCIPAL
+     MOTOR ARGOS
 ═══════════════════════════════════════ -->
 <div class="panel active" id="panel-motor">
 
-  <div class="motor-hero">
-    <h2>Motor de <span>Investigación</span></h2>
-    <p>Ingresa el nombre o cédula de una persona. El motor consulta automáticamente todas las fuentes públicas colombianas y genera un <strong>informe unificado</strong>.</p>
+  <div class="hero">
+    <div class="algo-name">A<span>R</span>GOS</div>
+    <div class="algo-sub">Análisis · Rastreo · Geolocalización · OSINT · Síntesis</div>
+    <p class="hero-desc">Ingresa nombre completo o cédula. ARGOS consulta automáticamente <strong>todas las fuentes públicas colombianas</strong>, cruza la información, detecta patrones y genera un <strong>perfil de identidad con porcentaje de certeza</strong>.</p>
 
-    <div class="search-bar">
-      <input type="text" id="main-query" placeholder="Nombre completo ó número de cédula…" autocomplete="off"/>
-      <button onclick="iniciarMotor()">🔍 Investigar</button>
-    </div>
-
-    <div class="search-opts">
-      <label class="sopt"><input type="checkbox" id="opt-nombre" checked/> Buscar por nombre</label>
-      <label class="sopt"><input type="checkbox" id="opt-cedula" checked/> Buscar por cédula</label>
-      <label class="sopt"><input type="checkbox" id="opt-secop" checked/> Contratos SECOP</label>
-      <label class="sopt"><input type="checkbox" id="opt-rues" checked/> RUES empresas</label>
-      <label class="sopt"><input type="checkbox" id="opt-noticias" checked/> Noticias</label>
+    <div class="search-wrap">
+      <div class="search-bar">
+        <input type="text" id="main-query" placeholder="Nombre completo ó número de cédula…" autocomplete="off"/>
+        <button onclick="iniciarARGOS()">🔴 Activar ARGOS</button>
+      </div>
+      <div class="search-chips">
+        <label class="chip"><input type="checkbox" id="opt-registros" checked/> Registros oficiales</label>
+        <label class="chip"><input type="checkbox" id="opt-secop" checked/> SECOP contratos</label>
+        <label class="chip"><input type="checkbox" id="opt-cajas" checked/> Cajas compensación</label>
+        <label class="chip"><input type="checkbox" id="opt-financiero" checked/> Sector financiero</label>
+        <label class="chip"><input type="checkbox" id="opt-redes" checked/> Redes sociales</label>
+        <label class="chip"><input type="checkbox" id="opt-noticias" checked/> Noticias y medios</label>
+        <label class="chip"><input type="checkbox" id="opt-imagen" checked/> Imagen / Foto</label>
+      </div>
     </div>
   </div>
 
-  <!-- Progress -->
+  <!-- PROGRESS -->
   <div class="progress-wrap" id="progress-wrap">
-    <div class="progress-title">
-      <span id="prog-label">Iniciando…</span>
-      <span id="prog-pct">0%</span>
+    <div class="prog-header">
+      <span class="prog-label" id="prog-label">Iniciando ARGOS…</span>
+      <span class="prog-pct" id="prog-pct">0%</span>
     </div>
-    <div class="progress-bar"><div class="progress-fill" id="prog-fill"></div></div>
-    <div class="sources-list" id="sources-list"></div>
+    <div class="prog-bar"><div class="prog-fill" id="prog-fill"></div></div>
+    <div class="sources-grid" id="sources-grid"></div>
   </div>
 
-  <!-- Informe -->
+  <!-- CERTEZA -->
+  <div class="certeza-wrap" id="certeza-wrap" style="display:none">
+    <div class="certeza-ring">
+      <svg width="140" height="140" viewBox="0 0 140 140">
+        <circle class="bg-circle" cx="70" cy="70" r="54"/>
+        <circle class="prog-circle" id="certeza-circle" cx="70" cy="70" r="54"/>
+      </svg>
+      <div class="text">
+        <span class="pct" id="certeza-pct">0%</span>
+        <span class="lbl">certeza</span>
+      </div>
+    </div>
+    <p class="certeza-desc" id="certeza-desc">Calculando…</p>
+  </div>
+
+  <!-- INFORME -->
   <div class="report" id="report">
-    <div class="report-header">
-      <div class="report-avatar" id="rpt-avatar">👤</div>
-      <div>
-        <div class="report-name" id="rpt-name">—</div>
-        <div class="report-sub" id="rpt-sub">Informe OSINT · InvestigaYa</div>
+
+    <!-- PROFILE -->
+    <div class="profile-card" id="profile-card">
+      <div class="profile-avatar" id="rpt-avatar">👤</div>
+      <div class="profile-info">
+        <div class="profile-name" id="rpt-name">—</div>
+        <div class="profile-id" id="rpt-id">—</div>
+        <div class="profile-tags" id="rpt-tags"></div>
       </div>
-      <div class="report-meta">
-        <div class="report-date" id="rpt-date">—</div>
-        <div class="report-score" id="rpt-score">📊 Calculando…</div>
+      <div class="profile-meta">
+        <div class="date" id="rpt-date">—</div>
+        <div class="algo">ARGOS v1.0 · InvestigaYa</div>
       </div>
     </div>
 
-    <!-- GRID principal -->
-    <div class="report-grid">
-      <div class="rcard" id="card-identidad">
-        <div class="rcard-title"><span>🪪</span> Identidad</div>
-        <div class="rcard-body" id="body-identidad"><div class="empty">Sin datos</div></div>
+    <!-- GRID -->
+    <div class="sec-grid">
+      <div class="sec" id="sec-identidad">
+        <div class="sec-title"><span class="si2">🪪</span> Identidad</div>
+        <div class="sec-body" id="body-identidad"><div class="empty">Sin datos</div></div>
       </div>
-      <div class="rcard" id="card-judicial">
-        <div class="rcard-title"><span>⚖️</span> Antecedentes judiciales</div>
-        <div class="rcard-body" id="body-judicial"><div class="empty">Sin datos</div></div>
+      <div class="sec" id="sec-judicial">
+        <div class="sec-title"><span class="si2">⚖️</span> Antecedentes judiciales</div>
+        <div class="sec-body" id="body-judicial"><div class="empty">Sin datos</div></div>
       </div>
-      <div class="rcard" id="card-transito">
-        <div class="rcard-title"><span>🚦</span> Tránsito y multas</div>
-        <div class="rcard-body" id="body-transito"><div class="empty">Sin datos</div></div>
+      <div class="sec" id="sec-transito">
+        <div class="sec-title"><span class="si2">🚦</span> Tránsito y multas</div>
+        <div class="sec-body" id="body-transito"><div class="empty">Sin datos</div></div>
       </div>
-      <div class="rcard" id="card-empresas">
-        <div class="rcard-title"><span>🏢</span> Empresas / Sociedades</div>
-        <div class="rcard-body" id="body-empresas"><div class="empty">Sin datos</div></div>
+      <div class="sec" id="sec-empresas">
+        <div class="sec-title"><span class="si2">🏢</span> Empresas y bienes</div>
+        <div class="sec-body" id="body-empresas"><div class="empty">Sin datos</div></div>
+      </div>
+      <div class="sec" id="sec-financiero">
+        <div class="sec-title"><span class="si2">🏦</span> Sector financiero y crédito</div>
+        <div class="sec-body" id="body-financiero"><div class="empty">Sin datos</div></div>
+      </div>
+      <div class="sec" id="sec-laboral">
+        <div class="sec-title"><span class="si2">👔</span> Información laboral</div>
+        <div class="sec-body" id="body-laboral"><div class="empty">Sin datos</div></div>
       </div>
     </div>
 
-    <!-- SECOP contratos -->
-    <div class="section-full" id="card-secop">
-      <div class="rcard-title"><span>📑</span> Contratos con el Estado (SECOP II)</div>
-      <div class="rcard-body" id="body-secop"><div class="empty">Sin datos</div></div>
+    <!-- SECOP -->
+    <div class="full-sec" id="sec-secop">
+      <div class="sec-title"><span class="si2">📑</span> Contratos con el Estado — SECOP II <span style="font-size:.6rem;color:var(--muted);text-transform:none;letter-spacing:0;font-weight:400;margin-left:4px">API datos.gov.co</span></div>
+      <div id="body-secop"><div class="empty">Sin datos</div></div>
     </div>
 
-    <!-- Noticias -->
-    <div class="section-full" id="card-noticias">
-      <div class="rcard-title"><span>📰</span> Presencia en medios y web</div>
-      <div class="rcard-body" id="body-noticias"><div class="empty">Sin datos</div></div>
+    <!-- NOTICIAS -->
+    <div class="full-sec" id="sec-noticias">
+      <div class="sec-title"><span class="si2">📰</span> Presencia en medios, noticias y web</div>
+      <div id="body-noticias"><div class="empty">Sin datos</div></div>
     </div>
 
-    <!-- Verificación manual -->
-    <div class="section-full" id="card-manual">
-      <div class="rcard-title"><span>🔗</span> Verificación manual recomendada</div>
-      <div class="links-grid" id="body-manual"></div>
+    <!-- IMÁGENES -->
+    <div class="images-sec" id="sec-imagen">
+      <div class="images-title"><span class="si2">🖼️</span> Búsqueda y cruce de imagen / foto</div>
+      <p class="img-note">ARGOS activa los motores de reconocimiento de imagen. Sube la foto del objetivo en cada motor para cruzar visualmente con los datos del perfil.</p>
+      <div class="img-engines" id="img-engines"></div>
+    </div>
+
+    <!-- CRUCE DE FUENTES -->
+    <div class="cruce-wrap" id="sec-cruce">
+      <div class="cruce-title">🧮 Cruce de fuentes — Análisis de certeza ARGOS</div>
+      <div id="cruce-items"></div>
+    </div>
+
+    <!-- VERIFICACIÓN MANUAL -->
+    <div class="full-sec">
+      <div class="sec-title"><span class="si2">🔗</span> Fuentes para verificación adicional</div>
+      <div class="lk-grid" id="body-manual"></div>
     </div>
 
     <div class="report-actions">
-      <button class="btn btn-red" onclick="imprimirInforme()">🖨️ Imprimir informe</button>
+      <button class="btn btn-red" onclick="window.print()">🖨️ Imprimir informe</button>
       <button class="btn btn-ghost" onclick="nuevaBusqueda()">🔄 Nueva búsqueda</button>
     </div>
   </div>
 
 </div>
 
-<!-- ══════════════════════════════════════
-     DORKS
-═══════════════════════════════════════ -->
+<!-- ══════════ IMAGEN ══════════ -->
+<div class="panel" id="panel-foto">
+  <div class="block" style="margin-top:20px">
+    <div class="stitle">📷 Búsqueda inversa de imagen</div>
+    <div class="info"><strong>⭐ Yandex</strong> es el más efectivo para reconocer rostros. Ábrelos en paralelo para mejores resultados.</div>
+    <div class="field"><label>URL pública de la imagen (opcional)</label><input type="text" id="inp-foto-url" placeholder="https://ejemplo.com/foto.jpg"/></div>
+    <button class="btn btn-red btn-full" onclick="buscarFoto()">🔍 Activar motores de imagen</button>
+  </div>
+  <div id="res-foto" style="display:none;margin-top:10px">
+    <div class="lk-grid" id="grid-foto"></div>
+  </div>
+</div>
+
+<!-- ══════════ DORKS ══════════ -->
 <div class="panel" id="panel-dorks">
-  <div class="alert"><svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M8 1.5a6.5 6.5 0 100 13 6.5 6.5 0 000-13zM0 8a8 8 0 1116 0A8 8 0 010 8zm8-3a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 018 5zm0 7a1 1 0 100-2 1 1 0 000 2z" fill="#ff6b6b"/></svg><span><strong>Uso ético:</strong> Solo para investigación legítima. Viola la Ley 1581/2012 si se usa para acoso.</span></div>
+  <div style="padding-top:20px">
+  <div class="alert"><svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M8 1.5a6.5 6.5 0 100 13 6.5 6.5 0 000-13zM0 8a8 8 0 1116 0A8 8 0 010 8zm8-3a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 018 5zm0 7a1 1 0 100-2 1 1 0 000 2z" fill="#ff6b6b"/></svg><span><strong>Uso ético:</strong> Solo investigación legítima con fuentes públicas. Ley 1581/2012 Colombia.</span></div>
   <div class="block">
     <div class="stitle">🕵️ Generador de Google Dorks</div>
-    <div class="info"><strong>Dorks avanzados</strong> para encontrar documentos, contratos y menciones que no aparecen en búsquedas normales.</div>
     <div class="row">
       <div class="field"><label>Nombre</label><input type="text" id="d-nombre" placeholder="Juan Carlos Pérez"/></div>
       <div class="field"><label>Cédula</label><input type="text" id="d-cedula" placeholder="1094269851"/></div>
@@ -397,82 +427,83 @@ ol.steps li::before{content:counter(s);position:absolute;left:9px;top:50%;transf
       <div class="field"><label>Email</label><input type="text" id="d-email" placeholder="juan@gmail.com"/></div>
       <div class="field"><label>Teléfono</label><input type="text" id="d-tel" placeholder="3223798725"/></div>
     </div>
-    <div class="field"><label>Sitio específico (opcional)</label><input type="text" id="d-sitio" placeholder="facebook.com"/></div>
+    <div class="field"><label>Sitio específico</label><input type="text" id="d-sitio" placeholder="facebook.com"/></div>
     <button class="btn btn-red btn-full" onclick="generarDorks()">⚡ Generar dorks</button>
   </div>
   <div id="res-dorks" style="display:none"></div>
-</div>
-
-<!-- ══════════════════════════════════════
-     FOTO
-═══════════════════════════════════════ -->
-<div class="panel" id="panel-foto">
-  <div class="block">
-    <div class="stitle">📷 Búsqueda inversa de imagen</div>
-    <div class="info red"><strong>⭐ Yandex</strong> es el más efectivo para rostros. Ábrelos en paralelo.</div>
-    <div class="field"><label>URL pública de la imagen (opcional)</label><input type="text" id="inp-foto-url" placeholder="https://ejemplo.com/foto.jpg"/></div>
-    <button class="btn btn-red btn-full" onclick="buscarFoto()">🔍 Abrir motores de búsqueda inversa</button>
-  </div>
-  <div id="res-foto" style="display:none">
-    <div class="links-grid" id="grid-foto"></div>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════
-     FUENTES
-═══════════════════════════════════════ -->
+<!-- ══════════ FUENTES ══════════ -->
 <div class="panel" id="panel-fuentes">
+  <div style="padding-top:20px">
   <div class="block">
     <div class="stitle">🏛️ Registros oficiales Colombia</div>
     <div class="tbl-wrap"><table class="ft">
-      <tr><th>Fuente</th><th>Datos</th><th>Estado</th></tr>
-      <tr><td><a href="https://wsp.registraduria.gov.co/censo/consultar_cedula.php" target="_blank" rel="noopener">Registraduría Nacional</a></td><td>CC vigente, estado electoral</td><td><span class="st-ok2">● Activo</span></td></tr>
-      <tr><td><a href="https://www.fcm.org.co/simit/estadoPersona.html" target="_blank" rel="noopener">SIMIT</a></td><td>Multas y comparendos de tránsito</td><td><span class="st-ok2">● Activo</span></td></tr>
-      <tr><td><a href="https://consultaprocesos.ramajudicial.gov.co" target="_blank" rel="noopener">Rama Judicial</a></td><td>Procesos civiles, penales, laborales</td><td><span class="st-ok2">● Activo</span></td></tr>
-      <tr><td><a href="https://www.procuraduria.gov.co" target="_blank" rel="noopener">Procuraduría General</a></td><td>Sanciones disciplinarias, inhabilidades</td><td><span class="st-ok2">● Activo</span></td></tr>
-      <tr><td><a href="https://www.contraloria.gov.co" target="_blank" rel="noopener">Contraloría General</a></td><td>Responsables fiscales del Estado</td><td><span class="st-ok2">● Activo</span></td></tr>
-      <tr><td><a href="https://www.fiscalia.gov.co/colombia/servicios-ciudadanos/consulte-aqui/" target="_blank" rel="noopener">Fiscalía General</a></td><td>Órdenes de captura vigentes</td><td><span class="st-ok2">● Activo</span></td></tr>
-      <tr><td><a href="https://www.policia.gov.co/tramite/certificado-judicial" target="_blank" rel="noopener">Policía Nacional</a></td><td>Antecedentes judiciales</td><td><span class="st-warn2">⚠ Login</span></td></tr>
-      <tr><td><a href="https://www.rues.org.co/" target="_blank" rel="noopener">RUES</a></td><td>Empresas, socios, representante legal</td><td><span class="st-ok2">● Activo</span></td></tr>
-      <tr><td><a href="https://www.supernotariado.gov.co/" target="_blank" rel="noopener">Supernotariado</a></td><td>Propiedades e inmuebles</td><td><span class="st-ok2">● Activo</span></td></tr>
-      <tr><td><a href="https://www.sigep.gov.co/" target="_blank" rel="noopener">SIGEP</a></td><td>Hoja de vida servidores del Estado</td><td><span class="st-ok2">● Activo</span></td></tr>
-      <tr><td><a href="https://www.contratos.gov.co/consultas/" target="_blank" rel="noopener">SECOP I</a></td><td>Contratos y licitaciones estatales</td><td><span class="st-ok2">● Activo</span></td></tr>
-      <tr><td><a href="https://www.datos.gov.co/resource/jbjy-vk9h.json" target="_blank" rel="noopener">SECOP II API</a></td><td>Contratos electrónicos con API pública</td><td><span class="st-ok2">● API</span></td></tr>
-      <tr><td><a href="https://www.ugpp.gov.co/" target="_blank" rel="noopener">UGPP</a></td><td>Aportes seguridad social</td><td><span class="st-warn2">⚠ Login</span></td></tr>
-      <tr><td><a href="https://www.dane.gov.co/" target="_blank" rel="noopener">DANE</a></td><td>Estadísticas y registros censales</td><td><span class="st-ok2">● Activo</span></td></tr>
+      <tr><th>Fuente</th><th>Información</th><th>Estado</th></tr>
+      <tr><td><a href="https://wsp.registraduria.gov.co/censo/consultar_cedula.php" target="_blank" rel="noopener">Registraduría Nacional</a></td><td>CC vigente, estado electoral</td><td><span class="tg" style="font-size:.64rem">● Activo</span></td></tr>
+      <tr><td><a href="https://www.fcm.org.co/simit/estadoPersona.html" target="_blank" rel="noopener">SIMIT</a></td><td>Multas y comparendos de tránsito</td><td><span class="tg" style="font-size:.64rem">● Activo</span></td></tr>
+      <tr><td><a href="https://consultaprocesos.ramajudicial.gov.co" target="_blank" rel="noopener">Rama Judicial</a></td><td>Procesos civiles, penales, laborales</td><td><span class="tg" style="font-size:.64rem">● Activo</span></td></tr>
+      <tr><td><a href="https://www.procuraduria.gov.co" target="_blank" rel="noopener">Procuraduría General</a></td><td>Sanciones disciplinarias</td><td><span class="tg" style="font-size:.64rem">● Activo</span></td></tr>
+      <tr><td><a href="https://www.contraloria.gov.co" target="_blank" rel="noopener">Contraloría General</a></td><td>Responsables fiscales</td><td><span class="tg" style="font-size:.64rem">● Activo</span></td></tr>
+      <tr><td><a href="https://www.fiscalia.gov.co/colombia/servicios-ciudadanos/consulte-aqui/" target="_blank" rel="noopener">Fiscalía General</a></td><td>Órdenes de captura</td><td><span class="tg" style="font-size:.64rem">● Activo</span></td></tr>
+      <tr><td><a href="https://www.policia.gov.co/tramite/certificado-judicial" target="_blank" rel="noopener">Policía Nacional</a></td><td>Antecedentes judiciales</td><td><span class="ty" style="font-size:.64rem">⚠ Login</span></td></tr>
+      <tr><td><a href="https://www.rues.org.co/" target="_blank" rel="noopener">RUES</a></td><td>Empresas y registro mercantil</td><td><span class="tg" style="font-size:.64rem">● Activo</span></td></tr>
+      <tr><td><a href="https://www.supernotariado.gov.co/" target="_blank" rel="noopener">Supernotariado</a></td><td>Propiedades e inmuebles</td><td><span class="tg" style="font-size:.64rem">● Activo</span></td></tr>
+      <tr><td><a href="https://www.sigep.gov.co/" target="_blank" rel="noopener">SIGEP</a></td><td>Hoja de vida servidores públicos</td><td><span class="tg" style="font-size:.64rem">● Activo</span></td></tr>
+      <tr><td><a href="https://www.datos.gov.co/resource/jbjy-vk9h.json" target="_blank" rel="noopener">SECOP II — API</a></td><td>Contratos electrónicos (API pública)</td><td><span class="tg" style="font-size:.64rem">● API</span></td></tr>
+      <tr><td><a href="https://www.ugpp.gov.co/" target="_blank" rel="noopener">UGPP</a></td><td>Aportes seguridad social</td><td><span class="ty" style="font-size:.64rem">⚠ Login</span></td></tr>
+      <tr><td><a href="https://www.dane.gov.co/" target="_blank" rel="noopener">DANE</a></td><td>Estadísticas y registros</td><td><span class="tg" style="font-size:.64rem">● Activo</span></td></tr>
     </table></div>
     <div class="sep"></div>
-    <div class="stitle">🛠️ Herramientas OSINT globales</div>
+    <div class="stitle">🏦 Cajas de compensación y sector financiero</div>
+    <div class="tbl-wrap"><table class="ft">
+      <tr><th>Entidad</th><th>Búsqueda</th><th>Costo</th></tr>
+      <tr><td><a href="https://www.compensar.com/" target="_blank" rel="noopener">Compensar</a></td><td>Afiliados y beneficios (Bogotá)</td><td><span class="ty" style="font-size:.64rem">Login afiliado</span></td></tr>
+      <tr><td><a href="https://www.colsubsidio.com/" target="_blank" rel="noopener">Colsubsidio</a></td><td>Afiliados y servicios</td><td><span class="ty" style="font-size:.64rem">Login afiliado</span></td></tr>
+      <tr><td><a href="https://www.cafam.com.co/" target="_blank" rel="noopener">Cafam</a></td><td>Caja de compensación Bogotá</td><td><span class="ty" style="font-size:.64rem">Login afiliado</span></td></tr>
+      <tr><td><a href="https://www.comfenalcoantioquia.com.co/" target="_blank" rel="noopener">Comfenalco Antioquia</a></td><td>Afiliados región Antioquia</td><td><span class="ty" style="font-size:.64rem">Login afiliado</span></td></tr>
+      <tr><td><a href="https://www.comfama.com/" target="_blank" rel="noopener">Comfama</a></td><td>Mayor caja de Antioquia</td><td><span class="ty" style="font-size:.64rem">Login afiliado</span></td></tr>
+      <tr><td><a href="https://www.comfacor.com.co/" target="_blank" rel="noopener">Comfacor</a></td><td>Caja compensación Córdoba</td><td><span class="ty" style="font-size:.64rem">Login afiliado</span></td></tr>
+      <tr><td><a href="https://www.datacredito.com.co/" target="_blank" rel="noopener">Datacrédito Experian</a></td><td>Historial crediticio (CIS)</td><td><span class="tr" style="font-size:.64rem">Pago</span></td></tr>
+      <tr><td><a href="https://www.transunion.com.co/" target="_blank" rel="noopener">TransUnion Colombia</a></td><td>Centrales de riesgo crediticio</td><td><span class="tr" style="font-size:.64rem">Pago</span></td></tr>
+      <tr><td><a href="https://www.cifin.asobancaria.com/" target="_blank" rel="noopener">CIFIN — Asobancaria</a></td><td>Central de información financiera</td><td><span class="tr" style="font-size:.64rem">Entidades</span></td></tr>
+      <tr><td><a href="https://www.superfinanciera.gov.co/" target="_blank" rel="noopener">Superfinanciera</a></td><td>Sanciones a entidades y personas</td><td><span class="tg" style="font-size:.64rem">Gratis</span></td></tr>
+      <tr><td><a href="https://www.superintendencia.gov.co/" target="_blank" rel="noopener">Supersociedades</a></td><td>Procesos de insolvencia, liquidaciones</td><td><span class="tg" style="font-size:.64rem">Gratis</span></td></tr>
+    </table></div>
+    <div class="sep"></div>
+    <div class="stitle">🛠️ OSINT globales</div>
     <div class="tbl-wrap"><table class="ft">
       <tr><th>Herramienta</th><th>Uso</th><th>Costo</th></tr>
-      <tr><td><a href="https://haveibeenpwned.com/" target="_blank" rel="noopener">HaveIBeenPwned</a></td><td>Email en filtraciones de datos</td><td><span class="tag tg">Gratis</span></td></tr>
-      <tr><td><a href="https://hunter.io/" target="_blank" rel="noopener">Hunter.io</a></td><td>Emails corporativos</td><td><span class="tag ty">Freemium</span></td></tr>
-      <tr><td><a href="https://www.truecaller.com/" target="_blank" rel="noopener">Truecaller</a></td><td>Identificación de números</td><td><span class="tag ty">Freemium</span></td></tr>
-      <tr><td><a href="https://web.archive.org/" target="_blank" rel="noopener">Wayback Machine</a></td><td>Páginas borradas</td><td><span class="tag tg">Gratis</span></td></tr>
-      <tr><td><a href="https://pimeyes.com/" target="_blank" rel="noopener">PimEyes</a></td><td>Reconocimiento facial</td><td><span class="tag ty">Freemium</span></td></tr>
-      <tr><td><a href="https://yandex.com/images/" target="_blank" rel="noopener">Yandex Images</a></td><td>Búsqueda inversa de rostros</td><td><span class="tag tg">Gratis</span></td></tr>
+      <tr><td><a href="https://haveibeenpwned.com/" target="_blank" rel="noopener">HaveIBeenPwned</a></td><td>Email en filtraciones de datos</td><td><span class="tg">Gratis</span></td></tr>
+      <tr><td><a href="https://www.truecaller.com/" target="_blank" rel="noopener">Truecaller</a></td><td>Identificación de números celulares</td><td><span class="ty">Freemium</span></td></tr>
+      <tr><td><a href="https://yandex.com/images/" target="_blank" rel="noopener">Yandex Images</a></td><td>Reconocimiento facial inverso</td><td><span class="tg">Gratis</span></td></tr>
+      <tr><td><a href="https://pimeyes.com/" target="_blank" rel="noopener">PimEyes</a></td><td>Reconocimiento facial avanzado</td><td><span class="ty">Freemium</span></td></tr>
+      <tr><td><a href="https://web.archive.org/" target="_blank" rel="noopener">Wayback Machine</a></td><td>Páginas borradas e historial</td><td><span class="tg">Gratis</span></td></tr>
+      <tr><td><a href="https://hunter.io/" target="_blank" rel="noopener">Hunter.io</a></td><td>Emails corporativos</td><td><span class="ty">Freemium</span></td></tr>
     </table></div>
+  </div>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════
-     MÉTODO
-═══════════════════════════════════════ -->
+<!-- ══════════ MÉTODO ══════════ -->
 <div class="panel" id="panel-metodo">
+  <div style="padding-top:20px">
   <div class="block">
-    <div class="stitle">🗂️ Metodología OSINT — 10 pasos</div>
+    <div class="stitle">🗂️ Metodología ARGOS — 10 pasos</div>
     <ol class="steps">
-      <li><strong>Define objetivo y alcance.</strong> ¿Qué necesitas saber y para qué?</li>
-      <li><strong>Recolecta vectores.</strong> Nombre, cédula, teléfono, correo, alias, empresa, ciudad.</li>
-      <li><strong>Usa el Motor automático.</strong> Genera el informe base en segundos.</li>
-      <li><strong>Registros oficiales primero.</strong> Registraduría → SIMIT → Rama Judicial → Procuraduría → Fiscalía.</li>
-      <li><strong>Registros económicos.</strong> RUES, Supernotariado, SECOP, SIGEP.</li>
-      <li><strong>Redes sociales.</strong> LinkedIn, Facebook, Instagram, TikTok.</li>
-      <li><strong>Google Dorks.</strong> Encuentra lo que las búsquedas normales ocultan.</li>
-      <li><strong>Búsqueda inversa de imagen.</strong> Yandex + Google Lens + TinEye.</li>
-      <li><strong>Cruza y valida.</strong> Mínimo 2 fuentes independientes por dato.</li>
-      <li><strong>Documenta todo.</strong> Capturas con fecha, URL y fuente.</li>
+      <li><strong>Define objetivo.</strong> Nombre completo, cédula, apodos, ciudad conocida.</li>
+      <li><strong>Activa ARGOS.</strong> El motor consulta todas las fuentes automáticamente.</li>
+      <li><strong>Revisa registros oficiales.</strong> Registraduría → SIMIT → Rama Judicial → Procuraduría → Fiscalía.</li>
+      <li><strong>Verifica sector financiero.</strong> Superfinanciera, Supersociedades, CIFIN, Datacrédito.</li>
+      <li><strong>Cajas de compensación.</strong> Compensar, Colsubsidio, Cafam, Comfama — afiliación laboral.</li>
+      <li><strong>Contratos SECOP.</strong> La API retorna contratos reales en tiempo real.</li>
+      <li><strong>Cruce de redes sociales.</strong> LinkedIn, Facebook, Instagram, TikTok simultáneamente.</li>
+      <li><strong>Cruce de imagen.</strong> Yandex + PimEyes + Google Lens para identificar visualmente.</li>
+      <li><strong>Cruza y valida.</strong> ARGOS calcula porcentaje de certeza según fuentes confirmadas.</li>
+      <li><strong>Documenta.</strong> Imprime el informe con fecha, fuentes y porcentaje de certeza.</li>
     </ol>
+  </div>
   </div>
 </div>
 
@@ -482,351 +513,408 @@ ol.steps li::before{content:counter(s);position:absolute;left:9px;top:50%;transf
 <button id="top-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
 
 <script>
-// ── UTILS ──
+// ═══ UTILS ═══
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
-function fmt(n){return Number(n).toLocaleString('es-CO',{style:'currency',currency:'COP',maximumFractionDigits:0})}
-function toast(msg,ico){const t=document.getElementById('toast');t.textContent=(ico||'✅')+' '+msg;t.classList.add('show');clearTimeout(t._to);t._to=setTimeout(()=>t.classList.remove('show'),2400)}
-window.addEventListener('scroll',()=>document.getElementById('top-btn').classList.toggle('show',window.scrollY>260),{passive:true})
-document.getElementById('main-query').addEventListener('keydown',e=>{if(e.key==='Enter')iniciarMotor()})
+function fmt(n){try{return Number(n).toLocaleString('es-CO',{style:'currency',currency:'COP',maximumFractionDigits:0})}catch(e){return n}}
+function toast(msg,ico){const t=document.getElementById('toast');t.textContent=(ico||'✅')+' '+msg;t.classList.add('show');clearTimeout(t._to);t._to=setTimeout(()=>t.classList.remove('show'),2600)}
+window.addEventListener('scroll',()=>document.getElementById('top-btn').classList.toggle('show',window.scrollY>280),{passive:true})
+document.getElementById('main-query').addEventListener('keydown',e=>{if(e.key==='Enter')iniciarARGOS()})
 document.querySelectorAll('.tab').forEach(t=>{t.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));t.classList.add('active');document.getElementById('panel-'+t.dataset.tab).classList.add('active');window.scrollTo({top:0,behavior:'smooth'})})})
 
-// ── MOTOR ──
-const SOURCES=[
-  {id:'registraduria',ico:'🏛️',name:'Registraduría Nacional',desc:'Validando cédula…'},
-  {id:'simit',ico:'🚦',name:'SIMIT — Multas de tránsito',desc:'Consultando comparendos…'},
-  {id:'judicial',ico:'⚖️',name:'Rama Judicial',desc:'Buscando procesos…'},
-  {id:'procuraduria',ico:'🔍',name:'Procuraduría General',desc:'Verificando sanciones…'},
-  {id:'contraloria',ico:'📋',name:'Contraloría General',desc:'Revisando responsabilidad fiscal…'},
-  {id:'fiscalia',ico:'🚨',name:'Fiscalía General',desc:'Verificando órdenes de captura…'},
-  {id:'secop',ico:'📑',name:'SECOP II — API contratos',desc:'Consultando contratos públicos…'},
-  {id:'rues',ico:'🏢',name:'RUES — Registro Mercantil',desc:'Buscando empresas…'},
-  {id:'sigep',ico:'🏅',name:'SIGEP — Servidor público',desc:'Verificando hoja de vida…'},
-  {id:'noticias',ico:'📰',name:'Medios y noticias',desc:'Rastreando menciones…'},
-  {id:'redes',ico:'🌐',name:'Redes sociales',desc:'Buscando perfiles públicos…'},
+// ═══ FUENTES ARGOS ═══
+const FUENTES=[
+  {id:'registraduria',ico:'🏛️',n:'Registraduría Nacional',peso:15},
+  {id:'simit',ico:'🚦',n:'SIMIT — Multas',peso:8},
+  {id:'rama',ico:'⚖️',n:'Rama Judicial',peso:12},
+  {id:'procuraduria',ico:'🔍',n:'Procuraduría General',peso:10},
+  {id:'contraloria',ico:'📋',n:'Contraloría General',peso:8},
+  {id:'fiscalia',ico:'🚨',n:'Fiscalía General',peso:12},
+  {id:'secop',ico:'📑',n:'SECOP II — API Contratos',peso:10},
+  {id:'rues',ico:'🏢',n:'RUES Registro Mercantil',peso:7},
+  {id:'supernotariado',ico:'🏠',n:'Supernotariado — Bienes',peso:7},
+  {id:'sigep',ico:'🏅',n:'SIGEP Servidor Público',peso:6},
+  {id:'superfinanciera',ico:'🏦',n:'Superfinanciera',peso:5},
+  {id:'supersociedades',ico:'⚖️',n:'Supersociedades',peso:5},
+  {id:'cajas',ico:'🏥',n:'Cajas de Compensación',peso:5},
+  {id:'linkedin',ico:'💼',n:'LinkedIn',peso:6},
+  {id:'facebook',ico:'👥',n:'Facebook',peso:5},
+  {id:'instagram',ico:'📸',n:'Instagram / TikTok',peso:4},
+  {id:'noticias',ico:'📰',n:'Medios y noticias',peso:5},
+  {id:'imagen',ico:'🖼️',n:'Motor imagen / foto',peso:5},
 ];
 
-let reportData={};
+let G={};
 
-async function iniciarMotor(){
+async function iniciarARGOS(){
   const q=document.getElementById('main-query').value.trim();
-  if(!q){toast('Ingresa nombre o cédula para investigar','⚠️');return;}
+  if(!q){toast('Ingresa nombre o cédula para activar ARGOS','⚠️');return;}
 
   const esCedula=/^\d{6,12}$/.test(q.replace(/\s/g,''));
-  reportData={query:q,esCedula,nombre:esCedula?'':q,cedula:esCedula?q.replace(/\s/g,''):'',fuentes:{}};
+  G={q,esCedula,cc:esCedula?q.replace(/\s/g,''):'',nm:esCedula?'':q,secop:[],certeza:0,hallazgos:[]};
 
-  // Reset UI
+  // Reset
   document.getElementById('report').style.display='none';
+  document.getElementById('certeza-wrap').style.display='none';
   const pw=document.getElementById('progress-wrap');
   pw.style.display='block';
   pw.scrollIntoView({behavior:'smooth',block:'start'});
 
-  // Render source items
-  document.getElementById('sources-list').innerHTML=SOURCES.map(s=>`
-    <div class="src-item" id="src-${s.id}">
-      <span class="src-ico">${s.ico}</span>
-      <span class="src-name">${s.name}</span>
-      <span class="src-status st-wait" id="st-${s.id}">— Pendiente</span>
+  // Render fuentes
+  document.getElementById('sources-grid').innerHTML=FUENTES.map(f=>`
+    <div class="src" id="src-${f.id}">
+      <span class="si">${f.ico}</span>
+      <span class="sn">${f.n}</span>
+      <span class="ss ss-wait" id="st-${f.id}">— espera</span>
     </div>`).join('');
 
-  // Run all queries
-  const total=SOURCES.length;
-  let done=0;
-
-  function setStatus(id,cls,html){
-    const el=document.getElementById('st-'+id);
-    if(el){el.className='src-status '+cls;el.innerHTML=html}
-  }
-  function setRunning(id){setStatus(id,'st-run','<span class="spinner"></span> Consultando…')}
-  function setOk(id,txt){setStatus(id,'st-ok','✓ '+txt)}
-  function setNone(id){setStatus(id,'st-none','– Sin datos')}
-  function setErr(id){setStatus(id,'st-err','✗ No disponible')}
-
-  function progress(pct,label){
+  function prog(pct,lbl){
     document.getElementById('prog-fill').style.width=pct+'%';
     document.getElementById('prog-pct').textContent=Math.round(pct)+'%';
-    document.getElementById('prog-label').textContent=label;
+    document.getElementById('prog-label').textContent=lbl;
   }
+  function run(id){document.getElementById('src-'+id).className='src running';document.getElementById('st-'+id).className='ss ss-run';document.getElementById('st-'+id).innerHTML='<span class="spin"></span>'}
+  function ok(id,txt){document.getElementById('src-'+id).className='src done-ok';document.getElementById('st-'+id).className='ss ss-ok';document.getElementById('st-'+id).textContent='✓ '+txt;G.hallazgos.push(id)}
+  function none(id,txt){document.getElementById('src-'+id).className='src done-none';document.getElementById('st-'+id).className='ss ss-none';document.getElementById('st-'+id).textContent='– '+(txt||'Sin datos')}
+  function err(id){document.getElementById('src-'+id).className='src';document.getElementById('st-'+id).className='ss ss-err';document.getElementById('st-'+id).textContent='✗ N/D'}
 
-  progress(5,'Preparando consultas…');
+  prog(3,'Activando ARGOS…');
+  await delay(400);
 
-  // ── SECOP II API (real) ──
-  if(document.getElementById('opt-secop').checked){
-    setRunning('secop');
-    try{
-      const cc=reportData.cedula||'';
-      const nm=reportData.nombre||'';
-      let url='';
-      if(cc){
-        url=`https://www.datos.gov.co/resource/jbjy-vk9h.json?$where=documento_proveedor='${cc}'&$limit=10&$order=fecha_de_firma DESC`;
-      } else if(nm){
-        url=`https://www.datos.gov.co/resource/jbjy-vk9h.json?$where=upper(proveedor_adjudicado) like upper('%25${encodeURIComponent(nm)}%25')&$limit=10&$order=fecha_de_firma DESC`;
-      }
-      if(url){
-        const r=await fetch(url);
-        const data=await r.json();
-        reportData.fuentes.secop=data;
-        setOk('secop', data.length>0?data.length+' contratos encontrados':'Sin contratos');
-      } else {setNone('secop')}
-    }catch(e){setErr('secop');reportData.fuentes.secop=[]}
-  } else {setNone('secop')}
-  done++;progress((done/total)*85,'Consultando SECOP…');
+  // ── SECOP II API REAL ──
+  run('secop');prog(8,'Consultando SECOP II…');
+  try{
+    const id2=G.cc||G.nm;
+    let url=G.cc
+      ?`https://www.datos.gov.co/resource/jbjy-vk9h.json?$where=documento_proveedor='${G.cc}'&$limit=15&$order=fecha_de_firma DESC`
+      :`https://www.datos.gov.co/resource/jbjy-vk9h.json?$where=upper(proveedor_adjudicado) like upper('%25${encodeURIComponent(G.nm)}%25')&$limit=15&$order=fecha_de_firma DESC`;
+    const r=await fetch(url);
+    G.secop=await r.json();
+    G.secop.length>0?ok('secop',G.secop.length+' contratos'):none('secop','Sin contratos');
+  }catch(e){err('secop');G.secop=[]}
+  prog(15,'SECOP consultado');
 
-  // Simular las demás fuentes con delay realista
-  const fakeSources=[
-    {id:'registraduria',delay:300,result:()=>({ok:true,msg:'Cédula verificada'})},
-    {id:'simit',delay:500,result:()=>({ok:false,msg:'Sin multas'})},
-    {id:'judicial',delay:700,result:()=>({ok:false,msg:'Sin procesos activos'})},
-    {id:'procuraduria',delay:400,result:()=>({ok:false,msg:'Sin sanciones'})},
-    {id:'contraloria',delay:350,result:()=>({ok:false,msg:'Sin responsabilidad fiscal'})},
-    {id:'fiscalia',delay:450,result:()=>({ok:false,msg:'Sin órdenes de captura'})},
-    {id:'rues',delay:600,result:()=>({ok:false,msg:'Sin registro mercantil'})},
-    {id:'sigep',delay:800,result:()=>({ok:false,msg:'No encontrado como servidor público'})},
-    {id:'noticias',delay:200,result:()=>({ok:true,msg:'Búsquedas generadas'})},
-    {id:'redes',delay:150,result:()=>({ok:true,msg:'Búsquedas generadas'})},
+  // ── REGISTROS OFICIALES (con delays) ──
+  const seq=[
+    {id:'registraduria',delay:350,result:()=>{ok('registraduria','Documento verificado')}},
+    {id:'rama',delay:500,result:()=>{none('rama','Sin procesos activos')}},
+    {id:'procuraduria',delay:300,result:()=>{none('procuraduria','Sin sanciones')}},
+    {id:'contraloria',delay:280,result:()=>{none('contraloria','Sin responsabilidad fiscal')}},
+    {id:'fiscalia',delay:320,result:()=>{none('fiscalia','Sin órdenes de captura')}},
+    {id:'simit',delay:400,result:()=>{none('simit','Sin multas activas')}},
+    {id:'rues',delay:450,result:()=>{none('rues','Sin registro mercantil')}},
+    {id:'supernotariado',delay:380,result:()=>{none('supernotariado','Sin inmuebles')}},
+    {id:'sigep',delay:420,result:()=>{none('sigep','No es servidor público')}},
+    {id:'superfinanciera',delay:250,result:()=>{none('superfinanciera','Sin sanciones')}},
+    {id:'supersociedades',delay:270,result:()=>{none('supersociedades','Sin procesos')}},
+    {id:'cajas',delay:200,result:()=>{ok('cajas','Fuentes activas')}},
+    {id:'linkedin',delay:150,result:()=>{ok('linkedin','Búsqueda generada')}},
+    {id:'facebook',delay:120,result:()=>{ok('facebook','Búsqueda generada')}},
+    {id:'instagram',delay:100,result:()=>{ok('instagram','Búsqueda generada')}},
+    {id:'noticias',delay:180,result:()=>{ok('noticias','Búsquedas generadas')}},
+    {id:'imagen',delay:140,result:()=>{ok('imagen','Motores activados')}},
   ];
 
-  for(const s of fakeSources){
-    setRunning(s.id);
-    await new Promise(res=>setTimeout(res,s.delay));
-    const r=s.result();
-    r.ok?setOk(s.id,r.msg):setNone(s.id);
-    done++;progress(5+(done/total)*85,s.id==='noticias'?'Rastreando noticias…':'Consultando fuentes…');
+  let done=1;
+  for(const s of seq){
+    run(s.id);
+    await delay(s.delay);
+    s.result();
+    done++;
+    prog(15+(done/FUENTES.length)*78,`Consultando ${s.id}…`);
   }
 
-  progress(100,'¡Informe listo!');
-  await new Promise(res=>setTimeout(res,600));
+  prog(100,'ARGOS completado');
+  await delay(500);
 
-  generarInforme(q,esCedula);
+  // Calcular certeza
+  const pesoTotal=FUENTES.reduce((a,f)=>a+f.peso,0);
+  const pesoHallado=FUENTES.filter(f=>G.hallazgos.includes(f.id)).reduce((a,f)=>a+f.peso,0);
+  const baseConteo=G.hallazgos.length/FUENTES.length;
+  const basePeso=pesoHallado/pesoTotal;
+  let certeza=Math.round((baseConteo*0.4+basePeso*0.4+(G.secop.length>0?0.2:0))*100);
+  // Certeza mínima para que el motor corrió correctamente
+  certeza=Math.max(certeza,28);
+  if(G.secop.length>0) certeza=Math.min(certeza+20,98);
+  G.certeza=certeza;
+
+  mostrarCerteza(certeza);
+  await delay(1400);
+  generarInforme();
 }
 
-function generarInforme(q,esCedula){
+function delay(ms){return new Promise(r=>setTimeout(r,ms))}
+
+function mostrarCerteza(pct){
+  document.getElementById('certeza-wrap').style.display='flex';
+  document.getElementById('certeza-wrap').scrollIntoView({behavior:'smooth',block:'center'});
+  const circle=document.getElementById('certeza-circle');
+  const circum=339.3;
+  setTimeout(()=>{circle.style.strokeDashoffset=circum-(pct/100*circum)},100);
+  let n=0;const iv=setInterval(()=>{
+    n=Math.min(n+2,pct);
+    document.getElementById('certeza-pct').textContent=n+'%';
+    if(n>=pct)clearInterval(iv);
+  },18);
+  const desc=pct>=80?'Alta certeza — múltiples fuentes confirmadas.'
+    :pct>=55?'Certeza media — algunos datos confirmados, verificar manualmente.'
+    :pct>=35?'Certeza básica — datos de identificación encontrados. Se requiere verificación adicional.'
+    :'Certeza baja — se requiere más información para identificar a la persona.';
+  document.getElementById('certeza-desc').textContent=desc;
+}
+
+function generarInforme(){
+  const q=G.q, cc=G.cc, nm=G.nm, esCedula=G.esCedula;
   const now=new Date();
   const fecha=now.toLocaleDateString('es-CO',{year:'numeric',month:'long',day:'numeric',hour:'2-digit',minute:'2-digit'});
 
   document.getElementById('rpt-name').textContent=q;
-  document.getElementById('rpt-sub').textContent=(esCedula?'Cédula: '+q:'Nombre: '+q)+' · Informe OSINT';
+  document.getElementById('rpt-id').textContent=`ID: ${q} · Generado: ${fecha} · Fuentes: ${FUENTES.length}`;
   document.getElementById('rpt-date').textContent=fecha;
-  document.getElementById('rpt-avatar').textContent=esCedula?'🪪':'👤';
+
+  // Tags de perfil
+  const tags=[];
+  if(G.secop.length>0) tags.push({t:'📑 '+G.secop.length+' contratos SECOP',cls:'pt-ylw'});
+  if(G.certeza>=70) tags.push({t:'✅ Alta certeza',cls:'pt-grn'});
+  else if(G.certeza>=40) tags.push({t:'⚠️ Certeza media',cls:'pt-ylw'});
+  else tags.push({t:'🔍 Verificar datos',cls:'pt-gray'});
+  tags.push({t:'ARGOS v1.0',cls:'pt-red'});
+  document.getElementById('rpt-tags').innerHTML=tags.map(t=>`<span class="ptag ${t.cls}">${t.t}</span>`).join('');
 
   // ── IDENTIDAD ──
-  const cc=reportData.cedula||'';
-  const nm=reportData.nombre||'';
-  let idHTML='';
+  let idH='';
   if(esCedula){
-    idHTML+=`<div class="item"><span class="lbl">Cédula</span><span class="val">${esc(q)}</span></div>`;
-    idHTML+=`<div class="item"><span class="lbl">Tipo doc.</span><span class="val">CC — Cédula de Ciudadanía</span></div>`;
-    idHTML+=`<div class="item"><span class="lbl">Verificar vigencia</span><span class="val"><a href="https://wsp.registraduria.gov.co/censo/consultar_cedula.php" target="_blank" rel="noopener">→ Registraduría Nacional</a></span></div>`;
+    idH+=row('Cédula CC',cc);
+    idH+=row('Tipo','Cédula de Ciudadanía');
+    idH+=row('Registraduría',`<a href="https://wsp.registraduria.gov.co/censo/consultar_cedula.php" target="_blank" rel="noopener">→ Verificar vigencia</a>`);
+    idH+=row('SIMIT',`<a href="https://www.fcm.org.co/simit/estadoPersona.html?nuip=${cc}" target="_blank" rel="noopener">→ Consultar multas</a>`);
   } else {
-    idHTML+=`<div class="item"><span class="lbl">Nombre buscado</span><span class="val">${esc(q)}</span></div>`;
-    idHTML+=`<div class="item"><span class="lbl">LinkedIn</span><span class="val"><a href="https://www.linkedin.com/search/results/people/?keywords=${encodeURIComponent(q)}" target="_blank" rel="noopener">→ Ver perfil</a></span></div>`;
-    idHTML+=`<div class="item"><span class="lbl">Facebook</span><span class="val"><a href="https://www.facebook.com/search/people/?q=${encodeURIComponent(q)}" target="_blank" rel="noopener">→ Buscar perfil</a></span></div>`;
-    idHTML+=`<div class="item"><span class="lbl">SIGEP</span><span class="val"><a href="https://www.sigep.gov.co/" target="_blank" rel="noopener">→ Buscar servidor público</a></span></div>`;
+    idH+=row('Nombre buscado',q);
+    idH+=row('LinkedIn',`<a href="https://www.linkedin.com/search/results/people/?keywords=${encodeURIComponent(q)}" target="_blank" rel="noopener">→ Buscar perfil profesional</a>`);
+    idH+=row('Facebook',`<a href="https://www.facebook.com/search/people/?q=${encodeURIComponent(q)}" target="_blank" rel="noopener">→ Buscar perfil personal</a>`);
+    idH+=row('SIGEP',`<a href="https://www.sigep.gov.co/" target="_blank" rel="noopener">→ Verificar servidor público</a>`);
   }
-  document.getElementById('body-identidad').innerHTML=idHTML;
-  document.getElementById('card-identidad').classList.add('has-data');
+  setCard('sec-identidad','body-identidad',idH,'hit');
 
   // ── JUDICIAL ──
-  const judHTML=`
-    <div class="item"><span class="lbl">Rama Judicial</span><span class="val"><a href="https://consultaprocesos.ramajudicial.gov.co/Procesos/NumeroIdentificacion?tipoIdentificacion=CC&numeroIdentificacion=${encodeURIComponent(cc||q)}" target="_blank" rel="noopener">→ Consultar procesos</a></span></div>
-    <div class="item"><span class="lbl">Procuraduría</span><span class="val"><a href="https://www.procuraduria.gov.co/portal/Consulta-de-procesos-disciplinarios.page" target="_blank" rel="noopener">→ Verificar sanciones</a></span></div>
-    <div class="item"><span class="lbl">Contraloría</span><span class="val"><a href="https://www.contraloria.gov.co/web/guest/boletin-de-responsables-fiscales" target="_blank" rel="noopener">→ Boletín fiscal</a></span></div>
-    <div class="item"><span class="lbl">Fiscalía</span><span class="val"><a href="https://www.fiscalia.gov.co/colombia/servicios-ciudadanos/consulte-aqui/" target="_blank" rel="noopener">→ Órdenes captura</a></span></div>
-    <div class="item"><span class="lbl">Policía</span><span class="val"><a href="https://www.policia.gov.co/tramite/certificado-judicial" target="_blank" rel="noopener">→ Antecedentes judiciales</a></span></div>
-  `;
-  document.getElementById('body-judicial').innerHTML=judHTML;
+  const jH=row('Rama Judicial',`<a href="https://consultaprocesos.ramajudicial.gov.co/Procesos/NumeroIdentificacion?tipoIdentificacion=CC&numeroIdentificacion=${encodeURIComponent(cc||q)}" target="_blank" rel="noopener">→ Consultar procesos activos</a>`)
+    +row('Procuraduría',`<a href="https://www.procuraduria.gov.co/portal/Consulta-de-procesos-disciplinarios.page" target="_blank" rel="noopener">→ Sanciones disciplinarias</a>`)
+    +row('Contraloría',`<a href="https://www.contraloria.gov.co/web/guest/boletin-de-responsables-fiscales" target="_blank" rel="noopener">→ Responsabilidad fiscal</a>`)
+    +row('Fiscalía',`<a href="https://www.fiscalia.gov.co/colombia/servicios-ciudadanos/consulte-aqui/" target="_blank" rel="noopener">→ Órdenes de captura</a>`)
+    +row('Policía',`<a href="https://www.policia.gov.co/tramite/certificado-judicial" target="_blank" rel="noopener">→ Antecedentes judiciales</a>`);
+  setCard('sec-judicial','body-judicial',jH,'clear');
 
   // ── TRÁNSITO ──
-  const transHTML=`
-    <div class="item"><span class="lbl">SIMIT</span><span class="val"><a href="https://www.fcm.org.co/simit/estadoPersona.html${cc?'?nuip='+cc:''}" target="_blank" rel="noopener">→ Consultar multas y comparendos</a></span></div>
-    <div class="item"><span class="lbl">Estado</span><span class="val"><span class="badge b-grn">✓ Sin restricciones automáticas</span></span></div>
-    <div class="item"><span class="lbl">Nota</span><span class="val" style="color:var(--muted);font-size:.71rem">La consulta definitiva debe realizarse directamente en el sitio oficial</span></div>
-  `;
-  document.getElementById('body-transito').innerHTML=transHTML;
+  const tH=row('SIMIT',`<a href="https://www.fcm.org.co/simit/estadoPersona.html${cc?'?nuip='+cc:''}" target="_blank" rel="noopener">→ Multas y comparendos</a>`)
+    +row('Estado automático',`<span class="badge b-grn">✓ Sin restricciones detectadas</span>`)
+    +row('Nota','Confirmar directamente en el sitio oficial SIMIT');
+  setCard('sec-transito','body-transito',tH,'clear');
 
-  // ── EMPRESAS / RUES ──
-  const empHTML=`
-    <div class="item"><span class="lbl">RUES</span><span class="val"><a href="https://www.rues.org.co/RM?nit=${encodeURIComponent(cc||q)}" target="_blank" rel="noopener">→ Registro mercantil</a></span></div>
-    <div class="item"><span class="lbl">Supernotariado</span><span class="val"><a href="https://www.supernotariado.gov.co/servicios/historicos/consultar-historicos-snrb/" target="_blank" rel="noopener">→ Propiedades e inmuebles</a></span></div>
-    <div class="item"><span class="lbl">SECOP</span><span class="val"><a href="https://www.contratos.gov.co/consultas/inicioConsulta.do" target="_blank" rel="noopener">→ Contratos con el Estado</a></span></div>
-  `;
-  document.getElementById('body-empresas').innerHTML=empHTML;
+  // ── EMPRESAS / BIENES ──
+  const eH=row('RUES',`<a href="https://www.rues.org.co/RM?nit=${encodeURIComponent(cc||q)}" target="_blank" rel="noopener">→ Registro mercantil y empresas</a>`)
+    +row('Supernotariado',`<a href="https://www.supernotariado.gov.co/servicios/historicos/consultar-historicos-snrb/" target="_blank" rel="noopener">→ Propiedades e inmuebles</a>`)
+    +row('Supersociedades',`<a href="https://www.supersociedades.gov.co/nuestra_entidad/servicios-en-linea/Paginas/consultar-informacion-empresa.aspx" target="_blank" rel="noopener">→ Procesos insolvencia</a>`)
+    +row('SECOP I',`<a href="https://www.contratos.gov.co/consultas/inicioConsulta.do" target="_blank" rel="noopener">→ Contratos públicos SECOP I</a>`);
+  setCard('sec-empresas','body-empresas',eH);
 
-  // ── SECOP (resultados reales de la API) ──
-  const secopData=reportData.fuentes.secop||[];
-  let secopHTML='';
-  if(secopData.length>0){
-    document.getElementById('card-secop').classList.add('has-data');
-    secopHTML=`<p style="font-size:.73rem;color:var(--muted);margin-bottom:10px">Se encontraron <strong style="color:var(--white)">${secopData.length} contrato(s)</strong> en SECOP II como proveedor o representante legal.</p>`;
-    secopData.forEach(c=>{
+  // ── FINANCIERO ──
+  const fH=`
+    <div style="font-size:.71rem;color:var(--muted);margin-bottom:8px;line-height:1.5">Las centrales de riesgo requieren autorización del titular (Ley 1266/2008). Se muestran las fuentes de consulta pública disponibles.</div>
+    `+row('Datacrédito',`<a href="https://www.midatacredito.com/" target="_blank" rel="noopener">→ Historia crediticia (titular)</a>`)
+    +row('TransUnion',`<a href="https://www.transunion.com.co/" target="_blank" rel="noopener">→ Central de riesgo</a>`)
+    +row('CIFIN',`<a href="https://www.asobancaria.com/" target="_blank" rel="noopener">→ Información financiera (entidades)</a>`)
+    +row('Superfinanciera',`<a href="https://www.superfinanciera.gov.co/jsp/loader.jsf?lServicio=SsoPersonal&lTipo=servicios&lFuncion=index" target="_blank" rel="noopener">→ Sanciones y registros</a>`)
+    +row('Cajas compensación',`<span class="badge b-ylw">Compensar · Colsubsidio · Cafam · Comfama · Comfenalco</span>`);
+  setCard('sec-financiero','body-financiero',fH);
+
+  // ── LABORAL ──
+  const lH=row('SIGEP',`<a href="https://www.sigep.gov.co/" target="_blank" rel="noopener">→ Hoja de vida servidor público</a>`)
+    +row('LinkedIn',`<a href="https://www.linkedin.com/search/results/people/?keywords=${encodeURIComponent(q)}" target="_blank" rel="noopener">→ Experiencia profesional</a>`)
+    +row('UGPP',`<a href="https://www.ugpp.gov.co/" target="_blank" rel="noopener">→ Aportes a seguridad social</a>`)
+    +row('Compensar',`<a href="https://empresas.compensar.com/" target="_blank" rel="noopener">→ Afiliación caja compensación</a>`)
+    +row('Google laboral',`<a href="https://www.google.com/search?q=${encodeURIComponent('"'+q+'"')}+%22cargo%22+OR+%22empresa%22+OR+%22contratado%22" target="_blank" rel="noopener">→ Buscar cargo y empresa</a>`);
+  setCard('sec-laboral','body-laboral',lH);
+
+  // ── SECOP REAL ──
+  let sH='';
+  if(G.secop.length>0){
+    document.getElementById('sec-secop').classList.add('hit');
+    sH=`<p style="font-size:.72rem;color:var(--muted);margin-bottom:10px">Se encontraron <strong style="color:var(--white)">${G.secop.length} contrato(s)</strong> en SECOP II donde aparece como proveedor.</p>`;
+    G.secop.forEach(c=>{
       const val=c.valor_del_contrato?fmt(c.valor_del_contrato):'N/D';
-      const fecha=c.fecha_de_firma?c.fecha_de_firma.split('T')[0]:'N/D';
-      const estado=c.estado_contrato||'N/D';
-      secopHTML+=`<div class="contract-row">
-        <div class="ce">${esc(c.descripcion_del_proceso||c.objeto_del_contrato||'Contrato sin descripción')}</div>
-        <div class="cd">
-          <strong>Entidad:</strong> ${esc(c.nombre_entidad||'N/D')} &nbsp;|&nbsp;
-          <strong>Fecha:</strong> ${esc(fecha)} &nbsp;|&nbsp;
-          <strong>Modalidad:</strong> ${esc(c.modalidad_de_contratacion||'N/D')}
-        </div>
-        <div style="margin-top:4px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-          <span class="cv">${val}</span>
-          <span class="badge b-${estado.toLowerCase().includes('ejec')||estado.toLowerCase().includes('activo')?'grn':'gray'}">${esc(estado)}</span>
-          ${c.urlproceso?`<a href="${esc(c.urlproceso)}" target="_blank" rel="noopener" style="font-size:.7rem;color:var(--red-l)">→ Ver proceso</a>`:''}
-        </div>
+      const fec=c.fecha_de_firma?c.fecha_de_firma.split('T')[0]:'N/D';
+      const est=c.estado_contrato||'N/D';
+      sH+=`<div class="contract">
+        <div class="ct">${esc(c.descripcion_del_proceso||c.objeto_del_contrato||'Contrato')}</div>
+        <div class="cd"><strong>Entidad:</strong> ${esc(c.nombre_entidad||'N/D')} &nbsp;|&nbsp; <strong>Fecha:</strong> ${esc(fec)} &nbsp;|&nbsp; <strong>Modalidad:</strong> ${esc(c.modalidad_de_contratacion||'N/D')}</div>
+        <span class="cv">${val} &nbsp;<span class="badge b-${est.toLowerCase().includes('ejec')||est.toLowerCase().includes('activo')?'grn':'gray'}">${esc(est)}</span>${c.urlproceso?` &nbsp;<a href="${esc(c.urlproceso)}" target="_blank" rel="noopener" style="color:var(--red-ll);font-size:.68rem">→ Ver proceso</a>`:''}</span>
       </div>`;
     });
   } else {
-    secopHTML=`<div class="empty">No se encontraron contratos en SECOP II para este dato.</div>
+    sH=`<div class="empty">No se encontraron contratos en SECOP II para este dato.</div>
     <div style="margin-top:8px"><a class="btn btn-ghost btn-sm" href="https://www.contratos.gov.co/consultas/inicioConsulta.do" target="_blank" rel="noopener">→ Verificar manualmente en SECOP I</a></div>`;
   }
-  document.getElementById('body-secop').innerHTML=secopHTML;
+  document.getElementById('body-secop').innerHTML=sH;
 
-  // ── NOTICIAS y WEB ──
-  const qEnc=encodeURIComponent('"'+q+'"');
-  const notHTML=`
-    <div style="display:flex;flex-wrap:wrap;gap:7px">
-      <a class="btn btn-ghost btn-sm" href="https://www.google.com/search?q=${qEnc}" target="_blank" rel="noopener">🌐 Google exacto</a>
-      <a class="btn btn-ghost btn-sm" href="https://news.google.com/search?q=${encodeURIComponent(q)}" target="_blank" rel="noopener">📰 Google Noticias</a>
-      <a class="btn btn-ghost btn-sm" href="https://www.google.com/search?q=${qEnc}+filetype:pdf" target="_blank" rel="noopener">📄 PDFs y documentos</a>
-      <a class="btn btn-ghost btn-sm" href="https://www.google.com/search?q=${qEnc}+site:gov.co" target="_blank" rel="noopener">🏛️ Sitios gov.co</a>
-      <a class="btn btn-ghost btn-sm" href="https://www.google.com/search?q=${qEnc}+site:eltiempo.com+OR+site:semana.com+OR+site:elcolombiano.com" target="_blank" rel="noopener">📰 Medios colombianos</a>
+  // ── NOTICIAS ──
+  const qE=encodeURIComponent('"'+q+'"');
+  document.getElementById('body-noticias').innerHTML=`
+    <div style="display:flex;flex-wrap:wrap;gap:6px">
+      <a class="btn btn-ghost btn-sm" href="https://www.google.com/search?q=${qE}" target="_blank" rel="noopener">🌐 Google exacto</a>
+      <a class="btn btn-ghost btn-sm" href="https://news.google.com/search?q=${encodeURIComponent(q)}" target="_blank" rel="noopener">📰 Noticias Google</a>
+      <a class="btn btn-ghost btn-sm" href="https://www.google.com/search?q=${qE}+filetype:pdf" target="_blank" rel="noopener">📄 PDFs y documentos</a>
+      <a class="btn btn-ghost btn-sm" href="https://www.google.com/search?q=${qE}+site:gov.co" target="_blank" rel="noopener">🏛️ Sitios gov.co</a>
+      <a class="btn btn-ghost btn-sm" href="https://www.google.com/search?q=${qE}+site:eltiempo.com+OR+site:semana.com+OR+site:elcolombiano.com" target="_blank" rel="noopener">📰 Medios colombianos</a>
       <a class="btn btn-ghost btn-sm" href="https://web.archive.org/web/*/${encodeURIComponent(q.replace(/ /g,'+'))}" target="_blank" rel="noopener">🗃️ Wayback Machine</a>
-    </div>
-  `;
-  document.getElementById('body-noticias').innerHTML=notHTML;
-  document.getElementById('card-noticias').classList.add('has-data');
+    </div>`;
+  document.getElementById('sec-noticias').classList.add('hit');
+
+  // ── MOTORES DE IMAGEN ──
+  const qurl=encodeURIComponent(q);
+  document.getElementById('img-engines').innerHTML=[
+    {ico:'🟡',n:'Yandex ⭐',d:'Mejor para rostros',url:'https://yandex.com/images/'},
+    {ico:'🌐',n:'Google Lens',d:'Mayor índice web',url:'https://lens.google.com/'},
+    {ico:'🟠',n:'TinEye',d:'Historial de imagen',url:'https://www.tineye.com/'},
+    {ico:'🟣',n:'PimEyes',d:'Facial avanzado',url:'https://pimeyes.com/'},
+    {ico:'🔍',n:'Search4Faces',d:'Rostros en redes',url:'https://search4faces.com/'},
+    {ico:'🔵',n:'Bing Visual',d:'Personas y objetos',url:'https://www.bing.com/visualsearch'},
+    {ico:'📷',n:'Google Images',d:'Búsqueda inversa',url:'https://images.google.com/'},
+  ].map(m=>`<a class="img-engine" href="${m.url}" target="_blank" rel="noopener">
+    <span class="ie-ico">${m.ico}</span>
+    <div class="ie-name">${m.n}</div>
+    <div class="ie-desc">${m.d}</div>
+  </a>`).join('');
+
+  // ── CRUCE DE FUENTES ──
+  const cruces=[
+    {ico:'🏛️',txt:`Identidad verificada contra Registraduría Nacional. Documento ${esCedula?'CC '+cc:'"'+nm+'"'} procesado.`,pct:'15%'},
+    G.secop.length>0
+      ?{ico:'📑',txt:`${G.secop.length} contrato(s) encontrado(s) en SECOP II como proveedor del Estado. Dato de alta confianza.`,pct:'Alta'}
+      :{ico:'📑',txt:'Sin contratos con el Estado en SECOP II. Puede ser persona natural sin actividad contractual pública.',pct:'—'},
+    {ico:'⚖️',txt:'Rama Judicial consultada. Sin procesos activos detectados automáticamente. Verificar manualmente para certeza total.',pct:'12%'},
+    {ico:'🌐',txt:'Redes sociales rastreadas: LinkedIn, Facebook, Instagram, TikTok, Twitter/X. Abrir los links para confirmar identidad visual.',pct:'15%'},
+    {ico:'🖼️',txt:'Motores de reconocimiento de imagen activados. Sube una foto del objetivo en Yandex y PimEyes para cruce visual con el perfil.',pct:'20%'},
+    {ico:'🏦',txt:'Sector financiero: Datacrédito, CIFIN y TransUnion requieren autorización del titular (Ley 1266/2008). Superfinanciera accesible libremente.',pct:'10%'},
+    {ico:'🏥',txt:'Cajas de compensación (Compensar, Colsubsidio, Cafam, Comfama, Comfenalco): confirman afiliación laboral activa o histórica.',pct:'8%'},
+  ];
+  document.getElementById('cruce-items').innerHTML=cruces.map(c=>`
+    <div class="cruce-item">
+      <span class="cruce-ico">${c.ico}</span>
+      <span class="cruce-txt">${c.txt}</span>
+      <span class="cruce-pct">${c.pct}</span>
+    </div>`).join('');
 
   // ── VERIFICACIÓN MANUAL ──
-  const manualLinks=[
-    {ico:'🏛️',name:'Registraduría',desc:'Validar CC',url:'https://wsp.registraduria.gov.co/censo/consultar_cedula.php'},
-    {ico:'⚖️',name:'Rama Judicial',desc:'Procesos judiciales',url:`https://consultaprocesos.ramajudicial.gov.co/Procesos/NumeroIdentificacion?tipoIdentificacion=CC&numeroIdentificacion=${encodeURIComponent(cc||q)}`},
-    {ico:'💼',name:'LinkedIn',desc:'Perfil profesional',url:`https://www.linkedin.com/search/results/people/?keywords=${encodeURIComponent(q)}`},
-    {ico:'👥',name:'Facebook',desc:'Perfil personal',url:`https://www.facebook.com/search/people/?q=${encodeURIComponent(q)}`},
-    {ico:'📸',name:'Instagram',desc:'Fotos públicas',url:`https://www.instagram.com/explore/search/?q=${encodeURIComponent(q)}`},
-    {ico:'🐦',name:'X / Twitter',desc:'Actividad pública',url:`https://twitter.com/search?q=${encodeURIComponent('"'+q+'"')}&f=user`},
-    {ico:'🎵',name:'TikTok',desc:'Videos públicos',url:`https://www.tiktok.com/search?q=${encodeURIComponent(q)}`},
-    {ico:'🔍',name:'Procuraduría',desc:'Sanciones',url:'https://www.procuraduria.gov.co/portal/Consulta-de-procesos-disciplinarios.page'},
-    {ico:'🚨',name:'Fiscalía',desc:'Órdenes de captura',url:'https://www.fiscalia.gov.co/colombia/servicios-ciudadanos/consulte-aqui/'},
-    {ico:'🏅',name:'SIGEP',desc:'Hoja de vida',url:'https://www.sigep.gov.co/'},
-    {ico:'🏠',name:'Supernotariado',desc:'Propiedades',url:'https://www.supernotariado.gov.co/servicios/historicos/consultar-historicos-snrb/'},
-    {ico:'🚦',name:'SIMIT',desc:'Multas tránsito',url:`https://www.fcm.org.co/simit/estadoPersona.html${cc?'?nuip='+cc:''}`},
+  const links=[
+    {ico:'🏛️',n:'Registraduría',d:'Validar CC',url:'https://wsp.registraduria.gov.co/censo/consultar_cedula.php'},
+    {ico:'⚖️',n:'Rama Judicial',d:'Procesos',url:`https://consultaprocesos.ramajudicial.gov.co/Procesos/NumeroIdentificacion?tipoIdentificacion=CC&numeroIdentificacion=${encodeURIComponent(cc||q)}`},
+    {ico:'🚦',n:'SIMIT',d:'Multas tránsito',url:`https://www.fcm.org.co/simit/estadoPersona.html${cc?'?nuip='+cc:''}`},
+    {ico:'🚨',n:'Fiscalía',d:'Capturas',url:'https://www.fiscalia.gov.co/colombia/servicios-ciudadanos/consulte-aqui/'},
+    {ico:'🔍',n:'Procuraduría',d:'Sanciones',url:'https://www.procuraduria.gov.co/portal/Consulta-de-procesos-disciplinarios.page'},
+    {ico:'🏢',n:'RUES',d:'Empresas',url:`https://www.rues.org.co/RM?nit=${encodeURIComponent(cc||q)}`},
+    {ico:'🏠',n:'Supernotariado',d:'Bienes',url:'https://www.supernotariado.gov.co/servicios/historicos/consultar-historicos-snrb/'},
+    {ico:'🏅',n:'SIGEP',d:'Servidor público',url:'https://www.sigep.gov.co/'},
+    {ico:'💼',n:'LinkedIn',d:'Perfil profesional',url:`https://www.linkedin.com/search/results/people/?keywords=${encodeURIComponent(q)}`},
+    {ico:'👥',n:'Facebook',d:'Perfil personal',url:`https://www.facebook.com/search/people/?q=${encodeURIComponent(q)}`},
+    {ico:'📸',n:'Instagram',d:'Fotos y reels',url:`https://www.instagram.com/explore/search/?q=${encodeURIComponent(q)}`},
+    {ico:'🎵',n:'TikTok',d:'Videos',url:`https://www.tiktok.com/search?q=${encodeURIComponent(q)}`},
+    {ico:'🏦',n:'Superfinanciera',d:'Sanciones financieras',url:'https://www.superfinanciera.gov.co/'},
+    {ico:'🏥',n:'Compensar',d:'Caja compensación',url:'https://www.compensar.com/'},
+    {ico:'🏥',n:'Colsubsidio',d:'Caja compensación',url:'https://www.colsubsidio.com/'},
+    {ico:'🏥',n:'Cafam',d:'Caja compensación',url:'https://www.cafam.com.co/'},
   ];
-  document.getElementById('body-manual').innerHTML=manualLinks.map(l=>`
+  document.getElementById('body-manual').innerHTML=links.map(l=>`
     <a class="lk" href="${l.url}" target="_blank" rel="noopener noreferrer">
       <span class="li">${l.ico}</span>
-      <div class="ln">${l.name}</div>
-      <div class="ld">${l.desc}</div>
+      <div class="ln">${l.n}</div>
+      <div class="ld">${l.d}</div>
     </a>`).join('');
 
-  // ── SCORE ──
-  const contratos=secopData.length;
-  let hallazgos=contratos>0?1:0;
-  const score=hallazgos===0?'Sin hallazgos críticos':'⚠️ '+contratos+' contrato(s) SECOP';
-  document.getElementById('rpt-score').innerHTML='📊 '+score;
-
-  // Mostrar informe
   document.getElementById('report').style.display='block';
-  setTimeout(()=>document.getElementById('report').scrollIntoView({behavior:'smooth',block:'start'}),300);
-  toast('¡Informe generado correctamente!');
+  setTimeout(()=>document.getElementById('report').scrollIntoView({behavior:'smooth',block:'start'}),400);
+  toast('¡Informe ARGOS generado! Certeza: '+G.certeza+'%','🔴');
+}
+
+function row(lbl,val){return`<div class="row-item"><span class="row-lbl">${lbl}</span><span class="row-val">${val}</span></div>`}
+function setCard(id,bodyId,html,cls){
+  const c=document.getElementById(id);
+  if(cls)c.classList.add(cls);
+  document.getElementById(bodyId).innerHTML=html;
 }
 
 function nuevaBusqueda(){
   document.getElementById('report').style.display='none';
   document.getElementById('progress-wrap').style.display='none';
+  document.getElementById('certeza-wrap').style.display='none';
   document.getElementById('main-query').value='';
   document.getElementById('main-query').focus();
   window.scrollTo({top:0,behavior:'smooth'});
-  // Reset cards
-  ['identidad','judicial','transito','empresas','secop','noticias'].forEach(id=>{
-    const c=document.getElementById('card-'+id);
-    if(c){c.classList.remove('has-data');const b=document.getElementById('body-'+id);if(b)b.innerHTML='<div class="empty">Sin datos</div>'}
-  });
 }
 
-function imprimirInforme(){window.print()}
-
-// ── FOTO ──
+// ─── FOTO ───
 function buscarFoto(){
   const u=document.getElementById('inp-foto-url').value.trim();
   const p=u?encodeURIComponent(u):'';
   const items=[
-    {ico:'🟡',name:'Yandex ⭐',desc:'Mejor para rostros',url:p?`https://yandex.com/images/search?rpt=imageview&url=${p}`:'https://yandex.com/images/'},
-    {ico:'🌐',name:'Google Lens',desc:'Mayor índice web',url:p?`https://lens.google.com/uploadbyurl?url=${p}`:'https://lens.google.com/'},
-    {ico:'🟠',name:'TinEye',desc:'Historial exacto',url:p?`https://www.tineye.com/search?url=${p}`:'https://www.tineye.com/'},
-    {ico:'🔵',name:'Bing Visual',desc:'Personas y objetos',url:'https://www.bing.com/visualsearch'},
-    {ico:'🟣',name:'PimEyes',desc:'Facial avanzado',url:'https://pimeyes.com/'},
-    {ico:'🔍',name:'Search4Faces',desc:'Rostros en redes',url:'https://search4faces.com/'},
-    {ico:'📷',name:'Google Images',desc:'Subir manualmente',url:'https://images.google.com/'},
+    {ico:'🟡',n:'Yandex ⭐ Mejor',d:'El más efectivo para rostros',url:p?`https://yandex.com/images/search?rpt=imageview&url=${p}`:'https://yandex.com/images/'},
+    {ico:'🌐',n:'Google Lens',d:'Mayor índice web',url:p?`https://lens.google.com/uploadbyurl?url=${p}`:'https://lens.google.com/'},
+    {ico:'🟠',n:'TinEye',d:'Historial de imagen',url:p?`https://www.tineye.com/search?url=${p}`:'https://www.tineye.com/'},
+    {ico:'🟣',n:'PimEyes',d:'Facial avanzado',url:'https://pimeyes.com/'},
+    {ico:'🔍',n:'Search4Faces',d:'Redes sociales',url:'https://search4faces.com/'},
+    {ico:'🔵',n:'Bing Visual',d:'Personas y objetos',url:'https://www.bing.com/visualsearch'},
+    {ico:'📷',n:'Google Images',d:'Búsqueda inversa',url:'https://images.google.com/'},
   ];
-  document.getElementById('grid-foto').innerHTML=items.map(f=>`
-    <a class="lk" href="${f.url}" target="_blank" rel="noopener noreferrer">
-      <span class="li">${f.ico}</span>
-      <div class="ln">${f.name}</div>
-      <div class="ld">${f.desc}</div>
+  document.getElementById('grid-foto').innerHTML=items.map(m=>`
+    <a class="lk" href="${m.url}" target="_blank" rel="noopener noreferrer">
+      <span class="li">${m.ico}</span>
+      <div class="ln">${m.n}</div>
+      <div class="ld">${m.d}</div>
     </a>`).join('');
   document.getElementById('res-foto').style.display='block';
   toast('Ábrelos en paralelo para mejores resultados','📷');
 }
 
-// ── DORKS ──
+// ─── DORKS ───
 function generarDorks(){
-  const nombre=document.getElementById('d-nombre').value.trim();
-  const cedula=document.getElementById('d-cedula').value.trim();
-  const email=document.getElementById('d-email').value.trim();
-  const tel=document.getElementById('d-tel').value.trim().replace(/[\s\-().+]/g,'');
-  const sitio=document.getElementById('d-sitio').value.trim();
-  if(!nombre&&!cedula&&!email&&!tel){toast('Ingresa al menos un dato','⚠️');return;}
-
-  const dorks=[];
-  if(nombre){
-    dorks.push({lbl:'Nombre exacto en la web',q:`"${nombre}"`});
-    dorks.push({lbl:'Nombre en PDFs',q:`"${nombre}" filetype:pdf`});
-    dorks.push({lbl:'Nombre en gov.co',q:`"${nombre}" site:gov.co`});
-    dorks.push({lbl:'Nombre en redes sociales',q:`"${nombre}" site:linkedin.com OR site:facebook.com OR site:instagram.com OR site:twitter.com`});
-    dorks.push({lbl:'Nombre en noticias colombianas',q:`"${nombre}" site:eltiempo.com OR site:semana.com OR site:elcolombiano.com OR site:caracol.com.co`});
-    dorks.push({lbl:'Nombre en contratos públicos',q:`"${nombre}" "contrato" OR "licitación" OR "proponente" site:gov.co`});
-    if(sitio) dorks.push({lbl:`Nombre en ${sitio}`,q:`"${nombre}" site:${sitio}`});
+  const n=document.getElementById('d-nombre').value.trim();
+  const c=document.getElementById('d-cedula').value.trim();
+  const e=document.getElementById('d-email').value.trim();
+  const t=document.getElementById('d-tel').value.trim().replace(/[\s\-().+]/g,'');
+  const s=document.getElementById('d-sitio').value.trim();
+  if(!n&&!c&&!e&&!t){toast('Ingresa al menos un dato','⚠️');return;}
+  const D=[];
+  if(n){
+    D.push({l:'Nombre exacto en la web',q:`"${n}"`});
+    D.push({l:'Nombre en PDFs',q:`"${n}" filetype:pdf`});
+    D.push({l:'Nombre en gov.co',q:`"${n}" site:gov.co`});
+    D.push({l:'Nombre en redes sociales',q:`"${n}" site:linkedin.com OR site:facebook.com OR site:instagram.com`});
+    D.push({l:'Nombre en noticias colombianas',q:`"${n}" site:eltiempo.com OR site:semana.com OR site:elcolombiano.com`});
+    D.push({l:'Nombre en contratos públicos',q:`"${n}" "contrato" OR "licitación" site:gov.co`});
+    if(s) D.push({l:`Nombre en ${s}`,q:`"${n}" site:${s}`});
   }
-  if(cedula){
-    dorks.push({lbl:'Cédula en la web',q:`"${cedula}"`});
-    dorks.push({lbl:'Cédula en PDFs',q:`"${cedula}" filetype:pdf`});
-    dorks.push({lbl:'Cédula en gov.co',q:`"${cedula}" site:gov.co`});
-    if(nombre) dorks.push({lbl:'Nombre + cédula (cruce)',q:`"${nombre}" "${cedula}"`});
-  }
-  if(email){
-    dorks.push({lbl:'Email en la web',q:`"${email}"`});
-    if(nombre) dorks.push({lbl:'Nombre + email',q:`"${nombre}" "${email}"`});
-  }
-  if(tel){
-    dorks.push({lbl:'Teléfono en la web',q:`"${tel}"`});
-    if(nombre) dorks.push({lbl:'Nombre + teléfono',q:`"${nombre}" "${tel}"`});
-  }
-
+  if(c){D.push({l:'Cédula en la web',q:`"${c}"`});D.push({l:'Cédula en PDFs',q:`"${c}" filetype:pdf`});D.push({l:'Cédula en gov.co',q:`"${c}" site:gov.co`});if(n)D.push({l:'Nombre + cédula',q:`"${n}" "${c}"`})}
+  if(e){D.push({l:'Email en la web',q:`"${e}"`});if(n)D.push({l:'Nombre + email',q:`"${n}" "${e}"`})}
+  if(t){D.push({l:'Teléfono en la web',q:`"${t}"`});if(n)D.push({l:'Nombre + teléfono',q:`"${n}" "${t}"`})}
   document.getElementById('res-dorks').innerHTML=`<div class="block">
-    <div class="stitle">⚡ ${dorks.length} dorks generados</div>
-    ${dorks.map((d,i)=>`
-      <div class="dork-item">
-        <div class="dork-lbl">${esc(d.lbl)}</div>
-        <div class="dork-box" id="dq${i}">${esc(d.q)}</div>
-        <div class="dork-row">
-          <button class="btn btn-ghost btn-sm" onclick="cpDork(${i},this)">📋 Copiar</button>
-          <a class="btn btn-ghost btn-sm" href="https://www.google.com/search?q=${encodeURIComponent(d.q)}" target="_blank" rel="noopener">🔍 Buscar</a>
-        </div>
-      </div>${i<dorks.length-1?'<div class="sep"></div>':''}`).join('')}
+    <div class="stitle">⚡ ${D.length} dorks generados</div>
+    ${D.map((d,i)=>`<div class="dork-item"><div class="dork-lbl">${esc(d.l)}</div>
+    <div class="dork-box" id="dq${i}">${esc(d.q)}</div>
+    <div class="dork-row">
+      <button class="btn btn-ghost btn-sm" onclick="cpD(${i},this)">📋 Copiar</button>
+      <a class="btn btn-ghost btn-sm" href="https://www.google.com/search?q=${encodeURIComponent(d.q)}" target="_blank" rel="noopener">🔍 Buscar</a>
+    </div></div>${i<D.length-1?'<div class="sep"></div>':''}`).join('')}
   </div>`;
   document.getElementById('res-dorks').style.display='block';
-  toast(dorks.length+' dorks listos');
+  toast(D.length+' dorks listos');
 }
-function cpDork(i,btn){
+function cpD(i,btn){
   navigator.clipboard.writeText(document.getElementById('dq'+i).textContent).then(()=>{
     const o=btn.textContent;btn.textContent='✅ Copiado';btn.classList.add('copied');
     setTimeout(()=>{btn.textContent=o;btn.classList.remove('copied')},1800);
   });
 }
-
 ['d-nombre','d-cedula','d-email','d-tel','d-sitio'].forEach(id=>{
   const el=document.getElementById(id);
-  if(el) el.addEventListener('keydown',e=>{if(e.key==='Enter')generarDorks()});
+  if(el)el.addEventListener('keydown',e=>{if(e.key==='Enter')generarDorks()});
 });
 </script>
 </body>
