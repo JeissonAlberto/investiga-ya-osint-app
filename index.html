@@ -3,501 +3,416 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>ARGOS v3 — Motor de Inteligencia OSINT Colombia</title>
+<title>ARGOS — Motor OSINT Colombia</title>
 <meta name="theme-color" content="#080808"/>
 <link rel="icon" type="image/svg+xml" href="logo-icon.svg"/>
 <style>
+*{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#080808;--bg2:#0f0f0f;--card:#141414;--card2:#1a1a1a;
-  --border:#232323;--border2:#2d2d2d;
-  --red:#dc2626;--red-l:#ef4444;--red-ll:#ff6060;--red-glow:rgba(220,38,38,.15);--red-sub:rgba(220,38,38,.08);
-  --white:#fff;--gray1:#ebebeb;--gray2:#b0b0b0;--gray3:#686868;--gray4:#383838;
-  --green:#16a34a;--green-l:#22c55e;--yellow-l:#eab308;
-  --text:#e8e8e8;--muted:#555;--r:10px;
+  --bg:#080808;--card:#141414;--card2:#1a1a1a;--border:#252525;--border2:#303030;
+  --red:#dc2626;--redl:#ef4444;--redll:#ff6060;--redglow:rgba(220,38,38,.15);--redsub:rgba(220,38,38,.08);
+  --white:#fff;--g1:#e8e8e8;--g2:#b0b0b0;--g3:#686868;--g4:#383838;
+  --green:#22c55e;--yellow:#eab308;--muted:#555;--r:10px;
 }
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;overflow-x:hidden}
-::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--bg2)}::-webkit-scrollbar-thumb{background:var(--red);border-radius:4px}
+body{background:var(--bg);color:var(--g1);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;overflow-x:hidden}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:#111}::-webkit-scrollbar-thumb{background:var(--red);border-radius:4px}
+a{color:var(--redll);text-decoration:none}a:hover{text-decoration:underline}
 
-header{background:rgba(8,8,8,.97);border-bottom:1px solid var(--border);padding:0 16px;height:52px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:200;backdrop-filter:blur(18px)}
-.logo-w{width:30px;height:30px;border-radius:7px;overflow:hidden;flex-shrink:0}.logo-w img{width:100%;height:100%}
-.brand .bname{font-size:.98rem;font-weight:900;color:var(--white);letter-spacing:.5px}
-.brand .bsub{font-size:.54rem;color:var(--red);font-weight:700;letter-spacing:2px;text-transform:uppercase}
-.hbadge{margin-left:auto;background:var(--red-sub);border:1px solid rgba(220,38,38,.3);color:var(--red-ll);font-size:.58rem;padding:2px 9px;border-radius:20px;font-weight:800;letter-spacing:.5px}
+/* HEADER */
+header{background:rgba(8,8,8,.97);border-bottom:1px solid var(--border);padding:0 16px;height:50px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:100;backdrop-filter:blur(16px)}
+.logo-w{width:28px;height:28px;border-radius:6px;overflow:hidden;flex-shrink:0}
+.logo-w img{width:100%;height:100%}
+.bname{font-size:.96rem;font-weight:900;color:var(--white);letter-spacing:.5px}
+.bsub{font-size:.52rem;color:var(--red);font-weight:700;letter-spacing:2px;text-transform:uppercase}
+.hbadge{margin-left:auto;background:var(--redsub);border:1px solid rgba(220,38,38,.3);color:var(--redll);font-size:.57rem;padding:2px 8px;border-radius:20px;font-weight:800}
 
-.tabs{background:var(--card);border-bottom:1px solid var(--border);display:flex;overflow-x:auto;scrollbar-width:none;padding:0 4px}
+/* TABS */
+.tabs{background:var(--card);border-bottom:1px solid var(--border);display:flex;overflow-x:auto;scrollbar-width:none}
 .tabs::-webkit-scrollbar{display:none}
-.tab{padding:11px 13px;font-size:.73rem;font-weight:700;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;transition:color .15s,border-color .15s;user-select:none}
-.tab:hover{color:var(--gray2)}.tab.active{color:var(--white);border-bottom-color:var(--red)}
+.tab{padding:11px 13px;font-size:.72rem;font-weight:700;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;transition:all .15s;user-select:none}
+.tab:hover{color:var(--g2)}.tab.active{color:var(--white);border-bottom-color:var(--red)}
 
 main{max-width:980px;margin:0 auto;padding:0 12px 80px}
 .panel{display:none}.panel.active{display:block}
 
 /* HERO */
-.hero{padding:26px 12px 20px;text-align:center;max-width:680px;margin:0 auto}
-.algo-name{font-size:2.4rem;font-weight:900;color:var(--white);letter-spacing:3px;margin-bottom:3px}
-.algo-name span{color:var(--red)}
-.algo-tag{font-size:.57rem;color:var(--muted);letter-spacing:3px;text-transform:uppercase;margin-bottom:10px;font-weight:600}
-.hero-sub{font-size:.78rem;color:var(--gray3);line-height:1.6;margin-bottom:4px}
-.hero-apis{font-size:.68rem;color:var(--red-ll);font-weight:700;margin-bottom:18px}
+.hero{padding:28px 12px 20px;text-align:center;max-width:680px;margin:0 auto}
+.aname{font-size:2.4rem;font-weight:900;color:var(--white);letter-spacing:3px;margin-bottom:3px}
+.aname span{color:var(--red)}
+.atag{font-size:.57rem;color:var(--muted);letter-spacing:3px;text-transform:uppercase;margin-bottom:10px;font-weight:600}
+.adesc{font-size:.78rem;color:var(--g3);line-height:1.6;margin-bottom:4px}
+.adesc strong{color:var(--white)}
+.aapis{font-size:.67rem;color:var(--redll);font-weight:700;margin-bottom:18px}
 
-.search-wrap{max-width:640px;margin:0 auto}
-.search-bar{display:flex;margin-bottom:8px}
-.search-bar input{flex:1;background:var(--card);border:2px solid var(--border2);border-right:none;color:var(--text);padding:13px 16px;font-size:.9rem;font-family:inherit;outline:none;border-radius:var(--r) 0 0 var(--r);transition:border-color .18s,box-shadow .18s}
-.search-bar input:focus{border-color:var(--red);box-shadow:0 0 0 3px var(--red-glow)}
-.search-bar input::placeholder{color:var(--muted)}
+/* SEARCH */
+.sw{max-width:640px;margin:0 auto}
+.sb{display:flex;margin-bottom:8px}
+.sb input{flex:1;background:var(--card);border:2px solid var(--border2);border-right:none;color:var(--g1);padding:13px 16px;font-size:.9rem;font-family:inherit;outline:none;border-radius:var(--r) 0 0 var(--r);transition:border-color .18s,box-shadow .18s}
+.sb input:focus{border-color:var(--red);box-shadow:0 0 0 3px var(--redglow)}
+.sb input::placeholder{color:var(--muted)}
 .sbtn{background:var(--red);color:#fff;border:none;padding:13px 20px;font-size:.85rem;font-weight:800;cursor:pointer;border-radius:0 var(--r) var(--r) 0;font-family:inherit;white-space:nowrap;transition:background .14s}
-.sbtn:hover{background:var(--red-l)}.sbtn:active{transform:scale(.97)}
-.search-note{font-size:.64rem;color:var(--muted);text-align:center;margin-bottom:6px}
+.sbtn:hover{background:var(--redl)}.sbtn:active{transform:scale(.97)}
+.snote{font-size:.63rem;color:var(--muted);text-align:center}
 
-.hist-wrap{max-width:640px;margin:-2px auto 10px;display:none}
-.hist-label{font-size:.59rem;color:var(--gray4);text-transform:uppercase;letter-spacing:1.5px;font-weight:700;margin-bottom:4px}
-.hist-chips{display:flex;flex-wrap:wrap;gap:4px}
-.hchip{font-size:.66rem;color:var(--gray3);cursor:pointer;padding:2px 9px;border-radius:20px;border:1px solid var(--border2);transition:all .13s;font-weight:600}
-.hchip:hover{border-color:var(--red-l);color:var(--white)}
-.hchip-x{color:var(--muted);margin-left:2px;font-size:.58rem}
-
-/* PROGRESS */
-.progress-wrap{max-width:660px;margin:22px auto 0;display:none}
-.ph{display:flex;justify-content:space-between;margin-bottom:5px}
-.plbl{font-size:.74rem;color:var(--gray2);font-weight:700}.ppct{font-size:.74rem;color:var(--red-ll);font-weight:800;font-family:monospace}
-.pbar{height:3px;background:var(--border);border-radius:3px;overflow:hidden;margin-bottom:10px}
-.pfill{height:100%;background:linear-gradient(90deg,var(--red),var(--red-ll));width:0;transition:width .3s ease}
-.src-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}
-@media(max-width:580px){.src-grid{grid-template-columns:1fr 1fr}}
-.src-item{display:flex;align-items:center;gap:5px;padding:5px 8px;background:var(--card);border:1px solid var(--border);border-radius:7px;font-size:.65rem;transition:border-color .2s}
-.src-item.run{border-color:var(--yellow-l)}.src-item.hit{border-color:var(--green-l)}.src-item.miss{opacity:.35}
-.src-ico{font-size:.8rem;flex-shrink:0}.src-name{flex:1;color:var(--gray2);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.src-st{font-size:.58rem;font-weight:700;white-space:nowrap;flex-shrink:0}
-.st-wait{color:var(--gray4)}.st-run{color:var(--yellow-l)}.st-hit{color:var(--green-l)}.st-miss{color:var(--muted)}
-.spin{display:inline-block;width:7px;height:7px;border:1.5px solid var(--yellow-l);border-top-color:transparent;border-radius:50%;animation:spin .5s linear infinite;vertical-align:middle}
+/* ESTADO */
+.estado{max-width:640px;margin:18px auto 0;display:none}
+.estado-lbl{font-size:.73rem;color:var(--g2);font-weight:700;margin-bottom:8px;display:flex;justify-content:space-between}
+.pbar-wrap{height:4px;background:var(--border);border-radius:4px;overflow:hidden;margin-bottom:14px}
+.pbar-fill{height:100%;background:linear-gradient(90deg,var(--red),var(--redll));width:0;transition:width .35s ease;border-radius:4px}
+.fuentes-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}
+@media(max-width:560px){.fuentes-grid{grid-template-columns:1fr 1fr}}
+.fuente{display:flex;align-items:center;gap:5px;padding:5px 8px;background:var(--card);border:1px solid var(--border);border-radius:6px;font-size:.64rem;transition:border-color .2s}
+.fuente.running{border-color:var(--yellow)}.fuente.hit{border-color:var(--green)}.fuente.miss{opacity:.35}
+.fst{font-size:.57rem;font-weight:700;margin-left:auto;white-space:nowrap}
+.fst-w{color:var(--g4)}.fst-r{color:var(--yellow)}.fst-h{color:var(--green)}.fst-m{color:var(--muted)}
+.spin{display:inline-block;width:7px;height:7px;border:1.5px solid var(--yellow);border-top-color:transparent;border-radius:50%;animation:spin .5s linear infinite;vertical-align:middle}
 @keyframes spin{to{transform:rotate(360deg)}}
 
 /* CERTEZA */
-.cert-wrap{display:none;flex-direction:column;align-items:center;margin:20px auto 0;max-width:640px}
-.cert-wrap.show{display:flex}
-.cert-ring{position:relative;width:120px;height:120px;margin-bottom:6px}
+.certeza-wrap{display:none;flex-direction:column;align-items:center;margin:20px auto 0;max-width:640px}
+.certeza-wrap.show{display:flex}
+.cert-ring{position:relative;width:116px;height:116px;margin-bottom:6px}
 .cert-ring svg{transform:rotate(-90deg)}
 .c-bg{fill:none;stroke:var(--border2);stroke-width:9}
-.c-fg{fill:none;stroke:var(--red);stroke-width:9;stroke-linecap:round;stroke-dasharray:314;stroke-dashoffset:314;transition:stroke-dashoffset 1.1s ease}
+.c-fg{fill:none;stroke:var(--red);stroke-width:9;stroke-linecap:round;stroke-dasharray:301;stroke-dashoffset:301;transition:stroke-dashoffset 1.1s ease}
 .cert-inner{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
 .cert-num{font-size:1.6rem;font-weight:900;color:var(--white)}
-.cert-lbl{font-size:.5rem;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;font-weight:700}
-.cert-desc{font-size:.7rem;color:var(--gray3);text-align:center;max-width:260px;line-height:1.5}
+.cert-sub{font-size:.5rem;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;font-weight:700}
+.cert-desc{font-size:.7rem;color:var(--g3);text-align:center;max-width:260px;line-height:1.5}
 .cert-pills{display:flex;gap:5px;margin-top:7px;flex-wrap:wrap;justify-content:center}
-.cpill{font-size:.61rem;padding:2px 9px;border-radius:20px;font-weight:700}
-.cpill-g{background:rgba(22,163,74,.12);color:var(--green-l);border:1px solid rgba(22,163,74,.2)}
-.cpill-y{background:rgba(234,179,8,.1);color:var(--yellow-l);border:1px solid rgba(234,179,8,.2)}
-.cpill-r{background:var(--red-sub);color:var(--red-ll);border:1px solid rgba(220,38,38,.2)}
+.cpill{font-size:.6rem;padding:2px 8px;border-radius:20px;font-weight:700}
+.cpg{background:rgba(34,197,94,.12);color:var(--green);border:1px solid rgba(34,197,94,.2)}
+.cpy{background:rgba(234,179,8,.1);color:var(--yellow);border:1px solid rgba(234,179,8,.2)}
+.cpr{background:var(--redsub);color:var(--redll);border:1px solid rgba(220,38,38,.2)}
 
-/* REPORT */
-.report{max-width:860px;margin:18px auto 0;display:none}
+/* INFORME */
+.informe{max-width:860px;margin:20px auto 0;display:none}
 
-.prof-card{background:var(--card);border:1px solid var(--border);border-top:3px solid var(--red);border-radius:var(--r);padding:15px;margin-bottom:9px;display:flex;gap:13px;align-items:flex-start;flex-wrap:wrap}
-.prof-av{width:50px;height:50px;border-radius:50%;background:linear-gradient(135deg,#6b0000,var(--red));display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0}
-.prof-info{flex:1;min-width:140px}
-.prof-name{font-size:1.05rem;font-weight:900;color:var(--white);margin-bottom:2px}
-.prof-sub{font-size:.65rem;color:var(--muted);font-family:monospace;margin-bottom:5px}
-.prof-tags{display:flex;flex-wrap:wrap;gap:3px}
+/* PERFIL */
+.perfil{background:var(--card);border:1px solid var(--border);border-top:3px solid var(--red);border-radius:var(--r);padding:15px;margin-bottom:9px;display:flex;gap:13px;align-items:flex-start;flex-wrap:wrap}
+.pav{width:50px;height:50px;border-radius:50%;background:linear-gradient(135deg,#6b0000,var(--red));display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0}
+.pinfo{flex:1;min-width:140px}
+.pname{font-size:1.05rem;font-weight:900;color:var(--white);margin-bottom:2px}
+.psub{font-size:.64rem;color:var(--muted);font-family:monospace;margin-bottom:6px}
+.ptags{display:flex;flex-wrap:wrap;gap:3px}
 .ptag{font-size:.57rem;font-weight:700;padding:2px 7px;border-radius:5px}
-.pt-r{background:var(--red-sub);color:var(--red-ll);border:1px solid rgba(220,38,38,.22)}
-.pt-g{background:rgba(22,163,74,.1);color:var(--green-l);border:1px solid rgba(22,163,74,.2)}
-.pt-y{background:rgba(234,179,8,.1);color:var(--yellow-l);border:1px solid rgba(234,179,8,.2)}
-.pt-x{background:rgba(255,255,255,.05);color:var(--gray3);border:1px solid var(--border2)}
-.prof-right{margin-left:auto;text-align:right;display:flex;flex-direction:column;gap:4px}
-.copy-btn{display:inline-flex;align-items:center;gap:4px;background:var(--card2);border:1px solid var(--border2);color:var(--gray2);border-radius:7px;padding:4px 9px;font-size:.68rem;font-weight:700;cursor:pointer;font-family:inherit;transition:all .13s}
-.copy-btn:hover{border-color:var(--red);color:var(--white)}
-.prof-algo{font-size:.6rem;color:var(--red-ll);font-weight:700}
-.prof-date{font-size:.58rem;color:var(--gray4);font-family:monospace}
+.ptg{background:rgba(34,197,94,.1);color:var(--green);border:1px solid rgba(34,197,94,.2)}
+.pty{background:rgba(234,179,8,.1);color:var(--yellow);border:1px solid rgba(234,179,8,.2)}
+.ptr{background:var(--redsub);color:var(--redll);border:1px solid rgba(220,38,38,.22)}
+.ptx{background:rgba(255,255,255,.05);color:var(--g3);border:1px solid var(--border)}
+.pbtn{display:inline-flex;align-items:center;gap:4px;background:var(--card2);border:1px solid var(--border2);color:var(--g2);border-radius:7px;padding:4px 9px;font-size:.67rem;font-weight:700;cursor:pointer;font-family:inherit;transition:all .13s}
+.pbtn:hover{border-color:var(--red);color:var(--white)}
+.pmeta{margin-left:auto;text-align:right;display:flex;flex-direction:column;gap:4px;align-items:flex-end}
+.pmeta-algo{font-size:.6rem;color:var(--redll);font-weight:700}
+.pmeta-fecha{font-size:.58rem;color:var(--g4);font-family:monospace}
 
-/* BLOQUES DE RESULTADO */
-.res-block{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:13px;margin-bottom:9px}
-.res-block.has-data{border-left:3px solid var(--red)}
-.res-block.clean{border-left:3px solid var(--green-l)}
-.res-block.warn{border-left:3px solid var(--yellow-l)}
-.rb-head{display:flex;align-items:center;gap:7px;margin-bottom:10px}
-.rb-ico{font-size:1rem}
-.rb-title{font-size:.6rem;text-transform:uppercase;letter-spacing:1.8px;color:var(--red);font-weight:800;flex:1}
-.rb-title.green{color:var(--green-l)}.rb-title.gray{color:var(--gray4)}
-.rb-count{font-size:.62rem;font-weight:800;padding:1px 7px;border-radius:20px}
-.rb-count.hit{background:rgba(220,38,38,.1);color:var(--red-ll);border:1px solid rgba(220,38,38,.2)}
-.rb-count.ok{background:rgba(22,163,74,.1);color:var(--green-l);border:1px solid rgba(22,163,74,.2)}
-.rb-count.none{background:rgba(255,255,255,.04);color:var(--muted);border:1px solid var(--border)}
+/* BLOQUE */
+.blk{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:13px;margin-bottom:9px}
+.blk.hit{border-left:3px solid var(--red)}.blk.clean{border-left:3px solid var(--green)}.blk.warn{border-left:3px solid var(--yellow)}
+.blk-head{display:flex;align-items:center;gap:7px;margin-bottom:10px}
+.blk-ico{font-size:.95rem}
+.blk-title{font-size:.59rem;text-transform:uppercase;letter-spacing:1.8px;color:var(--red);font-weight:800;flex:1}
+.blk-title.g{color:var(--green)}.blk-title.gr{color:var(--g4)}
+.blk-cnt{font-size:.61rem;font-weight:800;padding:1px 7px;border-radius:20px}
+.cnt-hit{background:var(--redsub);color:var(--redll);border:1px solid rgba(220,38,38,.2)}
+.cnt-ok{background:rgba(34,197,94,.1);color:var(--green);border:1px solid rgba(34,197,94,.18)}
+.cnt-none{background:rgba(255,255,255,.04);color:var(--muted);border:1px solid var(--border)}
 
-/* DATO REAL */
-.dato-card{background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:6px}
-.dato-card:last-child{margin-bottom:0}
-.dato-title{font-size:.75rem;font-weight:700;color:var(--white);margin-bottom:4px;line-height:1.3}
-.dato-grid{display:grid;grid-template-columns:auto 1fr;gap:2px 10px}
-.dato-label{font-size:.62rem;color:var(--muted)}
-.dato-val{font-size:.68rem;color:var(--gray1);font-weight:600;word-break:break-word}
-.dato-val a{color:var(--red-ll);text-decoration:none}.dato-val a:hover{text-decoration:underline}
-.dato-badge{display:inline-flex;align-items:center;font-size:.58rem;font-weight:700;padding:1px 6px;border-radius:5px;margin-left:5px}
-.db-g{background:rgba(22,163,74,.12);color:var(--green-l);border:1px solid rgba(22,163,74,.2)}
-.db-y{background:rgba(234,179,8,.1);color:var(--yellow-l);border:1px solid rgba(234,179,8,.2)}
-.db-r{background:var(--red-sub);color:var(--red-ll);border:1px solid rgba(220,38,38,.2)}
-.db-x{background:rgba(255,255,255,.04);color:var(--gray3);border:1px solid var(--border)}
-.dato-money{font-size:.82rem;font-weight:800;color:var(--green-l);margin-top:4px}
-.clean-msg{font-size:.72rem;color:var(--green-l);display:flex;align-items:center;gap:6px;padding:4px 0}
-.no-data-msg{font-size:.71rem;color:var(--muted);font-style:italic}
+/* DATO CARD */
+.dato{background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:6px}
+.dato:last-child{margin-bottom:0}
+.dato-title{font-size:.74rem;font-weight:700;color:var(--white);margin-bottom:6px;line-height:1.3}
+.dato-rows{display:grid;grid-template-columns:auto 1fr;gap:2px 10px}
+.dl{font-size:.62rem;color:var(--muted)}
+.dv{font-size:.68rem;color:var(--g1);font-weight:600;word-break:break-word}
+.dv a{color:var(--redll)}
+.dbadge{display:inline-flex;font-size:.57rem;font-weight:700;padding:1px 6px;border-radius:5px;margin-left:4px}
+.dbg{background:rgba(34,197,94,.12);color:var(--green);border:1px solid rgba(34,197,94,.2)}
+.dbr{background:var(--redsub);color:var(--redll);border:1px solid rgba(220,38,38,.2)}
+.dbx{background:rgba(255,255,255,.04);color:var(--g3);border:1px solid var(--border)}
+.dato-money{font-size:.8rem;font-weight:800;color:var(--green);margin-top:5px}
+.msg-ok{font-size:.72rem;color:var(--green);display:flex;align-items:center;gap:5px;padding:3px 0}
+.msg-no{font-size:.7rem;color:var(--muted);font-style:italic}
 
-/* ROW INFO */
-.ri{display:flex;gap:6px;padding:3px 0;border-bottom:1px solid rgba(255,255,255,.04)}
-.ri:last-child{border-bottom:none}
-.rl{color:var(--muted);flex-shrink:0;min-width:90px;font-size:.64rem}
-.rv{color:var(--gray1);font-weight:600;font-size:.7rem;word-break:break-word}
-.rv a{color:var(--red-ll);text-decoration:none}.rv a:hover{text-decoration:underline}
+/* ROW */
+.row-item{display:flex;gap:7px;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+.row-item:last-child{border-bottom:none}
+.rl{color:var(--muted);flex-shrink:0;min-width:95px;font-size:.63rem}
+.rv{color:var(--g1);font-weight:600;font-size:.69rem;word-break:break-word}
+.rv a{color:var(--redll)}
 
-/* GRID 2 COL */
-.two-col{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:9px}
-@media(max-width:560px){.two-col{grid-template-columns:1fr}}
+/* 2 COL */
+.two{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:9px}
+@media(max-width:560px){.two{grid-template-columns:1fr}}
 
-/* LINKS GRID */
-.lk-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:6px;margin-top:7px}
-.lk{background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:8px;text-decoration:none;display:block;transition:border-color .13s,transform .11s}
-.lk:hover{border-color:var(--red);transform:translateY(-1px)}
-.lk-ico{font-size:.92rem;display:block;margin-bottom:2px}
-.lk-n{font-size:.68rem;font-weight:700;color:var(--white)}
+/* LINKS */
+.lk-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(128px,1fr));gap:6px;margin-top:7px}
+.lk{background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:8px;text-decoration:none;display:block;transition:border-color .13s,transform .11s;color:inherit}
+.lk:hover{border-color:var(--red);transform:translateY(-1px);text-decoration:none}
+.lk-ico{font-size:.9rem;display:block;margin-bottom:2px}
+.lk-n{font-size:.67rem;font-weight:700;color:var(--white)}
 .lk-d{font-size:.59rem;color:var(--muted);margin-top:1px}
 
 /* IMG GRID */
-.img-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:6px;margin-top:7px}
-.img-e{background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:9px;text-decoration:none;display:block;text-align:center;transition:border-color .13s,transform .11s}
-.img-e:hover{border-color:var(--red);transform:translateY(-2px)}
-.img-e .ie{font-size:1.25rem;display:block;margin-bottom:3px}
-.img-e .in{font-size:.68rem;font-weight:700;color:var(--white)}
-.img-e .id2{font-size:.59rem;color:var(--muted)}
+.img-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(115px,1fr));gap:6px;margin-top:7px}
+.ig{background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:9px;text-decoration:none;display:block;text-align:center;transition:border-color .13s,transform .11s}
+.ig:hover{border-color:var(--red);transform:translateY(-2px)}
+.ig-ico{font-size:1.2rem;display:block;margin-bottom:3px}
+.ig-n{font-size:.67rem;font-weight:700;color:var(--white)}
+.ig-d{font-size:.58rem;color:var(--muted)}
 
-/* OTROS PANELES */
+/* OTROS */
 .block{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:9px}
 .stitle{font-size:.58rem;text-transform:uppercase;letter-spacing:2px;color:var(--red);font-weight:800;margin-bottom:9px;display:flex;align-items:center;gap:7px}
 .stitle::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--border2),transparent)}
 .field{margin-bottom:8px}
-.field label{display:block;font-size:.63rem;color:var(--gray3);font-weight:700;margin-bottom:3px;text-transform:uppercase;letter-spacing:.4px}
-.field input{width:100%;background:var(--card2);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:8px 12px;font-size:.83rem;outline:none;font-family:inherit;transition:border-color .14s,box-shadow .14s}
-.field input:focus{border-color:var(--red);box-shadow:0 0 0 3px var(--red-glow)}
-.field input::placeholder{color:var(--gray4)}
-.row{display:flex;gap:8px;flex-wrap:wrap}.row .field{flex:1;min-width:120px}
-.dork-box{background:#080808;border:1px solid var(--border);border-left:2px solid var(--red);border-radius:6px;padding:7px 10px;font-family:'Courier New',monospace;font-size:.72rem;color:#ff9999;line-height:1.45;margin:4px 0 5px;word-break:break-all;user-select:all}
-.dork-lbl{font-size:.61rem;color:var(--red);font-weight:700;text-transform:uppercase;letter-spacing:.8px}
+.field label{display:block;font-size:.63rem;color:var(--g3);font-weight:700;margin-bottom:3px;text-transform:uppercase;letter-spacing:.4px}
+.field input{width:100%;background:var(--card2);border:1px solid var(--border);color:var(--g1);border-radius:8px;padding:8px 12px;font-size:.82rem;outline:none;font-family:inherit;transition:border-color .14s}
+.field input:focus{border-color:var(--red);box-shadow:0 0 0 3px var(--redglow)}
+.field input::placeholder{color:var(--g4)}
+.rowf{display:flex;gap:8px;flex-wrap:wrap}.rowf .field{flex:1;min-width:120px}
+.dork-lbl{font-size:.61rem;color:var(--red);font-weight:700;text-transform:uppercase;letter-spacing:.8px;margin-bottom:3px}
+.dork-box{background:#080808;border:1px solid var(--border);border-left:2px solid var(--red);border-radius:6px;padding:7px 10px;font-family:'Courier New',monospace;font-size:.71rem;color:#ff9999;line-height:1.45;margin-bottom:5px;word-break:break-all;user-select:all}
 .dork-row{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:10px}
 .sep{height:1px;background:var(--border);margin:10px 0}
-.info{background:rgba(255,255,255,.02);border:1px solid var(--border);border-left:2px solid var(--gray4);border-radius:8px;padding:7px 10px;font-size:.7rem;color:var(--muted);line-height:1.5;margin-bottom:8px}
-.info strong{color:var(--gray2)}.info.red{border-left-color:var(--red);background:var(--red-sub)}.info.red strong{color:var(--red-ll)}
-.alert{display:flex;gap:6px;background:var(--red-sub);border:1px solid rgba(220,38,38,.18);border-left:3px solid var(--red);border-radius:var(--r);padding:8px 11px;font-size:.69rem;color:rgba(255,180,180,.8);line-height:1.5;margin-bottom:10px}
+.info{background:rgba(255,255,255,.02);border:1px solid var(--border);border-left:2px solid var(--g4);border-radius:8px;padding:7px 10px;font-size:.7rem;color:var(--muted);line-height:1.5;margin-bottom:8px}
+.info strong{color:var(--g2)}.info.red{border-left-color:var(--red);background:var(--redsub)}.info.red strong{color:var(--redll)}
+.alert{display:flex;gap:6px;background:var(--redsub);border:1px solid rgba(220,38,38,.18);border-left:3px solid var(--red);border-radius:var(--r);padding:8px 11px;font-size:.69rem;color:rgba(255,180,180,.8);line-height:1.5;margin-bottom:10px}
 .tbl-wrap{overflow-x:auto}
 .ft{width:100%;border-collapse:collapse;font-size:.71rem;min-width:340px}
 .ft th{text-align:left;color:var(--red);font-size:.58rem;text-transform:uppercase;letter-spacing:.9px;border-bottom:1px solid var(--border2);padding:0 5px 6px;font-weight:800}
 .ft td{padding:6px 5px;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:middle}
 .ft tr:last-child td{border-bottom:none}.ft tr:hover td{background:rgba(255,255,255,.02)}
-.ft a{color:var(--white);text-decoration:none;font-weight:600}.ft a:hover{color:var(--red-ll)}
-.tag{display:inline-block;font-size:.55rem;padding:2px 5px;border-radius:5px;font-weight:700}
-.tg{background:rgba(34,197,94,.1);color:#4ade80;border:1px solid rgba(34,197,94,.18)}
-.ty{background:rgba(234,179,8,.1);color:#fbbf24;border:1px solid rgba(234,179,8,.18)}
-.tr2{background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.18)}
+.ft a{color:var(--white);text-decoration:none;font-weight:600}.ft a:hover{color:var(--redll)}
+.tg{background:rgba(34,197,94,.1);color:#4ade80;border:1px solid rgba(34,197,94,.18);font-size:.55rem;padding:2px 5px;border-radius:5px;font-weight:700}
+.ty{background:rgba(234,179,8,.1);color:#fbbf24;border:1px solid rgba(234,179,8,.18);font-size:.55rem;padding:2px 5px;border-radius:5px;font-weight:700}
 .btn{display:inline-flex;align-items:center;gap:4px;padding:7px 13px;border-radius:8px;font-size:.74rem;font-weight:700;cursor:pointer;border:none;text-decoration:none;font-family:inherit;transition:all .13s}
 .btn:active{transform:scale(.96)}
-.btn-red{background:var(--red);color:#fff}.btn-red:hover{background:var(--red-l)}
-.btn-ghost{background:transparent;border:1px solid var(--border2);color:var(--gray2)}.btn-ghost:hover{border-color:var(--red);color:var(--white)}
+.btn-r{background:var(--red);color:#fff}.btn-r:hover{background:var(--redl)}
+.btn-g{background:transparent;border:1px solid var(--border2);color:var(--g2)}.btn-g:hover{border-color:var(--red);color:var(--white)}
 .btn-sm{padding:4px 8px;font-size:.67rem}.btn-full{width:100%;justify-content:center;margin-top:4px}
 .rep-acts{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0}
 ol.steps{list-style:none;counter-reset:s}
 ol.steps li{counter-increment:s;position:relative;padding:7px 7px 7px 36px;border-bottom:1px solid rgba(255,255,255,.04);font-size:.74rem;line-height:1.5}
 ol.steps li:last-child{border-bottom:none}
 ol.steps li::before{content:counter(s);position:absolute;left:6px;top:50%;transform:translateY(-50%);width:21px;height:21px;background:var(--red);border-radius:50%;text-align:center;line-height:21px;font-size:.6rem;font-weight:800;color:#fff}
-
-#toast{position:fixed;bottom:56px;left:50%;transform:translateX(-50%) translateY(8px);background:var(--card2);border:1px solid var(--border2);border-left:3px solid var(--red);border-radius:8px;padding:6px 14px;font-size:.72rem;font-weight:700;color:var(--text);opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;z-index:400;white-space:nowrap;box-shadow:0 6px 22px rgba(0,0,0,.5)}
+#toast{position:fixed;bottom:56px;left:50%;transform:translateX(-50%) translateY(8px);background:var(--card2);border:1px solid var(--border2);border-left:3px solid var(--red);border-radius:8px;padding:6px 14px;font-size:.71rem;font-weight:700;color:var(--g1);opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;z-index:400;white-space:nowrap;box-shadow:0 6px 22px rgba(0,0,0,.5)}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 #top-btn{position:fixed;bottom:13px;right:12px;background:var(--red);color:#fff;border:none;border-radius:50%;width:34px;height:34px;cursor:pointer;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(220,38,38,.35);z-index:99;display:none;font-size:.85rem}
 #top-btn.show{display:flex}
-
-@media print{header,#top-btn,#toast,.tabs,.rep-acts,.search-wrap,.progress-wrap,.cert-wrap,.hist-wrap{display:none!important}.panel,.report{display:block!important}body{background:#fff;color:#111}}
+@media print{header,#top-btn,#toast,.tabs,.rep-acts,.sw,.estado,.certeza-wrap{display:none!important}.panel,.informe{display:block!important}body{background:#fff;color:#111}}
 </style>
 </head>
 <body>
 
 <header>
   <div class="logo-w"><img src="logo-icon.svg" alt=""/></div>
-  <div class="brand"><div class="bname">ARGOS</div><div class="bsub">Motor de Inteligencia · Colombia</div></div>
-  <span class="hbadge">⚡ v3.0 · APIs reales</span>
+  <div><div class="bname">ARGOS</div><div class="bsub">Motor de Inteligencia Colombia</div></div>
+  <span class="hbadge">v3.5 APIs reales</span>
 </header>
 
 <div class="tabs">
   <div class="tab active" data-tab="motor">🔴 ARGOS</div>
   <div class="tab" data-tab="foto">📷 Imagen</div>
-  <div class="tab" data-tab="telefono">📱 Teléfono</div>
-  <div class="tab" data-tab="dorks">🕵️ Dorks</div>
+  <div class="tab" data-tab="telefono">📱 Telefono</div>
+  <div class="tab" data-tab="dorks">🕵 Dorks</div>
   <div class="tab" data-tab="fuentes">📚 Fuentes</div>
-  <div class="tab" data-tab="metodo">🗂️ Método</div>
+  <div class="tab" data-tab="metodo">🗂 Metodo</div>
 </div>
 
 <main>
 
-<!-- ═══════════════ MOTOR ═══════════════ -->
+<!-- MOTOR -->
 <div class="panel active" id="panel-motor">
 <div class="hero">
-  <div class="algo-name">A<span>R</span>GOS</div>
-  <div class="algo-tag">Análisis · Rastreo · Geolocalización · OSINT · Síntesis</div>
-  <p class="hero-sub">Motor que <strong style="color:var(--white)">consulta APIs públicas reales</strong> de Colombia y muestra los datos directamente — sin abrir tabs, sin links vacíos.</p>
-  <p class="hero-apis">🔴 SECOP II API · PEP Función Pública · SIRI Procuraduría · Contraloría · SECOP I · +25 fuentes</p>
-
-  <div class="search-wrap">
-    <div class="search-bar">
-      <input type="text" id="main-query" placeholder="Nombre completo ó cédula…" autocomplete="off" spellcheck="false"/>
-      <button class="sbtn" onclick="iniciarARGOS()">🔴 Activar ARGOS</button>
+  <div class="aname">A<span>R</span>GOS</div>
+  <div class="atag">Analisis · Rastreo · Geolocalizacion · OSINT · Sintesis</div>
+  <p class="adesc">Motor que <strong>consulta APIs publicas reales</strong> de Colombia y muestra los datos directamente en pantalla.</p>
+  <p class="aapis">SECOP II · SECOP Integrado · PEP · SIRI Procuraduria · Contraloria · +20 fuentes</p>
+  <div class="sw">
+    <div class="sb">
+      <input type="text" id="q" placeholder="Nombre completo o cedula..." autocomplete="off" spellcheck="false"/>
+      <button class="sbtn" id="btnActivar">Activar ARGOS</button>
     </div>
-    <p class="search-note">💡 Con cédula obtienes datos más precisos · Ej: <em>1094269851</em> o <em>Juan Carlos Pérez</em></p>
+    <p class="snote">Con cedula obtienes datos directos de la API. Ej: 1094269851</p>
   </div>
 </div>
 
-<div class="hist-wrap" id="hist-wrap">
-  <div class="hist-label">🕓 Recientes</div>
-  <div class="hist-chips" id="hist-chips"></div>
+<div class="estado" id="estado">
+  <div class="estado-lbl">
+    <span id="estado-txt">Iniciando...</span>
+    <span id="estado-pct" style="color:var(--redll);font-family:monospace">0%</span>
+  </div>
+  <div class="pbar-wrap"><div class="pbar-fill" id="pbar"></div></div>
+  <div class="fuentes-grid" id="fuentes-grid"></div>
 </div>
 
-<div class="progress-wrap" id="progress-wrap" style="display:none">
-  <div class="ph"><span class="plbl" id="plbl">Iniciando…</span><span class="ppct" id="ppct">0%</span></div>
-  <div class="pbar"><div class="pfill" id="pfill"></div></div>
-  <div class="src-grid" id="src-grid"></div>
-</div>
-
-<div class="cert-wrap" id="cert-wrap" style="display:none">
+<div class="certeza-wrap" id="certeza-wrap">
   <div class="cert-ring">
-    <svg width="120" height="120" viewBox="0 0 120 120">
-      <circle class="c-bg" cx="60" cy="60" r="50"/>
-      <circle class="c-fg" id="cert-circle" cx="60" cy="60" r="50"/>
+    <svg width="116" height="116" viewBox="0 0 116 116">
+      <circle class="c-bg" cx="58" cy="58" r="48"/>
+      <circle class="c-fg" id="c-fg" cx="58" cy="58" r="48"/>
     </svg>
     <div class="cert-inner">
       <span class="cert-num" id="cert-num">0%</span>
-      <span class="cert-lbl">certeza ARGOS</span>
+      <span class="cert-sub">certeza</span>
     </div>
   </div>
-  <p class="cert-desc" id="cert-desc">—</p>
+  <p class="cert-desc" id="cert-desc">Calculando...</p>
   <div class="cert-pills" id="cert-pills"></div>
 </div>
 
-<div class="report" id="report" style="display:none">
-  <!-- PERFIL -->
-  <div class="prof-card">
-    <div class="prof-av" id="rpt-av">👤</div>
-    <div class="prof-info">
-      <div class="prof-name" id="rpt-name">—</div>
-      <div class="prof-sub" id="rpt-sub">—</div>
-      <div class="prof-tags" id="rpt-tags"></div>
+<div class="informe" id="informe">
+  <div class="perfil">
+    <div class="pav" id="p-av">?</div>
+    <div class="pinfo">
+      <div class="pname" id="p-name">-</div>
+      <div class="psub" id="p-sub">-</div>
+      <div class="ptags" id="p-tags"></div>
     </div>
-    <div class="prof-right">
-      <button class="copy-btn" onclick="copiarInforme()">📋 Copiar informe</button>
-      <div class="prof-algo">ARGOS v3.0 · InvestigaYa</div>
-      <div class="prof-date" id="rpt-date">—</div>
-    </div>
-  </div>
-
-  <!-- DATOS REALES -->
-  <div class="res-block" id="blk-pep">
-    <div class="rb-head">
-      <span class="rb-ico">🏅</span>
-      <span class="rb-title">Función pública — PEP (Persona Expuesta Políticamente)</span>
-      <span class="rb-count none" id="cnt-pep">—</span>
-    </div>
-    <div id="body-pep"><div class="no-data-msg">Consultando API…</div></div>
-  </div>
-
-  <div class="res-block" id="blk-siri">
-    <div class="rb-head">
-      <span class="rb-ico">⚠️</span>
-      <span class="rb-title">Procuraduría — SIRI (sanciones disciplinarias)</span>
-      <span class="rb-count none" id="cnt-siri">—</span>
-    </div>
-    <div id="body-siri"><div class="no-data-msg">Consultando API…</div></div>
-  </div>
-
-  <div class="res-block" id="blk-secop2">
-    <div class="rb-head">
-      <span class="rb-ico">📑</span>
-      <span class="rb-title">SECOP II — Contratos con el Estado (API real)</span>
-      <span class="rb-count none" id="cnt-secop2">—</span>
-    </div>
-    <div id="body-secop2"><div class="no-data-msg">Consultando API…</div></div>
-  </div>
-
-  <div class="res-block" id="blk-secop1">
-    <div class="rb-head">
-      <span class="rb-ico">📋</span>
-      <span class="rb-title">SECOP Integrado — Contratos adicionales (API real)</span>
-      <span class="rb-count none" id="cnt-secop1">—</span>
-    </div>
-    <div id="body-secop1"><div class="no-data-msg">Consultando API…</div></div>
-  </div>
-
-  <!-- GRID 2 COL -->
-  <div class="two-col">
-    <div class="res-block" id="blk-judicial">
-      <div class="rb-head"><span class="rb-ico">⚖️</span><span class="rb-title">Rama Judicial</span><span class="rb-count none" id="cnt-jud">—</span></div>
-      <div id="body-judicial"></div>
-    </div>
-    <div class="res-block" id="blk-identidad">
-      <div class="rb-head"><span class="rb-ico">🪪</span><span class="rb-title">Registros de identidad</span></div>
-      <div id="body-identidad"></div>
-    </div>
-    <div class="res-block" id="blk-educacion">
-      <div class="rb-head"><span class="rb-ico">🎓</span><span class="rb-title">Educación y certificaciones</span></div>
-      <div id="body-educacion"></div>
-    </div>
-    <div class="res-block" id="blk-financiero">
-      <div class="rb-head"><span class="rb-ico">🏦</span><span class="rb-title">Sector financiero</span></div>
-      <div id="body-financiero"></div>
-    </div>
-    <div class="res-block" id="blk-laboral">
-      <div class="rb-head"><span class="rb-ico">👔</span><span class="rb-title">Laboral y cajas</span></div>
-      <div id="body-laboral"></div>
-    </div>
-    <div class="res-block" id="blk-empresas">
-      <div class="rb-head"><span class="rb-ico">🏢</span><span class="rb-title">Empresas y bienes</span></div>
-      <div id="body-empresas"></div>
+    <div class="pmeta">
+      <button class="pbtn" onclick="copiar()">Copiar informe</button>
+      <div class="pmeta-algo">ARGOS v3.5 InvestigaYa</div>
+      <div class="pmeta-fecha" id="p-fecha">-</div>
     </div>
   </div>
 
-  <!-- REDES -->
-  <div class="res-block has-data" id="blk-redes">
-    <div class="rb-head"><span class="rb-ico">🌐</span><span class="rb-title">Redes sociales y presencia digital</span></div>
-    <div id="body-redes"></div>
+  <div class="blk" id="blk-pep">
+    <div class="blk-head"><span class="blk-ico">🏅</span><span class="blk-title">Funcion Publica — PEP (servidor publico)</span><span class="blk-cnt cnt-none" id="cnt-pep">-</span></div>
+    <div id="body-pep"><div class="msg-no">Consultando...</div></div>
   </div>
 
-  <!-- NOTICIAS -->
-  <div class="res-block has-data" id="blk-noticias">
-    <div class="rb-head"><span class="rb-ico">📰</span><span class="rb-title">Noticias, medios y web pública</span></div>
-    <div id="body-noticias"></div>
+  <div class="blk" id="blk-siri">
+    <div class="blk-head"><span class="blk-ico">⚠</span><span class="blk-title">Procuraduria — SIRI (sanciones disciplinarias)</span><span class="blk-cnt cnt-none" id="cnt-siri">-</span></div>
+    <div id="body-siri"><div class="msg-no">Consultando...</div></div>
   </div>
 
-  <!-- IMAGEN -->
-  <div class="res-block" id="blk-imagen">
-    <div class="rb-head"><span class="rb-ico">🖼️</span><span class="rb-title">Reconocimiento visual</span></div>
-    <p style="font-size:.69rem;color:var(--muted);margin-bottom:7px">Sube la foto en cada motor. <strong style="color:var(--white)">Yandex + PimEyes</strong> son los más efectivos para rostros.</p>
-    <div class="img-grid" id="img-engines"></div>
+  <div class="blk" id="blk-s2">
+    <div class="blk-head"><span class="blk-ico">📑</span><span class="blk-title">SECOP II — Contratos con el Estado (API real)</span><span class="blk-cnt cnt-none" id="cnt-s2">-</span></div>
+    <div id="body-s2"><div class="msg-no">Consultando...</div></div>
   </div>
 
-  <!-- VERIFICACIÓN MANUAL -->
-  <div class="res-block">
-    <div class="rb-head"><span class="rb-ico">🔗</span><span class="rb-title gray">Verificación manual directa</span></div>
-    <div class="lk-grid" id="body-manual"></div>
+  <div class="blk" id="blk-si">
+    <div class="blk-head"><span class="blk-ico">📋</span><span class="blk-title">SECOP Integrado — Contratos adicionales (API real)</span><span class="blk-cnt cnt-none" id="cnt-si">-</span></div>
+    <div id="body-si"><div class="msg-no">Consultando...</div></div>
   </div>
+
+  <div class="two">
+    <div class="blk" id="blk-id"><div class="blk-head"><span class="blk-ico">🪪</span><span class="blk-title">Identidad y registros</span></div><div id="body-id"></div></div>
+    <div class="blk" id="blk-jud"><div class="blk-head"><span class="blk-ico">⚖</span><span class="blk-title">Antecedentes judiciales</span></div><div id="body-jud"></div></div>
+    <div class="blk" id="blk-edu"><div class="blk-head"><span class="blk-ico">🎓</span><span class="blk-title">Educacion y certificaciones</span></div><div id="body-edu"></div></div>
+    <div class="blk" id="blk-fin"><div class="blk-head"><span class="blk-ico">🏦</span><span class="blk-title">Sector financiero</span></div><div id="body-fin"></div></div>
+    <div class="blk" id="blk-lab"><div class="blk-head"><span class="blk-ico">👔</span><span class="blk-title">Laboral y cajas</span></div><div id="body-lab"></div></div>
+    <div class="blk" id="blk-emp"><div class="blk-head"><span class="blk-ico">🏢</span><span class="blk-title">Empresas y bienes</span></div><div id="body-emp"></div></div>
+  </div>
+
+  <div class="blk hit"><div class="blk-head"><span class="blk-ico">🌐</span><span class="blk-title">Redes sociales</span></div><div id="body-redes"></div></div>
+  <div class="blk hit"><div class="blk-head"><span class="blk-ico">📰</span><span class="blk-title">Noticias y web publica</span></div><div id="body-noticias"></div></div>
+
+  <div class="blk"><div class="blk-head"><span class="blk-ico">🖼</span><span class="blk-title">Reconocimiento visual</span></div>
+    <p style="font-size:.69rem;color:var(--muted);margin-bottom:7px">Sube la foto en cada motor. Yandex y PimEyes son los mas efectivos para rostros.</p>
+    <div class="img-grid" id="body-imagen"></div>
+  </div>
+
+  <div class="blk"><div class="blk-head"><span class="blk-ico">🔗</span><span class="blk-title gr">Verificacion manual directa</span></div><div class="lk-grid" id="body-manual"></div></div>
 
   <div class="rep-acts">
-    <button class="btn btn-red" onclick="window.print()">🖨️ Imprimir</button>
-    <button class="btn btn-ghost" onclick="copiarInforme()">📋 Copiar texto</button>
-    <button class="btn btn-ghost" onclick="nuevaBusqueda()">🔄 Nueva búsqueda</button>
+    <button class="btn btn-r" onclick="window.print()">Imprimir</button>
+    <button class="btn btn-g" onclick="copiar()">Copiar texto</button>
+    <button class="btn btn-g" onclick="nuevaBusqueda()">Nueva busqueda</button>
   </div>
 </div>
 </div>
 
-<!-- ═══════════════ IMAGEN ═══════════════ -->
+<!-- IMAGEN -->
 <div class="panel" id="panel-foto">
 <div style="padding-top:14px">
   <div class="block">
-    <div class="stitle">📷 Reconocimiento inverso de imagen</div>
-    <div class="info red"><strong>⭐ Yandex + PimEyes</strong> identifican rostros con mayor precisión. Ábrelos en paralelo.</div>
-    <div class="field"><label>URL pública de la foto (opcional)</label><input type="text" id="inp-foto" placeholder="https://ejemplo.com/foto.jpg"/></div>
-    <button class="btn btn-red btn-full" onclick="buscarFoto()">🔍 Activar motores</button>
+    <div class="stitle">Reconocimiento inverso de imagen</div>
+    <div class="info red"><strong>Yandex + PimEyes</strong> identifican rostros con mayor precision. Abralos en paralelo.</div>
+    <div class="field"><label>URL publica de la foto (opcional)</label><input type="text" id="inp-foto" placeholder="https://ejemplo.com/foto.jpg"/></div>
+    <button class="btn btn-r btn-full" onclick="buscarFoto()">Abrir motores de imagen</button>
   </div>
   <div id="res-foto" style="display:none"><div class="img-grid" id="grid-foto"></div></div>
 </div>
 </div>
 
-<!-- ═══════════════ TELÉFONO ═══════════════ -->
+<!-- TELEFONO -->
 <div class="panel" id="panel-telefono">
 <div style="padding-top:14px">
   <div class="block">
-    <div class="stitle">📱 Lookup de número telefónico</div>
-    <div class="field"><label>Número de teléfono colombiano</label><input type="tel" id="inp-tel" placeholder="3223798725" autocomplete="off"/></div>
-    <button class="btn btn-red btn-full" onclick="buscarTelefono()">🔍 Buscar número</button>
+    <div class="stitle">Lookup de numero telefonico</div>
+    <div class="field"><label>Numero de telefono</label><input type="tel" id="inp-tel" placeholder="3223798725"/></div>
+    <button class="btn btn-r btn-full" onclick="buscarTel()">Buscar numero</button>
   </div>
-  <div id="res-tel" style="display:none">
-    <div class="lk-grid" id="grid-tel"></div>
-  </div>
+  <div id="res-tel" style="display:none"><div class="lk-grid" id="grid-tel"></div></div>
 </div>
 </div>
 
-<!-- ═══════════════ DORKS ═══════════════ -->
+<!-- DORKS -->
 <div class="panel" id="panel-dorks">
 <div style="padding-top:14px">
-  <div class="alert">⚠️ <strong>Uso ético:</strong> Solo investigación legítima en fuentes públicas. Ley 1581/2012 Colombia.</div>
+  <div class="alert">Uso etico: Solo investigacion legitima en fuentes publicas. Ley 1581/2012 Colombia.</div>
   <div class="block">
-    <div class="stitle">🕵️ Generador de Google Dorks</div>
-    <div class="row">
-      <div class="field"><label>Nombre</label><input type="text" id="d-nombre" placeholder="Juan Carlos Pérez"/></div>
-      <div class="field"><label>Cédula</label><input type="text" id="d-cedula" placeholder="1094269851"/></div>
+    <div class="stitle">Generador de Google Dorks</div>
+    <div class="rowf">
+      <div class="field"><label>Nombre</label><input type="text" id="d-n" placeholder="Juan Carlos Perez"/></div>
+      <div class="field"><label>Cedula</label><input type="text" id="d-c" placeholder="1094269851"/></div>
     </div>
-    <div class="row">
-      <div class="field"><label>Email</label><input type="text" id="d-email" placeholder="juan@gmail.com"/></div>
-      <div class="field"><label>Teléfono</label><input type="text" id="d-tel2" placeholder="3223798725"/></div>
+    <div class="rowf">
+      <div class="field"><label>Email</label><input type="text" id="d-e" placeholder="juan@gmail.com"/></div>
+      <div class="field"><label>Empresa</label><input type="text" id="d-emp" placeholder="Empresa XYZ"/></div>
     </div>
-    <div class="row">
-      <div class="field"><label>Empresa</label><input type="text" id="d-empresa" placeholder="Empresa XYZ"/></div>
-      <div class="field"><label>Sitio específico</label><input type="text" id="d-sitio" placeholder="facebook.com"/></div>
-    </div>
-    <button class="btn btn-red btn-full" onclick="generarDorks()">⚡ Generar dorks</button>
+    <button class="btn btn-r btn-full" onclick="generarDorks()">Generar dorks</button>
   </div>
   <div id="res-dorks" style="display:none"></div>
 </div>
 </div>
 
-<!-- ═══════════════ FUENTES ═══════════════ -->
+<!-- FUENTES -->
 <div class="panel" id="panel-fuentes">
 <div style="padding-top:14px">
 <div class="block">
-  <div class="stitle">🟢 APIs que ARGOS consulta automáticamente</div>
+  <div class="stitle">APIs que ARGOS consulta automaticamente</div>
   <div class="tbl-wrap"><table class="ft">
-    <tr><th>API</th><th>Qué devuelve</th><th>Tipo</th></tr>
-    <tr><td><a href="https://www.datos.gov.co/resource/jbjy-vk9h.json" target="_blank" rel="noopener">SECOP II — datos.gov.co</a></td><td>Contratos con el Estado por cédula o nombre</td><td><span class="tg">● API Real</span></td></tr>
-    <tr><td><a href="https://www.datos.gov.co/resource/xvdy-vvsk.json" target="_blank" rel="noopener">SECOP I — datos.gov.co</a></td><td>Contratos históricos preelectrónicos</td><td><span class="tg">● API Real</span></td></tr>
-    <tr><td><a href="https://www.datos.gov.co/resource/3qxn-uc22.json" target="_blank" rel="noopener">PEP — Función Pública</a></td><td>Personas Expuestas Políticamente + cargo + entidad + SIGEP</td><td><span class="tg">● API Real</span></td></tr>
-    <tr><td><a href="https://www.datos.gov.co/resource/iaeu-rcn6.json" target="_blank" rel="noopener">SIRI — Procuraduría</a></td><td>Sanciones disciplinarias, inhabilidades</td><td><span class="tg">● API Real</span></td></tr>
-    <tr><td><a href="https://www.datos.gov.co/resource/jr8e-e8tu.json" target="_blank" rel="noopener">Responsabilidad Fiscal — Contraloría</a></td><td>Procesos de responsabilidad fiscal</td><td><span class="tg">● API Real</span></td></tr>
+    <tr><th>API</th><th>Datos</th><th>Tipo</th></tr>
+    <tr><td><a href="https://www.datos.gov.co/resource/jbjy-vk9h.json" target="_blank" rel="noopener">SECOP II — datos.gov.co</a></td><td>Contratos por cedula o nombre</td><td><span class="tg">API Real</span></td></tr>
+    <tr><td><a href="https://www.datos.gov.co/resource/rpmr-utcd.json" target="_blank" rel="noopener">SECOP Integrado</a></td><td>Contratos adicionales</td><td><span class="tg">API Real</span></td></tr>
+    <tr><td><a href="https://www.datos.gov.co/resource/3qxn-uc22.json" target="_blank" rel="noopener">PEP — Funcion Publica</a></td><td>Servidores publicos + cargo + SIGEP</td><td><span class="tg">API Real</span></td></tr>
+    <tr><td><a href="https://www.datos.gov.co/resource/iaeu-rcn6.json" target="_blank" rel="noopener">SIRI — Procuraduria</a></td><td>Sanciones disciplinarias</td><td><span class="tg">API Real</span></td></tr>
+    <tr><td><a href="https://www.datos.gov.co/resource/jr8e-e8tu.json" target="_blank" rel="noopener">Contraloria</a></td><td>Responsabilidad fiscal</td><td><span class="tg">API Real</span></td></tr>
   </table></div>
   <div class="sep"></div>
-  <div class="stitle">🔗 Fuentes de verificación manual</div>
+  <div class="stitle">Fuentes manuales</div>
   <div class="tbl-wrap"><table class="ft">
-    <tr><th>Fuente</th><th>Información</th><th>Estado</th></tr>
-    <tr><td><a href="https://wsp.registraduria.gov.co/censo/consultar_cedula.php" target="_blank" rel="noopener">Registraduría</a></td><td>CC vigente, estado electoral</td><td><span class="tg">● Activo</span></td></tr>
-    <tr><td><a href="https://consultaprocesos.ramajudicial.gov.co" target="_blank" rel="noopener">Rama Judicial</a></td><td>Procesos civiles, penales, laborales</td><td><span class="tg">● Activo</span></td></tr>
-    <tr><td><a href="https://www.fcm.org.co/simit/estadoPersona.html" target="_blank" rel="noopener">SIMIT</a></td><td>Multas y comparendos</td><td><span class="tg">● Activo</span></td></tr>
-    <tr><td><a href="https://certificados.sena.edu.co/" target="_blank" rel="noopener">SENA Certificados</a></td><td>Diplomas y certificados SENA</td><td><span class="tg">● Activo</span></td></tr>
-    <tr><td><a href="https://resultados.icfes.edu.co/resultados-saber2016-web/pages/publicacionResultados/autenticacion/consultaSnp.jsf" target="_blank" rel="noopener">ICFES Saber 11</a></td><td>Resultados pruebas por documento</td><td><span class="tg">● Activo</span></td></tr>
-    <tr><td><a href="https://snies.mineducacion.gov.co/" target="_blank" rel="noopener">SNIES Mineducación</a></td><td>Títulos universitarios</td><td><span class="tg">● Activo</span></td></tr>
-    <tr><td><a href="https://www.sispro.gov.co/central-prestadores-de-servicios/Pages/ReTHUS-Registro-de-Talento-Humano-en-Salud.aspx" target="_blank" rel="noopener">RETHUS</a></td><td>Profesionales de salud</td><td><span class="tg">● Activo</span></td></tr>
-    <tr><td><a href="https://www.invima.gov.co/consulta-registros-sanitarios" target="_blank" rel="noopener">INVIMA</a></td><td>Registros sanitarios</td><td><span class="tg">● Activo</span></td></tr>
-    <tr><td><a href="https://www.rues.org.co/" target="_blank" rel="noopener">RUES</a></td><td>Empresas y cámaras de comercio</td><td><span class="tg">● Activo</span></td></tr>
-    <tr><td><a href="https://www.vur.gov.co/" target="_blank" rel="noopener">VUR Inmuebles</a></td><td>Propiedades y escrituras</td><td><span class="tg">● Activo</span></td></tr>
-    <tr><td><a href="https://www.midatacredito.com/" target="_blank" rel="noopener">Datacrédito</a></td><td>Historia crediticia (titular)</td><td><span class="ty">⚠ Login</span></td></tr>
-    <tr><td><a href="https://www.sistecredito.com/" target="_blank" rel="noopener">Sistecrédito</a></td><td>Crédito retail</td><td><span class="ty">⚠ Login</span></td></tr>
-    <tr><td><a href="https://www.fiscalia.gov.co/colombia/servicios-ciudadanos/consulte-aqui/" target="_blank" rel="noopener">Fiscalía</a></td><td>Órdenes de captura</td><td><span class="tg">● Activo</span></td></tr>
-    <tr><td><a href="https://www.verdadabierta.com/" target="_blank" rel="noopener">Verdad Abierta</a></td><td>Conflicto armado</td><td><span class="tg">● Activo</span></td></tr>
+    <tr><th>Fuente</th><th>Informacion</th><th>Estado</th></tr>
+    <tr><td><a href="https://wsp.registraduria.gov.co/censo/consultar_cedula.php" target="_blank" rel="noopener">Registraduria</a></td><td>CC vigente, estado electoral</td><td><span class="tg">Activo</span></td></tr>
+    <tr><td><a href="https://consultaprocesos.ramajudicial.gov.co" target="_blank" rel="noopener">Rama Judicial</a></td><td>Procesos civiles, penales, laborales</td><td><span class="tg">Activo</span></td></tr>
+    <tr><td><a href="https://www.fcm.org.co/simit/estadoPersona.html" target="_blank" rel="noopener">SIMIT</a></td><td>Multas y comparendos</td><td><span class="tg">Activo</span></td></tr>
+    <tr><td><a href="https://certificados.sena.edu.co/" target="_blank" rel="noopener">SENA Certificados</a></td><td>Diplomas SENA</td><td><span class="tg">Activo</span></td></tr>
+    <tr><td><a href="https://snies.mineducacion.gov.co/" target="_blank" rel="noopener">SNIES</a></td><td>Titulos universitarios</td><td><span class="tg">Activo</span></td></tr>
+    <tr><td><a href="https://www.sispro.gov.co/central-prestadores-de-servicios/Pages/ReTHUS-Registro-de-Talento-Humano-en-Salud.aspx" target="_blank" rel="noopener">RETHUS</a></td><td>Profesionales de salud</td><td><span class="tg">Activo</span></td></tr>
+    <tr><td><a href="https://www.rues.org.co/" target="_blank" rel="noopener">RUES</a></td><td>Empresas</td><td><span class="tg">Activo</span></td></tr>
+    <tr><td><a href="https://www.midatacredito.com/" target="_blank" rel="noopener">Datacredito</a></td><td>Historia crediticia</td><td><span class="ty">Login</span></td></tr>
   </table></div>
 </div>
 </div>
 </div>
 
-<!-- ═══════════════ MÉTODO ═══════════════ -->
+<!-- METODO -->
 <div class="panel" id="panel-metodo">
 <div style="padding-top:14px">
   <div class="block">
-    <div class="stitle">🗂️ Metodología ARGOS v3.0</div>
+    <div class="stitle">Metodologia ARGOS v3.5</div>
     <ol class="steps">
-      <li><strong>Define objetivo.</strong> Nombre completo o cédula. Con cédula = datos más exactos.</li>
-      <li><strong>Activa ARGOS.</strong> El motor consulta APIs reales: SECOP II, PEP, SIRI, Contraloría.</li>
-      <li><strong>Lee los resultados directos.</strong> ARGOS muestra los datos en pantalla — contratos, cargos, sanciones.</li>
-      <li><strong>Verifica manualmente</strong> en Rama Judicial, SIMIT, Registraduría, SENA, SNIES, RETHUS.</li>
-      <li><strong>Redes sociales.</strong> LinkedIn, Facebook, Instagram, Twitter/X — búsquedas pre-armadas.</li>
-      <li><strong>Imagen.</strong> Tab 📷 → Yandex + PimEyes para identificación facial cruzada.</li>
-      <li><strong>Documenta.</strong> Usa 🖨️ Imprimir o 📋 Copiar para el informe final.</li>
+      <li><strong>Ingresa cedula o nombre.</strong> Con cedula obtienes datos directos de la API.</li>
+      <li><strong>ARGOS consulta 5 APIs reales</strong> en paralelo: SECOP II, SECOP Integrado, PEP, SIRI, Contraloria.</li>
+      <li><strong>Los resultados aparecen en pantalla</strong> — contratos reales, sanciones, cargos publicos.</li>
+      <li><strong>Verifica manualmente</strong> en Rama Judicial, SIMIT, Registraduria, SENA.</li>
+      <li><strong>Redes sociales y noticias.</strong> Busquedas pre-armadas con el nombre del objetivo.</li>
+      <li><strong>Imagen.</strong> Tab Imagen — Yandex + PimEyes para identificacion facial.</li>
     </ol>
-  </div>
-  <div class="block">
-    <div class="stitle">💡 Por qué ARGOS v3 es diferente</div>
-    <div class="info"><strong>v1-v2:</strong> Solo abría links estáticos. No consultaba nada.</div>
-    <div class="info" style="border-left-color:var(--red-l)"><strong>v3:</strong> Consulta APIs REST reales de datos.gov.co con CORS abierto. Los resultados aparecen directamente en pantalla: contratos reales, sanciones reales, cargos públicos reales.</div>
-    <div class="info"><strong>Limitación honesta:</strong> SIMIT, Registraduría, Datacrédito, Rama Judicial no tienen APIs públicas con CORS — requieren verificación manual.</div>
   </div>
 </div>
 </div>
@@ -505,572 +420,567 @@ ol.steps li::before{content:counter(s);position:absolute;left:6px;top:50%;transf
 </main>
 
 <div id="toast"></div>
-<button id="top-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+<button id="top-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})">^</button>
 
 <script>
-// ═══ UTILS ═══
-const esc=s=>String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-const H=(l,v)=>'<div class="ri"><span class="rl">'+esc(l)+'</span><span class="rv">'+v+'</span></div>';
-const fmt=n=>{try{return Number(n).toLocaleString('es-CO',{style:'currency',currency:'COP',maximumFractionDigits:0})}catch{return n}};
-const delay=ms=>new Promise(r=>setTimeout(r,ms));
-function toast(m,i='✅'){const t=document.getElementById('toast');t.textContent=i+' '+m;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2800)}
-window.addEventListener('scroll',()=>document.getElementById('top-btn').classList.toggle('show',scrollY>260),{passive:true});
-document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{
-  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
-  document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));
-  t.classList.add('active');
-  document.getElementById('panel-'+t.dataset.tab).classList.add('active');
-  scrollTo({top:0,behavior:'smooth'});
-}));
-document.getElementById('main-query').addEventListener('keydown',e=>{if(e.key==='Enter')iniciarARGOS()});
+// Utilidades basicas
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function fmt(n) { try { return Number(n).toLocaleString('es-CO',{style:'currency',currency:'COP',maximumFractionDigits:0}); } catch(e) { return String(n); } }
+function ri(l, v) { return '<div class="row-item"><span class="rl">'+l+'</span><span class="rv">'+v+'</span></div>'; }
+function toast(m) { var t=document.getElementById('toast'); t.textContent=m; t.classList.add('show'); clearTimeout(t._t); t._t=setTimeout(function(){t.classList.remove('show');},2800); }
 
-// ═══ HISTORIAL ═══
-function getH(){try{return JSON.parse(localStorage.getItem('argos_h')||'[]')}catch{return[]}}
-function saveH(q){let h=getH().filter(x=>x.toLowerCase()!==q.toLowerCase());h.unshift(q);h=h.slice(0,7);try{localStorage.setItem('argos_h',JSON.stringify(h))}catch{}renderH()}
-function renderH(){
-  const h=getH(),w=document.getElementById('hist-wrap'),c=document.getElementById('hist-chips');
-  if(!h.length){w.style.display='none';return}
-  w.style.display='block';
-  c.innerHTML=h.map((q,i)=>`<span class="hchip" onclick="useH('${esc(q)}')">${esc(q)}<span class="hchip-x" onclick="event.stopPropagation();delH(${i})">✕</span></span>`).join('');
-}
-function useH(q){document.getElementById('main-query').value=q;iniciarARGOS()}
-function delH(i){const h=getH();h.splice(i,1);try{localStorage.setItem('argos_h',JSON.stringify(h))}catch{}renderH()}
-renderH();
+window.addEventListener('scroll', function() {
+  document.getElementById('top-btn').classList.toggle('show', window.scrollY > 260);
+}, {passive:true});
 
-// ═══ FUENTES ═══
-const SRCS=[
-  {id:'pep',ico:'🏅',n:'PEP API',peso:12},
-  {id:'siri',ico:'⚠️',n:'SIRI API',peso:12},
-  {id:'secop2',ico:'📑',n:'SECOP II API',peso:11},
-  {id:'secop1',ico:'📋',n:'SECOP I API',peso:8},
-  {id:'contraloria',ico:'📊',n:'Contraloría API',peso:8},
-  {id:'registraduria',ico:'🏛️',n:'Registraduría',peso:8},
-  {id:'rama',ico:'⚖️',n:'Rama Judicial',peso:9},
-  {id:'simit',ico:'🚦',n:'SIMIT',peso:6},
-  {id:'sena',ico:'🎓',n:'SENA',peso:7},
-  {id:'icfes',ico:'📚',n:'ICFES',peso:6},
-  {id:'snies',ico:'🏫',n:'SNIES',peso:6},
-  {id:'rethus',ico:'🩺',n:'RETHUS',peso:6},
-  {id:'invima',ico:'💊',n:'INVIMA',peso:4},
-  {id:'rues',ico:'🏢',n:'RUES',peso:5},
-  {id:'vur',ico:'🏠',n:'VUR',peso:5},
-  {id:'superfinanciera',ico:'🏦',n:'Superfinanciera',peso:5},
-  {id:'datacredito',ico:'💳',n:'Datacrédito',peso:4},
-  {id:'sistecredito',ico:'🛒',n:'Sistecrédito',peso:3},
-  {id:'compensar',ico:'🏥',n:'Compensar',peso:3},
-  {id:'colsubsidio',ico:'🏥',n:'Colsubsidio',peso:3},
-  {id:'linkedin',ico:'💼',n:'LinkedIn',peso:5},
-  {id:'facebook',ico:'👥',n:'Facebook',peso:4},
-  {id:'twitter',ico:'🐦',n:'Twitter/X',peso:3},
-  {id:'instagram',ico:'📸',n:'Instagram',peso:3},
-  {id:'noticias',ico:'📰',n:'Noticias',peso:4},
-  {id:'imagen',ico:'🖼️',n:'Imagen',peso:4},
+// Tabs
+document.querySelectorAll('.tab').forEach(function(t) {
+  t.addEventListener('click', function() {
+    document.querySelectorAll('.tab').forEach(function(x){x.classList.remove('active');});
+    document.querySelectorAll('.panel').forEach(function(x){x.classList.remove('active');});
+    t.classList.add('active');
+    document.getElementById('panel-'+t.dataset.tab).classList.add('active');
+    window.scrollTo({top:0,behavior:'smooth'});
+  });
+});
+
+// Enter en input
+document.getElementById('q').addEventListener('keydown', function(e) { if(e.key==='Enter') activar(); });
+
+// Estado global
+var G = {};
+
+// Lista de fuentes
+var SRCS = [
+  {id:'pep', n:'PEP API', ico:'🏅'},
+  {id:'siri', n:'SIRI API', ico:'⚠'},
+  {id:'s2', n:'SECOP II API', ico:'📑'},
+  {id:'si', n:'SECOP Integrado', ico:'📋'},
+  {id:'regist', n:'Registraduria', ico:'🏛'},
+  {id:'rama', n:'Rama Judicial', ico:'⚖'},
+  {id:'simit', n:'SIMIT', ico:'🚦'},
+  {id:'sena', n:'SENA', ico:'🎓'},
+  {id:'snies', n:'SNIES', ico:'🏫'},
+  {id:'rethus', n:'RETHUS', ico:'🩺'},
+  {id:'rues', n:'RUES', ico:'🏢'},
+  {id:'datacred', n:'Datacredito', ico:'💳'},
+  {id:'linkedin', n:'LinkedIn', ico:'💼'},
+  {id:'facebook', n:'Facebook', ico:'👥'},
+  {id:'twitter', n:'Twitter/X', ico:'🐦'},
+  {id:'noticias', n:'Noticias', ico:'📰'},
+  {id:'imagen', n:'Imagen', ico:'🖼'},
 ];
 
-let G={};
+function setP(pct, txt) {
+  document.getElementById('pbar').style.width = pct + '%';
+  document.getElementById('estado-pct').textContent = Math.round(pct) + '%';
+  document.getElementById('estado-txt').textContent = txt;
+}
 
-// ═══ MOTOR PRINCIPAL ═══
-async function iniciarARGOS(){
-  const q=document.getElementById('main-query').value.trim();
-  if(!q){toast('Ingresa nombre o cédula','⚠️');return}
-  const esCedula=/^\d{6,12}$/.test(q.replace(/\D/g,''))&&q.replace(/\D/g,'').length>=6;
-  G={q,esCedula,cc:esCedula?q.replace(/\D/g,''):'',nm:esCedula?'':q,
-    r:{pep:[],siri:[],secop2:[],secop1:[],contraloria:[]},
-    hits:[],certeza:0};
-  saveH(q);
+function setFuente(id, estado, txt) {
+  var el = document.getElementById('f-'+id);
+  var st = document.getElementById('fs-'+id);
+  if (!el || !st) return;
+  el.className = 'fuente ' + estado;
+  if (estado === 'running') { st.className='fst fst-r'; st.innerHTML='<span class="spin"></span>'; }
+  else if (estado === 'hit') { st.className='fst fst-h'; st.textContent='HIT'; }
+  else if (estado === 'miss') { st.className='fst fst-m'; st.textContent='--'; }
+  else { st.className='fst fst-w'; st.textContent=txt||'...'; }
+}
 
-  // Reset UI
-  document.getElementById('report').style.display='none';
-  document.getElementById('cert-wrap').classList.remove('show');
-  const pw=document.getElementById('progress-wrap');
-  pw.style.display='block';
-  pw.scrollIntoView({behavior:'smooth',block:'start'});
+function activar() {
+  var q = document.getElementById('q').value.trim();
+  if (!q) { toast('Ingresa nombre o cedula'); return; }
 
-  document.getElementById('src-grid').innerHTML=SRCS.map(s=>`
-    <div class="src-item" id="src-${s.id}">
-      <span class="src-ico">${s.ico}</span>
-      <span class="src-name">${s.n}</span>
-      <span class="src-st st-wait" id="st-${s.id}">—</span>
-    </div>`).join('');
-
-  const setP=(pct,lbl)=>{
-    document.getElementById('pfill').style.width=pct+'%';
-    document.getElementById('ppct').textContent=Math.round(pct)+'%';
-    document.getElementById('plbl').textContent=lbl;
+  var esCedula = /^\d{6,12}$/.test(q.replace(/\D/g,'')) && q.replace(/\D/g,'').length >= 6;
+  G = {
+    q: q,
+    cc: esCedula ? q.replace(/\D/g,'') : '',
+    nm: esCedula ? '' : q,
+    esCedula: esCedula,
+    pep: [], siri: [], s2: [], si: [],
+    hits: 0,
+    certeza: 0
   };
-  const runS=id=>{const el=document.getElementById('src-'+id);if(el)el.className='src-item run';const st=document.getElementById('st-'+id);if(st){st.className='src-st st-run';st.innerHTML='<span class="spin"></span>'}};
-  const hitS=(id,txt)=>{const el=document.getElementById('src-'+id);if(el)el.className='src-item hit';const st=document.getElementById('st-'+id);if(st){st.className='src-st st-hit';st.textContent='✓ '+txt}G.hits.push(id)};
-  const missS=(id,txt)=>{const el=document.getElementById('src-'+id);if(el)el.className='src-item miss';const st=document.getElementById('st-'+id);if(st){st.className='src-st st-miss';st.textContent='– '+(txt||'—')}};
 
-  setP(2,'Iniciando ARGOS v3.0…');
+  // Resetear UI
+  document.getElementById('informe').style.display = 'none';
+  document.getElementById('certeza-wrap').classList.remove('show');
 
-  // ══ API 1: PEP (Función Pública) ══
-  runS('pep');setP(8,'Consultando PEP — Función Pública…');
-  try{
-    const url=G.cc
-      ?`https://www.datos.gov.co/resource/3qxn-uc22.json?$where=numero_documento=%27${G.cc}%27&$limit=10`
-      :`https://www.datos.gov.co/resource/3qxn-uc22.json?$where=upper(nombre_pep)%20like%20upper(%27%25${encodeURIComponent(G.nm)}%25%27)&$limit=10`;
-    const d=await fetch(url,{signal:(() => { const c=new AbortController(); setTimeout(()=>c.abort(),9000); return c.signal; })()}).then(r=>r.json());
-    G.r.pep=Array.isArray(d)?d:[];
-    G.r.pep.length>0?hitS('pep',G.r.pep.length+' registros'):missS('pep','Sin registros');
-  }catch{missS('pep','Timeout');G.r.pep=[]}
-  setP(22,'PEP consultado…');
+  // Mostrar estado
+  var estado = document.getElementById('estado');
+  estado.style.display = 'block';
+  setP(2, 'Iniciando ARGOS...');
 
-  // ══ API 2: SIRI (Procuraduría) ══
-  runS('siri');setP(28,'Consultando SIRI — Procuraduría…');
-  try{
-    // SIRI: buscar por cédula (trim) o por apellido separado
-    const partes=G.nm.split(' ').filter(Boolean);
-    const apellido=partes[partes.length-1]||G.nm;
-    const url=G.cc
-      ?`https://www.datos.gov.co/resource/iaeu-rcn6.json?$where=trim(numero_identificacion)=%27${G.cc}%27&$limit=10`
-      :`https://www.datos.gov.co/resource/iaeu-rcn6.json?$where=upper(primer_apellido)%20like%20upper(%27%25${encodeURIComponent(apellido)}%25%27)&$limit=10`;
-    const d=await fetch(url,{signal:(() => { const c=new AbortController(); setTimeout(()=>c.abort(),9000); return c.signal; })()}).then(r=>r.json());
-    G.r.siri=Array.isArray(d)?d:[];
-    G.r.siri.length>0?hitS('siri',G.r.siri.length+' sanciones'):missS('siri','Sin sanciones');
-  }catch{missS('siri','Timeout');G.r.siri=[]}
-  setP(40,'SIRI consultado…');
+  // Construir grid de fuentes
+  var grid = '';
+  SRCS.forEach(function(s) {
+    grid += '<div class="fuente" id="f-'+s.id+'"><span>'+s.ico+'</span><span style="flex:1;font-size:.63rem;color:var(--g2);font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+s.n+'</span><span class="fst fst-w" id="fs-'+s.id+'">...</span></div>';
+  });
+  document.getElementById('fuentes-grid').innerHTML = grid;
 
-  // ══ API 3: SECOP II ══
-  runS('secop2');setP(46,'Consultando SECOP II…');
-  try{
-    const url=G.cc
-      ?`https://www.datos.gov.co/resource/jbjy-vk9h.json?$where=documento_proveedor=%27${G.cc}%27&$limit=15&$order=fecha_de_firma%20DESC`
-      :`https://www.datos.gov.co/resource/jbjy-vk9h.json?$where=upper(proveedor_adjudicado)%20like%20upper(%27%25${encodeURIComponent(G.nm)}%25%27)&$limit=15&$order=fecha_de_firma%20DESC`;
-    const d=await fetch(url,{signal:(() => { const c=new AbortController(); setTimeout(()=>c.abort(),9000); return c.signal; })()}).then(r=>r.json());
-    G.r.secop2=Array.isArray(d)?d:[];
-    G.r.secop2.length>0?hitS('secop2',G.r.secop2.length+' contratos'):missS('secop2','Sin contratos');
-  }catch{missS('secop2','Timeout');G.r.secop2=[]}
-  setP(60,'SECOP II consultado…');
+  estado.scrollIntoView({behavior:'smooth', block:'start'});
 
-  // ══ API 4: SECOP I ══
-  runS('secop1');setP(65,'Consultando SECOP I…');
-  try{
-    // SECOP Integrado (rpmr-utcd) — más completo que xvdy-vvsk
-    const url=G.cc
-      ?`https://www.datos.gov.co/resource/rpmr-utcd.json?$where=documento_proveedor=%27${G.cc}%27&$limit=10`
-      :`https://www.datos.gov.co/resource/rpmr-utcd.json?$where=upper(nom_raz_social_contratista)%20like%20upper(%27%25${encodeURIComponent(G.nm||G.q)}%25%27)&$limit=10`;
-    const d=await fetch(url,{signal:(() => { const c=new AbortController(); setTimeout(()=>c.abort(),9000); return c.signal; })()}).then(r=>r.json());
-    G.r.secop1=Array.isArray(d)?d:[];
-    G.r.secop1.length>0?hitS('secop1',G.r.secop1.length+' contratos'):missS('secop1','Sin contratos');
-    // Quitar duplicados con SECOP II por documento
-    if(G.cc) G.r.secop1=G.r.secop1.filter(x=>x.numero_del_contrato&&!G.r.secop2.some(y=>y.referencia_del_contrato===x.numero_del_contrato));
-  }catch{missS('secop1','Timeout');G.r.secop1=[]}
-  setP(76,'SECOP I consultado…');
+  // Ejecutar consultas
+  correrConsultas();
+}
 
-  // ══ API 5: Contraloría ══
-  runS('contraloria');setP(80,'Consultando Contraloría…');
-  try{
-    // Contraloría: busca por nombre de entidad (no tiene campo cédula individual)
-    const url=`https://www.datos.gov.co/resource/jr8e-e8tu.json?$where=upper(raz_n_social_de_la_entidad)%20like%20upper(%27%25${encodeURIComponent(G.nm||G.q)}%25%27)&$limit=10`;
-    const d=await fetch(url,{signal:(() => { const c=new AbortController(); setTimeout(()=>c.abort(),9000); return c.signal; })()}).then(r=>r.json());
-    G.r.contraloria=Array.isArray(d)?d:[];
-    G.r.contraloria.length>0?hitS('contraloria',G.r.contraloria.length+' procesos'):missS('contraloria','Sin procesos');
-  }catch{missS('contraloria','Timeout');G.r.contraloria=[]}
-  setP(88,'Contraloría consultada…');
+function correrConsultas() {
+  var q = G.q, cc = G.cc, nm = G.nm;
 
-  // ══ Fuentes de verificación (mark as active) ══
-  const verify=['registraduria','rama','simit','sena','icfes','snies','rethus','invima','rues','vur','superfinanciera','datacredito','sistecredito','compensar','colsubsidio','linkedin','facebook','twitter','instagram','noticias','imagen'];
-  for(const id of verify){
-    runS(id);await delay(40);hitS(id,'Listo');
+  // Construir URLs con %27 para comillas simples (no apostrofes que rompen JS)
+  var BASE = 'https://www.datos.gov.co/resource/';
+  var urlPEP, urlSIRI, urlS2, urlSI;
+
+  if (cc) {
+    urlPEP  = BASE + '3qxn-uc22.json?$where=numero_documento=%27'+cc+'%27&$limit=10';
+    urlSIRI = BASE + 'iaeu-rcn6.json?$where=trim(numero_identificacion)=%27'+cc+'%27&$limit=10';
+    urlS2   = BASE + 'jbjy-vk9h.json?$where=documento_proveedor=%27'+cc+'%27&$limit=15&$order=fecha_de_firma%20DESC';
+    urlSI   = BASE + 'rpmr-utcd.json?$where=documento_proveedor=%27'+cc+'%27&$limit=10';
+  } else {
+    var enc = encodeURIComponent(nm);
+    urlPEP  = BASE + '3qxn-uc22.json?$where=upper(nombre_pep)%20like%20upper(%27%25'+enc+'%25%27)&$limit=10';
+    // SIRI: buscar por primer apellido (ultima palabra del nombre)
+    var partes = nm.trim().split(' ');
+    var apellido = encodeURIComponent(partes[partes.length-1]);
+    urlSIRI = BASE + 'iaeu-rcn6.json?$where=upper(primer_apellido)%20like%20upper(%27%25'+apellido+'%25%27)&$limit=10';
+    urlS2   = BASE + 'jbjy-vk9h.json?$where=upper(proveedor_adjudicado)%20like%20upper(%27%25'+enc+'%25%27)&$limit=15&$order=fecha_de_firma%20DESC';
+    urlSI   = BASE + 'rpmr-utcd.json?$where=upper(nom_raz_social_contratista)%20like%20upper(%27%25'+enc+'%25%27)&$limit=10';
   }
-  setP(100,'✅ ARGOS completado');
-  await delay(400);
+
+  var done = 0;
+  var total = 4;
+
+  function checkDone() {
+    done++;
+    setP(20 + done * 18, 'Procesando fuentes...');
+    if (done >= total) {
+      finalizarYMostrar();
+    }
+  }
+
+  function callAPI(id, url, cb) {
+    setFuente(id, 'running');
+    setP(5 + done*5, 'Consultando '+id+'...');
+    fetch(url)
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        var arr = Array.isArray(data) ? data : [];
+        cb(arr);
+        setFuente(id, arr.length > 0 ? 'hit' : 'miss');
+        if (arr.length > 0) G.hits++;
+        checkDone();
+      })
+      .catch(function(err) {
+        console.warn(id+' error:', err);
+        cb([]);
+        setFuente(id, 'miss');
+        checkDone();
+      });
+  }
+
+  callAPI('pep',  urlPEP,  function(d){ G.pep  = d; });
+  callAPI('siri', urlSIRI, function(d){ G.siri = d; });
+  callAPI('s2',   urlS2,   function(d){ G.s2   = d; });
+  callAPI('si',   urlSI,   function(d){ G.si   = d; });
+
+  // Marcar fuentes manuales
+  ['regist','rama','simit','sena','snies','rethus','rues','datacred','linkedin','facebook','twitter','noticias','imagen'].forEach(function(id) {
+    setFuente(id, 'hit');
+  });
+}
+
+function finalizarYMostrar() {
+  setP(100, 'ARGOS completado');
 
   // Calcular certeza
-  const pesoTotal=SRCS.reduce((a,s)=>a+s.peso,0);
-  const pesoHits=SRCS.filter(s=>G.hits.includes(s.id)).reduce((a,s)=>a+s.peso,0);
-  const apiHits=G.r.pep.length+G.r.siri.length+G.r.secop2.length+G.r.secop1.length+G.r.contraloria.length;
-  let cert=Math.round((pesoHits/pesoTotal)*100*0.5);
-  if(apiHits>0) cert+=Math.min(apiHits*4,40);
-  cert=Math.max(cert,15);cert=Math.min(cert,98);
-  G.certeza=cert;
+  var apiHits = G.pep.length + G.siri.length + G.s2.length + G.si.length;
+  var cert = 20 + Math.min(apiHits * 6, 60) + (G.hits >= 2 ? 10 : 0);
+  cert = Math.min(cert, 97);
+  G.certeza = cert;
 
-  animCerteza(cert);
-  await delay(1100);
-  buildReport();
-}
-
-function animCerteza(pct){
-  const cw=document.getElementById('cert-wrap');
+  // Mostrar certeza
+  var cw = document.getElementById('certeza-wrap');
   cw.classList.add('show');
-  cw.scrollIntoView({behavior:'smooth',block:'center'});
-  const circ=314;
-  setTimeout(()=>{document.getElementById('cert-circle').style.strokeDashoffset=circ-(pct/100*circ)},60);
-  let n=0;const iv=setInterval(()=>{n=Math.min(n+2,pct);document.getElementById('cert-num').textContent=n+'%';if(n>=pct)clearInterval(iv)},14);
-  document.getElementById('cert-desc').textContent=
-    pct>=80?'Alta certeza — múltiples APIs con hallazgos reales confirmados.'
-    :pct>=55?'Certeza media — algunos hallazgos en APIs. Verificar manualmente.'
-    :pct>=30?'Certeza básica — sin hallazgos directos en APIs. Verificar fuentes manuales.'
-    :'Certeza baja — sin datos en APIs públicas. Intenta con cédula.';
-  const r=G.r;
-  const pills=[];
-  if(r.pep.length>0)pills.push(`<span class="cpill cpill-r">🏅 ${r.pep.length} PEP</span>`);
-  if(r.siri.length>0)pills.push(`<span class="cpill cpill-r">⚠️ ${r.siri.length} sanciones</span>`);
-  if(r.secop2.length>0)pills.push(`<span class="cpill cpill-y">📑 ${r.secop2.length} contratos SECOP II</span>`);
-  if(r.secop1.length>0)pills.push(`<span class="cpill cpill-y">📋 ${r.secop1.length} contratos SECOP I</span>`);
-  if(r.contraloria.length>0)pills.push(`<span class="cpill cpill-r">📊 ${r.contraloria.length} procesos fiscal</span>`);
-  const total=r.pep.length+r.siri.length+r.secop2.length+r.secop1.length+r.contraloria.length;
-  if(total===0)pills.push(`<span class="cpill cpill-g">✓ Sin hallazgos en APIs — perfil limpio</span>`);
-  document.getElementById('cert-pills').innerHTML=pills.join('');
+  cw.scrollIntoView({behavior:'smooth', block:'center'});
+  var circ = 301;
+  setTimeout(function() {
+    document.getElementById('c-fg').style.strokeDashoffset = circ - (cert/100*circ);
+  }, 60);
+  var n = 0;
+  var iv = setInterval(function() {
+    n = Math.min(n+2, cert);
+    document.getElementById('cert-num').textContent = n+'%';
+    if (n >= cert) clearInterval(iv);
+  }, 14);
+  document.getElementById('cert-desc').textContent =
+    cert >= 70 ? 'Alta certeza — hallazgos reales en APIs publicas.' :
+    cert >= 45 ? 'Certeza media — algunos datos encontrados. Verificar manualmente.' :
+    'Certeza basica — sin datos directos en APIs. Prueba con cedula.';
+
+  var pills = '';
+  if (G.s2.length > 0)   pills += '<span class="cpill cpy">'+G.s2.length+' contratos SECOP II</span>';
+  if (G.si.length > 0)   pills += '<span class="cpill cpy">'+G.si.length+' SECOP Integrado</span>';
+  if (G.pep.length > 0)  pills += '<span class="cpill cpr">PEP: servidor publico</span>';
+  if (G.siri.length > 0) pills += '<span class="cpill cpr">'+G.siri.length+' sanciones Procuraduria</span>';
+  if (!pills)             pills = '<span class="cpill cpg">Sin hallazgos en APIs — perfil limpio</span>';
+  document.getElementById('cert-pills').innerHTML = pills;
+
+  // Construir informe
+  setTimeout(buildReport, 1100);
 }
 
-function buildReport(){
-  const {q,cc,esCedula,r}=G;
-  const fecha=new Date().toLocaleDateString('es-CO',{year:'numeric',month:'long',day:'numeric',hour:'2-digit',minute:'2-digit'});
-  document.getElementById('rpt-name').textContent=q;
-  document.getElementById('rpt-sub').textContent=`Consulta: ${q} · ${SRCS.length} fuentes · ${fecha}`;
-  document.getElementById('rpt-date').textContent=fecha;
-  document.getElementById('rpt-av').textContent=esCedula?'🪪':'👤';
+function buildReport() {
+  var q = G.q, cc = G.cc, nm = G.nm;
+  var fecha = new Date().toLocaleDateString('es-CO',{year:'numeric',month:'long',day:'numeric',hour:'2-digit',minute:'2-digit'});
 
-  const tags=[];
-  const total=r.pep.length+r.siri.length+r.secop2.length+r.secop1.length+r.contraloria.length;
-  if(r.siri.length>0)tags.push({t:'⚠️ '+r.siri.length+' sanciones Procuraduría',c:'pt-r'});
-  if(r.pep.length>0)tags.push({t:'🏅 PEP — Servidor Público',c:'pt-y'});
-  if(r.secop2.length+r.secop1.length>0)tags.push({t:'📑 '+(r.secop2.length+r.secop1.length)+' contratos Estado',c:'pt-y'});
-  if(r.contraloria.length>0)tags.push({t:'📊 '+r.contraloria.length+' procesos fiscales',c:'pt-r'});
-  if(total===0)tags.push({t:'✓ Sin hallazgos en APIs',c:'pt-g'});
-  tags.push({t:G.certeza+'% certeza ARGOS',c:G.certeza>=65?'pt-g':G.certeza>=40?'pt-y':'pt-x'});
-  document.getElementById('rpt-tags').innerHTML=tags.map(t=>`<span class="ptag ${t.c}">${t.t}</span>`).join('');
+  document.getElementById('p-name').textContent = q;
+  document.getElementById('p-sub').textContent = 'Consulta: '+q+' | '+SRCS.length+' fuentes | '+fecha;
+  document.getElementById('p-fecha').textContent = fecha;
+  document.getElementById('p-av').textContent = G.esCedula ? 'ID' : 'P';
+
+  // Tags perfil
+  var tags = '';
+  if (G.siri.length > 0) tags += '<span class="ptag ptr">'+G.siri.length+' sanciones</span>';
+  if (G.pep.length > 0)  tags += '<span class="ptag pty">Servidor publico</span>';
+  if (G.s2.length+G.si.length > 0) tags += '<span class="ptag pty">'+(G.s2.length+G.si.length)+' contratos</span>';
+  if (!tags) tags = '<span class="ptag ptg">Sin hallazgos en APIs</span>';
+  tags += '<span class="ptag ptx">'+G.certeza+'% certeza</span>';
+  document.getElementById('p-tags').innerHTML = tags;
 
   // PEP
-  if(r.pep.length>0){
-    document.getElementById('blk-pep').className='res-block has-data';
-    document.getElementById('cnt-pep').className='rb-count hit';
-    document.getElementById('cnt-pep').textContent=r.pep.length+' registros';
-    document.getElementById('body-pep').innerHTML=r.pep.map(p=>`
-      <div class="dato-card">
-        <div class="dato-title">${esc(p.nombre_pep||'—')}</div>
-        <div class="dato-grid">
-          <span class="dato-label">Cédula</span><span class="dato-val">${esc(p.numero_documento||'—')}</span>
-          <span class="dato-label">Cargo</span><span class="dato-val">${esc(p.denominacion_cargo||'—')}</span>
-          <span class="dato-label">Entidad</span><span class="dato-val">${esc(p.nombre_entidad||'—')}</span>
-          <span class="dato-label">Vinculación</span><span class="dato-val">${esc(p.fecha_vinculacion||'—')}</span>
-          <span class="dato-label">SIGEP</span><span class="dato-val">${p.enlace_hoja_vida_sigep&&p.enlace_hoja_vida_sigep.url?`<a href="${esc(p.enlace_hoja_vida_sigep.url)}" target="_blank" rel="noopener">→ Ver hoja de vida</a>`:'N/D'}</span>
-        </div>
-      </div>`).join('');
-  } else {
-    document.getElementById('blk-pep').className='res-block clean';
-    document.getElementById('cnt-pep').className='rb-count ok';
-    document.getElementById('cnt-pep').textContent='Limpio';
-    document.getElementById('body-pep').innerHTML=`<div class="clean-msg">✓ No figura como Persona Expuesta Políticamente ni servidor público activo.</div>`;
-  }
+  buildBlk('pep', 'blk-pep', 'cnt-pep', G.pep, function(p) {
+    var u = p.enlace_hoja_vida_sigep && (typeof p.enlace_hoja_vida_sigep === 'object' ? p.enlace_hoja_vida_sigep.url : p.enlace_hoja_vida_sigep);
+    return '<div class="dato"><div class="dato-title">'+esc(p.nombre_pep||'-')+'</div><div class="dato-rows">'
+      +'<span class="dl">Cedula</span><span class="dv">'+esc(p.numero_documento||'-')+'</span>'
+      +'<span class="dl">Cargo</span><span class="dv">'+esc(p.denominacion_cargo||'-')+'</span>'
+      +'<span class="dl">Entidad</span><span class="dv">'+esc(p.nombre_entidad||'-')+'</span>'
+      +'<span class="dl">Vinculacion</span><span class="dv">'+esc(p.fecha_vinculacion||'-')+'</span>'
+      +'<span class="dl">SIGEP</span><span class="dv">'+(u?'<a href="'+esc(u)+'" target="_blank" rel="noopener">Ver hoja de vida</a>':'-')+'</span>'
+      +'</div></div>';
+  }, 'No figura como servidor publico activo.');
 
   // SIRI
-  if(r.siri.length>0){
-    document.getElementById('blk-siri').className='res-block warn';
-    document.getElementById('cnt-siri').className='rb-count hit';
-    document.getElementById('cnt-siri').textContent=r.siri.length+' sanciones';
-    document.getElementById('body-siri').innerHTML=r.siri.map(s=>`
-      <div class="dato-card">
-        <div class="dato-title">${esc([s.primer_nombre,s.segundo_nombre,s.primer_apellido,s.segundo_apellido].filter(Boolean).join(' ')||'—')}
-          <span class="dato-badge db-r">${esc(s.tipo_inhabilidad||'Sanción')}</span>
-        </div>
-        <div class="dato-grid">
-          <span class="dato-label">Cédula</span><span class="dato-val">${esc((s.numero_identificacion||'').trim())}</span>
-          <span class="dato-label">Sanción</span><span class="dato-val">${esc(s.sanciones||'—')}</span>
-          <span class="dato-label">Cargo</span><span class="dato-val">${esc(s.cargo||'—')}</span>
-          <span class="dato-label">Autoridad</span><span class="dato-val">${esc(s.autoridad||'—')}</span>
-          <span class="dato-label">Fecha efectos</span><span class="dato-val">${esc(s.fecha_efectos_juridicos||'—')}</span>
-          <span class="dato-label">Duración</span><span class="dato-val">${[s.duracion_anos&&s.duracion_anos+'a',s.duracion_mes&&s.duracion_mes+'m',s.duracion_dias&&s.duracion_dias+'d'].filter(Boolean).join(' ')||'N/D'}</span>
-          <span class="dato-label">Entidad</span><span class="dato-val">${esc(s.entidad_sancionado||'—')}</span>
-          <span class="dato-label">No. proceso</span><span class="dato-val">${esc((s.numero_proceso||'').trim())}</span>
-        </div>
-      </div>`).join('');
-  } else {
-    document.getElementById('blk-siri').className='res-block clean';
-    document.getElementById('cnt-siri').className='rb-count ok';
-    document.getElementById('cnt-siri').textContent='Limpio';
-    document.getElementById('body-siri').innerHTML=`<div class="clean-msg">✓ Sin sanciones disciplinarias en el SIRI de la Procuraduría.</div>`;
-  }
+  buildBlk('siri', 'blk-siri', 'cnt-siri', G.siri, function(s) {
+    var nombre = [s.primer_nombre,s.segundo_nombre,s.primer_apellido,s.segundo_apellido].filter(Boolean).join(' ');
+    return '<div class="dato"><div class="dato-title">'+esc(nombre||'-')+' <span class="dbadge dbr">'+esc(s.tipo_inhabilidad||'Sancion')+'</span></div><div class="dato-rows">'
+      +'<span class="dl">Cedula</span><span class="dv">'+esc((s.numero_identificacion||'').trim())+'</span>'
+      +'<span class="dl">Sancion</span><span class="dv">'+esc(s.sanciones||'-')+'</span>'
+      +'<span class="dl">Cargo</span><span class="dv">'+esc(s.cargo||'-')+'</span>'
+      +'<span class="dl">Autoridad</span><span class="dv">'+esc(s.autoridad||'-')+'</span>'
+      +'<span class="dl">Fecha</span><span class="dv">'+esc(s.fecha_efectos_juridicos||'-')+'</span>'
+      +'<span class="dl">Entidad</span><span class="dv">'+esc(s.entidad_sancionado||'-')+'</span>'
+      +'</div></div>';
+  }, 'Sin sanciones disciplinarias en el SIRI.');
 
   // SECOP II
-  // SECOP II
-  const renderSecop2=(arr)=>arr.map(c=>{
-    const val=c.valor_del_contrato?fmt(c.valor_del_contrato):'N/D';
-    const fec=(c.fecha_de_firma||'').split('T')[0]||'N/D';
-    const est=c.estado_contrato||'N/D';
-    const activo=est.toLowerCase().match(/ejecuci|activo|vigente/);
-    const urlp=c.urlproceso&&(typeof c.urlproceso==='object'?c.urlproceso.url:c.urlproceso);
-    return`<div class="dato-card">
-      <div class="dato-title">${esc(c.objeto_del_contrato||c.descripcion_del_proceso||'Contrato')}</div>
-      <div class="dato-grid">
-        <span class="dato-label">Entidad</span><span class="dato-val">${esc(c.nombre_entidad||'—')}</span>
-        <span class="dato-label">Proveedor</span><span class="dato-val">${esc(c.proveedor_adjudicado||'—')}</span>
-        <span class="dato-label">Cédula/NIT</span><span class="dato-val">${esc(c.documento_proveedor||'—')}</span>
-        <span class="dato-label">Modalidad</span><span class="dato-val">${esc(c.modalidad_de_contratacion||'—')}</span>
-        <span class="dato-label">Fecha firma</span><span class="dato-val">${esc(fec)}</span>
-        <span class="dato-label">Estado</span><span class="dato-val"><span class="dato-badge ${activo?'db-g':'db-x'}">${esc(est)}</span></span>
-      </div>
-      <div class="dato-money">${val}${urlp?` <a href="${esc(urlp)}" target="_blank" rel="noopener" style="font-size:.65rem;font-weight:700;color:var(--red-ll)">→ Ver proceso</a>`:''}</div>
-    </div>`;
-  }).join('');
-  // SECOP Integrado (rpmr-utcd) - campos distintos
-  const renderSecopInt=(arr)=>arr.map(c=>{
-    const val=c.valor_contrato?fmt(c.valor_contrato):'N/D';
-    const fec=(c.fecha_de_firma_del_contrato||'').split('T')[0]||'N/D';
-    const est=c.estado_del_proceso||'N/D';
-    const activo=est.toLowerCase().match(/ejecuci|activo|vigente|celebrado/);
-    const urlp=c.url_contrato&&(typeof c.url_contrato==='object'?c.url_contrato.url:c.url_contrato);
-    return`<div class="dato-card">
-      <div class="dato-title">${esc(c.objeto_del_proceso||c.objeto_a_contratar||'Contrato')}</div>
-      <div class="dato-grid">
-        <span class="dato-label">Entidad</span><span class="dato-val">${esc(c.nombre_de_la_entidad||'—')}</span>
-        <span class="dato-label">Contratista</span><span class="dato-val">${esc(c.nom_raz_social_contratista||'—')}</span>
-        <span class="dato-label">Doc. proveedor</span><span class="dato-val">${esc(c.documento_proveedor||'—')}</span>
-        <span class="dato-label">Modalidad</span><span class="dato-val">${esc(c.modalidad_de_contrataci_n||'—')}</span>
-        <span class="dato-label">Fecha firma</span><span class="dato-val">${esc(fec)}</span>
-        <span class="dato-label">Estado</span><span class="dato-val"><span class="dato-badge ${activo?'db-g':'db-x'}">${esc(est)}</span></span>
-      </div>
-      <div class="dato-money">${val}${urlp?` <a href="${esc(urlp)}" target="_blank" rel="noopener" style="font-size:.65rem;font-weight:700;color:var(--red-ll)">→ Ver contrato</a>`:''}</div>
-    </div>`;
-  }).join('');
+  buildBlk('s2', 'blk-s2', 'cnt-s2', G.s2, function(c) {
+    return renderContrato(c, c.objeto_del_contrato||c.descripcion_del_proceso, c.proveedor_adjudicado, c.documento_proveedor, c.fecha_de_firma, c.estado_contrato, c.valor_del_contrato, c.modalidad_de_contratacion, c.nombre_entidad, c.urlproceso);
+  }, 'Sin contratos en SECOP II.');
 
-  if(r.secop2.length>0){
-    document.getElementById('blk-secop2').className='res-block has-data';
-    document.getElementById('cnt-secop2').className='rb-count hit';
-    document.getElementById('cnt-secop2').textContent=r.secop2.length+' contratos';
-    document.getElementById('body-secop2').innerHTML=renderSecop2(r.secop2);
-  } else {
-    document.getElementById('blk-secop2').className='res-block clean';
-    document.getElementById('cnt-secop2').className='rb-count ok';
-    document.getElementById('cnt-secop2').textContent='Sin contratos';
-    document.getElementById('body-secop2').innerHTML=`<div class="clean-msg">✓ Sin contratos en SECOP II.</div>`;
-  }
+  // SECOP Integrado
+  buildBlk('si', 'blk-si', 'cnt-si', G.si, function(c) {
+    return renderContrato(c, c.objeto_del_proceso||c.objeto_a_contratar, c.nom_raz_social_contratista, c.documento_proveedor, c.fecha_de_firma_del_contrato, c.estado_del_proceso, c.valor_contrato, c.modalidad_de_contrataci_n, c.nombre_de_la_entidad, c.url_contrato);
+  }, 'Sin contratos en SECOP Integrado.');
 
-  if(r.secop1.length>0){
-    document.getElementById('blk-secop1').className='res-block has-data';
-    document.getElementById('cnt-secop1').className='rb-count hit';
-    document.getElementById('cnt-secop1').textContent=r.secop1.length+' contratos';
-    document.getElementById('body-secop1').innerHTML=renderSecopInt(r.secop1);
-  } else {
-    document.getElementById('blk-secop1').className='res-block clean';
-    document.getElementById('cnt-secop1').className='rb-count ok';
-    document.getElementById('cnt-secop1').textContent='Sin contratos';
-    document.getElementById('body-secop1').innerHTML=`<div class="clean-msg">✓ Sin contratos en SECOP I.</div>`;
-  }
+  // Identidad
+  var simitUrl = 'https://www.fcm.org.co/simit/estadoPersona.html' + (cc ? '?nuip='+cc : '');
+  var idHtml = (G.esCedula ? ri('Cedula CC', esc(cc)) : '')
+    + ri('Registraduria', '<a href="https://wsp.registraduria.gov.co/censo/consultar_cedula.php" target="_blank" rel="noopener">Verificar vigencia</a>')
+    + ri('SIMIT', '<a href="'+esc(simitUrl)+'" target="_blank" rel="noopener">Consultar multas</a>');
+  document.getElementById('body-id').innerHTML = idHtml;
 
-  // JUDICIAL
-  const jUrl='https://consultaprocesos.ramajudicial.gov.co/Procesos/NumeroIdentificacion?tipoIdentificacion=CC&numeroIdentificacion='+encodeURIComponent(cc||q);
-  document.getElementById('body-judicial').innerHTML=
-    H('Rama Judicial','<a href="'+jUrl+'" target="_blank" rel="noopener">→ Consultar procesos (CC: '+esc(cc||q)+')</a>')
-    +H('Fiscalia','<a href="https://www.fiscalia.gov.co/colombia/servicios-ciudadanos/consulte-aqui/" target="_blank" rel="noopener">→ Ordenes de captura</a>')
-    +H('Policia','<a href="https://www.policia.gov.co/tramite/certificado-judicial" target="_blank" rel="noopener">→ Antecedentes judiciales</a>');
-  document.getElementById('cnt-jud').textContent='Manual';
+  // Judicial
+  var judUrl = 'https://consultaprocesos.ramajudicial.gov.co/Procesos/NumeroIdentificacion?tipoIdentificacion=CC&numeroIdentificacion='+encodeURIComponent(cc||q);
+  document.getElementById('body-jud').innerHTML =
+    ri('Rama Judicial', '<a href="'+esc(judUrl)+'" target="_blank" rel="noopener">Consultar procesos</a>')
+    + ri('Fiscalia', '<a href="https://www.fiscalia.gov.co/colombia/servicios-ciudadanos/consulte-aqui/" target="_blank" rel="noopener">Ordenes de captura</a>')
+    + ri('Policia', '<a href="https://www.policia.gov.co/tramite/certificado-judicial" target="_blank" rel="noopener">Antecedentes judiciales</a>');
 
-  // IDENTIDAD
-  var simitUrl='https://www.fcm.org.co/simit/estadoPersona.html'+(cc?'?nuip='+cc:'');
-  document.getElementById('body-identidad').innerHTML=
-    (esCedula?H('Cedula CC',esc(cc)):'')
-    +H('Registraduria','<a href="https://wsp.registraduria.gov.co/censo/consultar_cedula.php" target="_blank" rel="noopener">→ Verificar vigencia</a>')
-    +H('SIMIT','<a href="'+simitUrl+'" target="_blank" rel="noopener">→ Consultar multas</a>');
+  // Educacion
+  document.getElementById('body-edu').innerHTML =
+    ri('SENA', '<a href="https://certificados.sena.edu.co/" target="_blank" rel="noopener">Certificados y diplomas</a>')
+    + ri('SENA SEP', '<a href="https://sep.sena.edu.co/Certificados.aspx" target="_blank" rel="noopener">Consultar por cedula</a>')
+    + ri('ICFES', '<a href="https://resultados.icfes.edu.co/resultados-saber2016-web/pages/publicacionResultados/autenticacion/consultaSnp.jsf" target="_blank" rel="noopener">Saber 11</a>')
+    + ri('SNIES', '<a href="https://snies.mineducacion.gov.co/" target="_blank" rel="noopener">Titulos universitarios</a>')
+    + ri('RETHUS', '<a href="https://www.sispro.gov.co/central-prestadores-de-servicios/Pages/ReTHUS-Registro-de-Talento-Humano-en-Salud.aspx" target="_blank" rel="noopener">Profesional salud</a>');
 
-  // EDUCACION
-  document.getElementById('body-educacion').innerHTML=
-    H('SENA','<a href="https://certificados.sena.edu.co/" target="_blank" rel="noopener">→ Certificados y diplomas</a>')
-    +H('SENA SEP','<a href="https://sep.sena.edu.co/Certificados.aspx" target="_blank" rel="noopener">→ Consultar por cedula</a>')
-    +H('ICFES Saber 11','<a href="https://resultados.icfes.edu.co/resultados-saber2016-web/pages/publicacionResultados/autenticacion/consultaSnp.jsf" target="_blank" rel="noopener">→ Resultados</a>')
-    +H('SNIES Titulos','<a href="https://snies.mineducacion.gov.co/" target="_blank" rel="noopener">→ Titulos universitarios</a>')
-    +H('RETHUS','<a href="https://www.sispro.gov.co/central-prestadores-de-servicios/Pages/ReTHUS-Registro-de-Talento-Humano-en-Salud.aspx" target="_blank" rel="noopener">→ Profesional salud</a>');
+  // Financiero
+  document.getElementById('body-fin').innerHTML =
+    '<div style="font-size:.62rem;color:var(--muted);margin-bottom:5px">Centrales de riesgo requieren autorizacion del titular (Ley 1266/2008)</div>'
+    + ri('Datacredito', '<a href="https://www.midatacredito.com/" target="_blank" rel="noopener">Historia crediticia</a>')
+    + ri('Sistecredito', '<a href="https://www.sistecredito.com/" target="_blank" rel="noopener">Credito retail</a>')
+    + ri('Superfinanciera', '<a href="https://www.superfinanciera.gov.co/" target="_blank" rel="noopener">Sanciones publicas</a>');
 
-  // FINANCIERO
-  document.getElementById('body-financiero').innerHTML=
-    '<div style="font-size:.63rem;color:var(--muted);margin-bottom:5px">⚠ Centrales de riesgo requieren autorizacion titular (Ley 1266/2008)</div>'
-    +H('Datacredito','<a href="https://www.midatacredito.com/" target="_blank" rel="noopener">→ Historia crediticia</a>')
-    +H('Sistecredito','<a href="https://www.sistecredito.com/" target="_blank" rel="noopener">→ Credito retail</a>')
-    +H('Superfinanciera','<a href="https://www.superfinanciera.gov.co/" target="_blank" rel="noopener">→ Sanciones publicas</a>');
+  // Laboral
+  document.getElementById('body-lab').innerHTML =
+    ri('Compensar', '<a href="https://www.compensar.com/" target="_blank" rel="noopener">Afiliacion</a>')
+    + ri('Colsubsidio', '<a href="https://www.colsubsidio.com/" target="_blank" rel="noopener">Afiliacion</a>')
+    + ri('Cafam', '<a href="https://www.cafam.com.co/" target="_blank" rel="noopener">Afiliacion</a>')
+    + ri('Comfama', '<a href="https://www.comfama.com/" target="_blank" rel="noopener">Afiliacion</a>')
+    + ri('UGPP', '<a href="https://www.ugpp.gov.co/" target="_blank" rel="noopener">Aportes parafiscales</a>');
 
-  // LABORAL
-  document.getElementById('body-laboral').innerHTML=
-    H('Compensar','<a href="https://www.compensar.com/" target="_blank" rel="noopener">→ Consultar afiliacion</a>')
-    +H('Colsubsidio','<a href="https://www.colsubsidio.com/" target="_blank" rel="noopener">→ Consultar afiliacion</a>')
-    +H('Cafam','<a href="https://www.cafam.com.co/" target="_blank" rel="noopener">→ Consultar afiliacion</a>')
-    +H('Comfama','<a href="https://www.comfama.com/" target="_blank" rel="noopener">→ Consultar afiliacion</a>')
-    +H('UGPP','<a href="https://www.ugpp.gov.co/" target="_blank" rel="noopener">→ Aportes parafiscales</a>');
+  // Empresas
+  var ruesUrl = 'https://www.rues.org.co/RM?nit='+encodeURIComponent(cc||q);
+  document.getElementById('body-emp').innerHTML =
+    ri('RUES', '<a href="'+esc(ruesUrl)+'" target="_blank" rel="noopener">Empresas y registro</a>')
+    + ri('VUR', '<a href="https://www.vur.gov.co/" target="_blank" rel="noopener">Inmuebles y propiedades</a>')
+    + ri('Supersociedades', '<a href="https://www.supersociedades.gov.co/nuestra_entidad/servicios-en-linea/Paginas/consultar-informacion-empresa.aspx" target="_blank" rel="noopener">Insolvencias</a>');
 
-  // EMPRESAS
-  var ruesUrl='https://www.rues.org.co/RM?nit='+encodeURIComponent(cc||q);
-  document.getElementById('body-empresas').innerHTML=
-    H('RUES','<a href="'+ruesUrl+'" target="_blank" rel="noopener">→ Empresas y registro</a>')
-    +H('VUR','<a href="https://www.vur.gov.co/" target="_blank" rel="noopener">→ Inmuebles</a>')
-    +H('Supersociedades','<a href="https://www.supersociedades.gov.co/nuestra_entidad/servicios-en-linea/Paginas/consultar-informacion-empresa.aspx" target="_blank" rel="noopener">→ Insolvencias</a>');
-
-  // REDES
-  var qe=encodeURIComponent(q);
-  document.getElementById('body-redes').innerHTML=
+  // Redes
+  var qe = encodeURIComponent(q);
+  document.getElementById('body-redes').innerHTML =
     '<div style="display:flex;flex-wrap:wrap;gap:5px">'
-    +'<a class="btn btn-ghost btn-sm" href="https://www.linkedin.com/search/results/people/?keywords='+qe+'" target="_blank" rel="noopener">💼 LinkedIn</a>'
-    +'<a class="btn btn-ghost btn-sm" href="https://www.facebook.com/search/people/?q='+qe+'" target="_blank" rel="noopener">👥 Facebook</a>'
-    +'<a class="btn btn-ghost btn-sm" href="https://twitter.com/search?q='+encodeURIComponent('"'+q+'"')+'&f=user" target="_blank" rel="noopener">🐦 Twitter/X</a>'
-    +'<a class="btn btn-ghost btn-sm" href="https://www.instagram.com/explore/search/?q='+qe+'" target="_blank" rel="noopener">📸 Instagram</a>'
-    +'<a class="btn btn-ghost btn-sm" href="https://www.tiktok.com/search?q='+qe+'" target="_blank" rel="noopener">🎵 TikTok</a>'
-    +'<a class="btn btn-ghost btn-sm" href="https://scholar.google.com/scholar?q='+qe+'" target="_blank" rel="noopener">🎓 Scholar</a>'
-    +'</div>';
+    + '<a class="btn btn-g btn-sm" href="https://www.linkedin.com/search/results/people/?keywords='+qe+'" target="_blank" rel="noopener">LinkedIn</a>'
+    + '<a class="btn btn-g btn-sm" href="https://www.facebook.com/search/people/?q='+qe+'" target="_blank" rel="noopener">Facebook</a>'
+    + '<a class="btn btn-g btn-sm" href="https://twitter.com/search?q='+encodeURIComponent('"'+q+'"')+'&f=user" target="_blank" rel="noopener">Twitter/X</a>'
+    + '<a class="btn btn-g btn-sm" href="https://www.instagram.com/explore/search/?q='+qe+'" target="_blank" rel="noopener">Instagram</a>'
+    + '<a class="btn btn-g btn-sm" href="https://www.tiktok.com/search?q='+qe+'" target="_blank" rel="noopener">TikTok</a>'
+    + '<a class="btn btn-g btn-sm" href="https://scholar.google.com/scholar?q='+qe+'" target="_blank" rel="noopener">Scholar</a>'
+    + '</div>';
 
-  // NOTICIAS
-  var qq=encodeURIComponent('"'+q+'"');
-  document.getElementById('body-noticias').innerHTML=
+  // Noticias
+  var qq = encodeURIComponent('"'+q+'"');
+  document.getElementById('body-noticias').innerHTML =
     '<div style="display:flex;flex-wrap:wrap;gap:5px">'
-    +'<a class="btn btn-ghost btn-sm" href="https://www.google.com/search?q='+qq+'" target="_blank" rel="noopener">🌐 Google exacto</a>'
-    +'<a class="btn btn-ghost btn-sm" href="https://news.google.com/search?q='+qe+'" target="_blank" rel="noopener">📰 Google News</a>'
-    +'<a class="btn btn-ghost btn-sm" href="https://www.google.com/search?q='+qq+'+filetype:pdf" target="_blank" rel="noopener">📄 PDFs</a>'
-    +'<a class="btn btn-ghost btn-sm" href="https://www.google.com/search?q='+qq+'+site:gov.co" target="_blank" rel="noopener">🏛️ gov.co</a>'
-    +'<a class="btn btn-ghost btn-sm" href="https://www.google.com/search?q='+qq+'+site:eltiempo.com+OR+site:semana.com" target="_blank" rel="noopener">📰 Medios CO</a>'
-    +'<a class="btn btn-ghost btn-sm" href="https://www.verdadabierta.com/?s='+qe+'" target="_blank" rel="noopener">🔍 Verdad Abierta</a>'
-    +'<a class="btn btn-ghost btn-sm" href="https://colombiacheck.com/?s='+qe+'" target="_blank" rel="noopener">✅ ColombiaCheck</a>'
-    +'<a class="btn btn-ghost btn-sm" href="https://web.archive.org/web/*/'+qe+'" target="_blank" rel="noopener">🗃️ Wayback</a>'
-    +'</div>';
+    + '<a class="btn btn-g btn-sm" href="https://www.google.com/search?q='+qq+'" target="_blank" rel="noopener">Google exacto</a>'
+    + '<a class="btn btn-g btn-sm" href="https://news.google.com/search?q='+qe+'" target="_blank" rel="noopener">Google News</a>'
+    + '<a class="btn btn-g btn-sm" href="https://www.google.com/search?q='+qq+'+filetype:pdf" target="_blank" rel="noopener">PDFs</a>'
+    + '<a class="btn btn-g btn-sm" href="https://www.google.com/search?q='+qq+'+site:gov.co" target="_blank" rel="noopener">gov.co</a>'
+    + '<a class="btn btn-g btn-sm" href="https://www.google.com/search?q='+qq+'+site:eltiempo.com+OR+site:semana.com" target="_blank" rel="noopener">Medios CO</a>'
+    + '<a class="btn btn-g btn-sm" href="https://www.verdadabierta.com/?s='+qe+'" target="_blank" rel="noopener">Verdad Abierta</a>'
+    + '<a class="btn btn-g btn-sm" href="https://colombiacheck.com/?s='+qe+'" target="_blank" rel="noopener">ColombiaCheck</a>'
+    + '</div>';
 
-    // IMAGEN
-  document.getElementById('img-engines').innerHTML=[
-    {ico:'🟡',n:'Yandex ⭐',d:'Mejor para rostros',url:'https://yandex.com/images/'},
-    {ico:'🟣',n:'PimEyes ⭐',d:'Facial avanzado',url:'https://pimeyes.com/'},
-    {ico:'🌐',n:'Google Lens',d:'Mayor índice',url:'https://lens.google.com/'},
-    {ico:'🔍',n:'Search4Faces',d:'Redes sociales',url:'https://search4faces.com/'},
-    {ico:'🧠',n:'FaceCheck.ID',d:'Búsqueda facial',url:'https://facecheck.id/'},
-    {ico:'🟠',n:'TinEye',d:'Historial imagen',url:'https://www.tineye.com/'},
-  ].map(m=>`<a class="img-e" href="${m.url}" target="_blank" rel="noopener"><span class="ie">${m.ico}</span><div class="in">${m.n}</div><div class="id2">${m.d}</div></a>`).join('');
-
-  // MANUAL
-  const links=[
-    {ico:'🏛️',n:'Registraduría',d:'CC vigente',url:'https://wsp.registraduria.gov.co/censo/consultar_cedula.php'},
-    {ico:'⚖️',n:'Rama Judicial',d:'Procesos',url:jUrl},
-    {ico:'🚦',n:'SIMIT',d:'Multas',url:`https://www.fcm.org.co/simit/estadoPersona.html${cc?'?nuip='+cc:''}`},
-    {ico:'🚨',n:'Fiscalía',d:'Capturas',url:'https://www.fiscalia.gov.co/colombia/servicios-ciudadanos/consulte-aqui/'},
-    {ico:'🎓',n:'SENA',d:'Certificados',url:'https://certificados.sena.edu.co/'},
-    {ico:'📚',n:'ICFES',d:'Saber 11',url:'https://resultados.icfes.edu.co/resultados-saber2016-web/pages/publicacionResultados/autenticacion/consultaSnp.jsf'},
-    {ico:'🏫',n:'SNIES',d:'Títulos',url:'https://snies.mineducacion.gov.co/'},
-    {ico:'🩺',n:'RETHUS',d:'Salud',url:'https://www.sispro.gov.co/central-prestadores-de-servicios/Pages/ReTHUS-Registro-de-Talento-Humano-en-Salud.aspx'},
-    {ico:'💊',n:'INVIMA',d:'Sanitario',url:'https://www.invima.gov.co/consulta-registros-sanitarios'},
-    {ico:'🏢',n:'RUES',d:'Empresas',url:`https://www.rues.org.co/RM?nit=${encodeURIComponent(cc||q)}`},
-    {ico:'🏠',n:'VUR',d:'Inmuebles',url:'https://www.vur.gov.co/'},
-    {ico:'💳',n:'Datacrédito',d:'Crédito',url:'https://www.midatacredito.com/'},
-    {ico:'🛒',n:'Sistecrédito',d:'Retail',url:'https://www.sistecredito.com/'},
-    {ico:'🔍',n:'Verdad Abierta',d:'Conflicto',url:`https://www.verdadabierta.com/?s=${qe}`},
-    {ico:'✅',n:'ColombiaCheck',d:'Fact-check',url:`https://colombiacheck.com/?s=${qe}`},
-    {ico:'🗃️',n:'Wayback',d:'Historial web',url:`https://web.archive.org/web/*/${qe}`},
+  // Imagen
+  var motoresImg = [
+    {ico:'🟡', n:'Yandex (mejor)', d:'Facial', url:'https://yandex.com/images/'},
+    {ico:'🟣', n:'PimEyes', d:'Avanzado', url:'https://pimeyes.com/'},
+    {ico:'🌐', n:'Google Lens', d:'Mayor indice', url:'https://lens.google.com/'},
+    {ico:'🔍', n:'Search4Faces', d:'Redes', url:'https://search4faces.com/'},
+    {ico:'🟠', n:'TinEye', d:'Historial', url:'https://www.tineye.com/'},
+    {ico:'🔵', n:'Bing Visual', d:'Objetos', url:'https://www.bing.com/visualsearch'},
   ];
-  document.getElementById('body-manual').innerHTML=links.map(l=>`<a class="lk" href="${l.url}" target="_blank" rel="noopener noreferrer"><span class="lk-ico">${l.ico}</span><div class="lk-n">${l.n}</div><div class="lk-d">${l.d}</div></a>`).join('');
+  var imgHtml = '';
+  motoresImg.forEach(function(m) {
+    imgHtml += '<a class="ig" href="'+m.url+'" target="_blank" rel="noopener"><span class="ig-ico">'+m.ico+'</span><div class="ig-n">'+m.n+'</div><div class="ig-d">'+m.d+'</div></a>';
+  });
+  document.getElementById('body-imagen').innerHTML = imgHtml;
 
-  document.getElementById('report').style.display='block';
-  setTimeout(()=>document.getElementById('report').scrollIntoView({behavior:'smooth',block:'start'}),300);
-  const total=G.r.pep.length+G.r.siri.length+G.r.secop2.length+G.r.secop1.length+G.r.contraloria.length;
-  toast(`ARGOS completado · ${total} hallazgos en APIs · ${G.certeza}% certeza`,'🔴');
-}
-
-function copiarInforme(){
-  const {q,cc,r,certeza}=G;
-  const f=new Date().toLocaleDateString('es-CO');
-  const secciones=[
-    `🔴 INFORME ARGOS v3.0 — InvestigaYa\n${'═'.repeat(42)}`,
-    `Objetivo: ${q}${cc?' (CC: '+cc+')':''}`,
-    `Certeza ARGOS: ${certeza}%  |  Fecha: ${f}`,
-    '',
-    r.pep.length>0?`🏅 PEP — SERVIDOR PÚBLICO (${r.pep.length}):\n`+r.pep.map(p=>`• ${p.nombre_pep} | ${p.denominacion_cargo} | ${p.nombre_entidad} | ${p.fecha_vinculacion}`).join('\n'):`🏅 PEP: No figura como servidor público`,
-    '',
-    r.siri.length>0?`⚠️ SIRI — SANCIONES PROCURADURÍA (${r.siri.length}):\n`+r.siri.map(s=>`• ${[s.primer_nombre,s.primer_apellido].join(' ')} | ${s.sanciones} | ${s.autoridad} | ${s.fecha_efectos_juridicos}`).join('\n'):`⚠️ SIRI: Sin sanciones disciplinarias`,
-    '',
-    r.secop2.length>0?`📑 SECOP II — CONTRATOS (${r.secop2.length}):\n`+r.secop2.map(c=>`• ${c.objeto_del_contrato||c.descripcion_del_proceso||'Contrato'} | ${c.nombre_entidad} | ${c.valor_del_contrato?fmt(c.valor_del_contrato):'N/D'} | ${(c.fecha_de_firma||'').split('T')[0]}`).join('\n'):`📑 SECOP II: Sin contratos`,
-    '',
-    r.secop1.length>0?`📋 SECOP Integrado — CONTRATOS (${r.secop1.length}):\n`+r.secop1.map(c=>`• ${c.nom_raz_social_contratista||'Contrato'} | ${c.nombre_de_la_entidad||'—'} | ${c.valor_contrato||'N/D'} | ${(c.fecha_de_firma_del_contrato||'').split('T')[0]}`).join('\n'):`📋 SECOP Integrado: Sin contratos`,
-    '',
-    r.contraloria.length>0?`📊 CONTRALORÍA — PROCESOS FISCALES (${r.contraloria.length}):\n`+r.contraloria.map(c=>`• ${c.raz_n_social_de_la_entidad||'—'} | ${c.fallo||'—'} | ${c.cuant_a_del_fallo_en_primera||'—'}`).join('\n'):`📊 Contraloría: Sin procesos fiscales`,
-    '',
-    `Generado por ARGOS v3.0 · https://jeissonalberto.github.io/investiga-ya-osint-app/`
+  // Manual grid
+  var manualLinks = [
+    {ico:'🏛', n:'Registraduria', d:'CC vigente', url:'https://wsp.registraduria.gov.co/censo/consultar_cedula.php'},
+    {ico:'⚖', n:'Rama Judicial', d:'Procesos', url:judUrl},
+    {ico:'🚦', n:'SIMIT', d:'Multas', url:simitUrl},
+    {ico:'🚨', n:'Fiscalia', d:'Capturas', url:'https://www.fiscalia.gov.co/colombia/servicios-ciudadanos/consulte-aqui/'},
+    {ico:'🎓', n:'SENA', d:'Certificados', url:'https://certificados.sena.edu.co/'},
+    {ico:'🏫', n:'SNIES', d:'Titulos', url:'https://snies.mineducacion.gov.co/'},
+    {ico:'🩺', n:'RETHUS', d:'Salud', url:'https://www.sispro.gov.co/central-prestadores-de-servicios/Pages/ReTHUS-Registro-de-Talento-Humano-en-Salud.aspx'},
+    {ico:'🏢', n:'RUES', d:'Empresas', url:ruesUrl},
+    {ico:'🏠', n:'VUR', d:'Inmuebles', url:'https://www.vur.gov.co/'},
+    {ico:'💳', n:'Datacredito', d:'Credito', url:'https://www.midatacredito.com/'},
+    {ico:'🛒', n:'Sistecredito', d:'Retail', url:'https://www.sistecredito.com/'},
+    {ico:'🔍', n:'Verdad Abierta', d:'Conflicto', url:'https://www.verdadabierta.com/?s='+qe},
+    {ico:'✅', n:'ColombiaCheck', d:'Fact-check', url:'https://colombiacheck.com/?s='+qe},
+    {ico:'🗃', n:'Wayback', d:'Historial web', url:'https://web.archive.org/web/*/'+qe},
   ];
-  navigator.clipboard.writeText(secciones.join('\n')).then(()=>toast('Informe copiado','📋')).catch(()=>toast('Error al copiar','⚠️'));
+  var manualHtml = '';
+  manualLinks.forEach(function(l) {
+    manualHtml += '<a class="lk" href="'+esc(l.url)+'" target="_blank" rel="noopener noreferrer"><span class="lk-ico">'+l.ico+'</span><div class="lk-n">'+l.n+'</div><div class="lk-d">'+l.d+'</div></a>';
+  });
+  document.getElementById('body-manual').innerHTML = manualHtml;
+
+  // Mostrar informe
+  document.getElementById('informe').style.display = 'block';
+  setTimeout(function() {
+    document.getElementById('informe').scrollIntoView({behavior:'smooth', block:'start'});
+  }, 300);
+  toast('ARGOS listo: '+(G.pep.length+G.siri.length+G.s2.length+G.si.length)+' hallazgos en APIs | '+G.certeza+'% certeza');
 }
 
-function nuevaBusqueda(){
-  ['report','progress-wrap'].forEach(id=>document.getElementById(id).style.display='none');
-  document.getElementById('cert-wrap').classList.remove('show');
-  document.getElementById('main-query').value='';
-  document.getElementById('main-query').focus();
-  scrollTo({top:0,behavior:'smooth'});
-}
-
-// FOTO
-function buscarFoto(){
-  const u=document.getElementById('inp-foto').value.trim();
-  const p=u?encodeURIComponent(u):'';
-  const items=[
-    {ico:'🟡',n:'Yandex ⭐',d:'Reconocimiento facial',url:p?`https://yandex.com/images/search?rpt=imageview&url=${p}`:'https://yandex.com/images/'},
-    {ico:'🟣',n:'PimEyes ⭐',d:'Facial avanzado',url:'https://pimeyes.com/'},
-    {ico:'🌐',n:'Google Lens',d:'Mayor índice',url:p?`https://lens.google.com/uploadbyurl?url=${p}`:'https://lens.google.com/'},
-    {ico:'🔍',n:'Search4Faces',d:'Redes',url:'https://search4faces.com/'},
-    {ico:'🧠',n:'FaceCheck.ID',d:'IA facial',url:'https://facecheck.id/'},
-    {ico:'🟠',n:'TinEye',d:'Historial',url:p?`https://www.tineye.com/search?url=${p}`:'https://www.tineye.com/'},
-    {ico:'🔵',n:'Bing Visual',d:'Objetos',url:'https://www.bing.com/visualsearch'},
-    {ico:'📷',n:'Google Images',d:'Inversa',url:'https://images.google.com/'},
-  ];
-  document.getElementById('grid-foto').innerHTML=items.map(m=>`<a class="img-e" href="${m.url}" target="_blank" rel="noopener"><span class="ie">${m.ico}</span><div class="in">${m.n}</div><div class="id2">${m.d}</div></a>`).join('');
-  document.getElementById('res-foto').style.display='block';
-  toast('Ábrelos en paralelo','📷');
-}
-document.getElementById('inp-foto').addEventListener('keydown',e=>{if(e.key==='Enter')buscarFoto()});
-
-// TELÉFONO
-function buscarTelefono(){
-  const t=document.getElementById('inp-tel').value.trim().replace(/\s/g,'');
-  if(!t){toast('Ingresa un número','⚠️');return}
-  const intl=t.startsWith('+')?t:'+57'+t.replace(/^0/,'');
-  const items=[
-    {ico:'📞',n:'Truecaller',d:'Nombre e identificación',url:`https://www.truecaller.com/search/co/${encodeURIComponent(t)}`},
-    {ico:'💬',n:'WhatsApp',d:'Abrir chat',url:`https://wa.me/${intl.replace('+','')}`},
-    {ico:'🌐',n:'NumLookup',d:'Operador y tipo',url:`https://www.numlookup.com/?number=${encodeURIComponent(intl)}`},
-    {ico:'🔍',n:'Google',d:'Buscar número',url:`https://www.google.com/search?q="${encodeURIComponent(t)}"`},
-    {ico:'📘',n:'Facebook',d:'Buscar',url:`https://www.facebook.com/search/top?q=${encodeURIComponent(t)}`},
-    {ico:'🗃️',n:'Wayback',d:'Menciones históricas',url:`https://web.archive.org/web/*/${encodeURIComponent(t)}`},
-  ];
-  document.getElementById('grid-tel').innerHTML=items.map(m=>`<a class="lk" href="${m.url}" target="_blank" rel="noopener"><span class="lk-ico">${m.ico}</span><div class="lk-n">${m.n}</div><div class="lk-d">${m.d}</div></a>`).join('');
-  document.getElementById('res-tel').style.display='block';
-  toast('Fuentes activadas','📱');
-}
-document.getElementById('inp-tel').addEventListener('keydown',e=>{if(e.key==='Enter')buscarTelefono()});
-
-// DORKS
-function generarDorks(){
-  const n=document.getElementById('d-nombre').value.trim();
-  const c=document.getElementById('d-cedula').value.trim();
-  const e=document.getElementById('d-email').value.trim();
-  const t=document.getElementById('d-tel2').value.trim().replace(/[\s\-().+]/g,'');
-  const emp=document.getElementById('d-empresa').value.trim();
-  const s=document.getElementById('d-sitio').value.trim();
-  if(!n&&!c&&!e&&!t){toast('Ingresa al menos un dato','⚠️');return}
-  const D=[];
-  if(n){
-    D.push({l:'Nombre exacto en la web',q:`"${n}"`});
-    D.push({l:'Nombre en PDFs',q:`"${n}" filetype:pdf`});
-    D.push({l:'Nombre en gov.co',q:`"${n}" site:gov.co`});
-    D.push({l:'Nombre en contratos públicos',q:`"${n}" "contrato" OR "licitación" site:gov.co`});
-    D.push({l:'Nombre en redes sociales',q:`"${n}" site:linkedin.com OR site:facebook.com OR site:twitter.com`});
-    D.push({l:'Nombre en noticias',q:`"${n}" site:eltiempo.com OR site:semana.com OR site:elespectador.com`});
-    D.push({l:'Nombre en educación',q:`"${n}" site:sena.edu.co OR site:icfes.gov.co OR site:mineducacion.gov.co`});
-    D.push({l:'Nombre en universidades',q:`"${n}" site:unal.edu.co OR site:udea.edu.co OR site:javeriana.edu.co`});
-    if(emp)D.push({l:`Nombre + empresa`,q:`"${n}" "${emp}"`});
-    if(s)D.push({l:`Nombre en ${s}`,q:`"${n}" site:${s}`});
+function buildBlk(src, blkId, cntId, arr, renderer, emptyMsg) {
+  var blk = document.getElementById(blkId);
+  var cnt = document.getElementById(cntId);
+  var body = document.getElementById('body-'+src);
+  if (arr.length > 0) {
+    blk.className = 'blk hit';
+    cnt.className = 'blk-cnt cnt-hit';
+    cnt.textContent = arr.length + ' registros';
+    var html = '';
+    arr.forEach(function(item) { html += renderer(item); });
+    body.innerHTML = html;
+  } else {
+    blk.className = 'blk clean';
+    cnt.className = 'blk-cnt cnt-ok';
+    cnt.textContent = 'Limpio';
+    body.innerHTML = '<div class="msg-ok">✓ '+emptyMsg+'</div>';
   }
-  if(c){D.push({l:'Cédula exacta',q:`"${c}"`});D.push({l:'Cédula en PDFs',q:`"${c}" filetype:pdf`});D.push({l:'Cédula en gov.co',q:`"${c}" site:gov.co`});if(n)D.push({l:'Nombre + cédula',q:`"${n}" "${c}"`})}
-  if(e){D.push({l:'Email exacto',q:`"${e}"`});D.push({l:'Email en Pastebin',q:`"${e}" site:pastebin.com`})}
-  if(t){D.push({l:'Teléfono exacto',q:`"${t}"`});D.push({l:'Tel en WhatsApp/Telegram',q:`"${t}" site:wa.me OR site:t.me`})}
-  document.getElementById('res-dorks').innerHTML=`<div class="block"><div class="stitle">⚡ ${D.length} dorks generados</div>${D.map((d,i)=>`
-    <div class="dork-lbl">${esc(d.l)}</div>
-    <div class="dork-box" id="dq${i}">${esc(d.q)}</div>
-    <div class="dork-row">
-      <button class="btn btn-ghost btn-sm" onclick="cpD(${i},this)">📋 Copiar</button>
-      <a class="btn btn-ghost btn-sm" href="https://www.google.com/search?q=${encodeURIComponent(d.q)}" target="_blank" rel="noopener">🔍 Google</a>
-      <a class="btn btn-ghost btn-sm" href="https://duckduckgo.com/?q=${encodeURIComponent(d.q)}" target="_blank" rel="noopener">🦆 DDG</a>
-    </div>${i<D.length-1?'<div class="sep"></div>':''}`).join('')}</div>`;
-  document.getElementById('res-dorks').style.display='block';
+}
+
+function renderContrato(c, objeto, proveedor, doc, fechaRaw, estado, valor, modalidad, entidad, urlRaw) {
+  var fecha = (fechaRaw||'').split('T')[0] || '-';
+  var est = estado || '-';
+  var activo = /ejecuci|activo|vigente|celebrado/i.test(est);
+  var urlContrato = '';
+  if (urlRaw) { urlContrato = typeof urlRaw === 'object' ? (urlRaw.url||'') : urlRaw; }
+  var val = valor ? fmt(valor) : 'N/D';
+  return '<div class="dato">'
+    + '<div class="dato-title">'+esc(objeto||'-')+'</div>'
+    + '<div class="dato-rows">'
+    + '<span class="dl">Entidad</span><span class="dv">'+esc(entidad||'-')+'</span>'
+    + '<span class="dl">Proveedor</span><span class="dv">'+esc(proveedor||'-')+'</span>'
+    + '<span class="dl">Cedula/NIT</span><span class="dv">'+esc(doc||'-')+'</span>'
+    + '<span class="dl">Modalidad</span><span class="dv">'+esc(modalidad||'-')+'</span>'
+    + '<span class="dl">Fecha firma</span><span class="dv">'+esc(fecha)+'</span>'
+    + '<span class="dl">Estado</span><span class="dv"><span class="dbadge '+(activo?'dbg':'dbx')+'">'+esc(est)+'</span></span>'
+    + '</div>'
+    + '<div class="dato-money">'+val+(urlContrato ? ' <a href="'+esc(urlContrato)+'" target="_blank" rel="noopener" style="font-size:.63rem;font-weight:700;color:var(--redll)">Ver proceso</a>' : '')+'</div>'
+    + '</div>';
+}
+
+function copiar() {
+  var q = G.q||'', cc = G.cc||'';
+  var lineas = [
+    'INFORME ARGOS v3.5 - InvestigaYa',
+    ''.padStart(40,'='),
+    'Objetivo: '+q+(cc?' (CC: '+cc+')':''),
+    'Certeza: '+G.certeza+'%',
+    '',
+    'PEP ('+(G.pep.length)+'):' ,
+  ];
+  G.pep.forEach(function(p){ lineas.push('  '+[p.nombre_pep,p.denominacion_cargo,p.nombre_entidad,p.fecha_vinculacion].join(' | ')); });
+  lineas.push('');
+  lineas.push('SIRI/Sanciones ('+(G.siri.length)+'):');
+  G.siri.forEach(function(s){ lineas.push('  '+[s.primer_nombre,s.primer_apellido,s.sanciones,s.autoridad,s.fecha_efectos_juridicos].join(' | ')); });
+  lineas.push('');
+  lineas.push('SECOP II ('+(G.s2.length)+'):');
+  G.s2.forEach(function(c){ lineas.push('  '+[(c.objeto_del_contrato||c.descripcion_del_proceso||'-'),c.nombre_entidad,fmt(c.valor_del_contrato||0)].join(' | ')); });
+  lineas.push('');
+  lineas.push('SECOP Integrado ('+(G.si.length)+'):');
+  G.si.forEach(function(c){ lineas.push('  '+[(c.objeto_del_proceso||'-'),c.nombre_de_la_entidad,fmt(c.valor_contrato||0)].join(' | ')); });
+  lineas.push('');
+  lineas.push('Generado por ARGOS v3.5 - https://jeissonalberto.github.io/investiga-ya-osint-app/');
+  navigator.clipboard.writeText(lineas.join('\n'))
+    .then(function(){ toast('Informe copiado'); })
+    .catch(function(){ toast('Error al copiar'); });
+}
+
+function nuevaBusqueda() {
+  document.getElementById('informe').style.display = 'none';
+  document.getElementById('estado').style.display = 'none';
+  document.getElementById('certeza-wrap').classList.remove('show');
+  document.getElementById('q').value = '';
+  document.getElementById('q').focus();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+// Foto
+function buscarFoto() {
+  var u = document.getElementById('inp-foto').value.trim();
+  var p = u ? encodeURIComponent(u) : '';
+  var motores = [
+    {ico:'🟡', n:'Yandex (mejor)', d:'Reconocimiento facial', url: p ? 'https://yandex.com/images/search?rpt=imageview&url='+p : 'https://yandex.com/images/'},
+    {ico:'🟣', n:'PimEyes', d:'Facial avanzado', url:'https://pimeyes.com/'},
+    {ico:'🌐', n:'Google Lens', d:'Mayor indice', url: p ? 'https://lens.google.com/uploadbyurl?url='+p : 'https://lens.google.com/'},
+    {ico:'🔍', n:'Search4Faces', d:'Redes sociales', url:'https://search4faces.com/'},
+    {ico:'🟠', n:'TinEye', d:'Historial imagen', url: p ? 'https://www.tineye.com/search?url='+p : 'https://www.tineye.com/'},
+    {ico:'🔵', n:'Bing Visual', d:'Objetos y personas', url:'https://www.bing.com/visualsearch'},
+    {ico:'🧠', n:'FaceCheck.ID', d:'IA facial', url:'https://facecheck.id/'},
+    {ico:'📷', n:'Google Images', d:'Busqueda inversa', url:'https://images.google.com/'},
+  ];
+  var html = '';
+  motores.forEach(function(m) {
+    html += '<a class="ig" href="'+m.url+'" target="_blank" rel="noopener"><span class="ig-ico">'+m.ico+'</span><div class="ig-n">'+m.n+'</div><div class="ig-d">'+m.d+'</div></a>';
+  });
+  document.getElementById('grid-foto').innerHTML = html;
+  document.getElementById('res-foto').style.display = 'block';
+  toast('Abralos en paralelo para mayor cobertura');
+}
+document.getElementById('inp-foto').addEventListener('keydown', function(e){ if(e.key==='Enter') buscarFoto(); });
+
+// Telefono
+function buscarTel() {
+  var t = document.getElementById('inp-tel').value.trim().replace(/\s/g,'');
+  if (!t) { toast('Ingresa un numero'); return; }
+  var intl = t.startsWith('+') ? t : '+57'+t.replace(/^0/,'');
+  var motores = [
+    {ico:'📞', n:'Truecaller', d:'Nombre e ID', url:'https://www.truecaller.com/search/co/'+encodeURIComponent(t)},
+    {ico:'💬', n:'WhatsApp', d:'Abrir chat', url:'https://wa.me/'+intl.replace('+','')},
+    {ico:'🌐', n:'NumLookup', d:'Operador', url:'https://www.numlookup.com/?number='+encodeURIComponent(intl)},
+    {ico:'🔍', n:'Google', d:'Buscar numero', url:'https://www.google.com/search?q=%22'+encodeURIComponent(t)+'%22'},
+    {ico:'📘', n:'Facebook', d:'Buscar', url:'https://www.facebook.com/search/top?q='+encodeURIComponent(t)},
+    {ico:'🗃', n:'Wayback', d:'Historial', url:'https://web.archive.org/web/*/'+encodeURIComponent(t)},
+  ];
+  var html = '';
+  motores.forEach(function(m) {
+    html += '<a class="lk" href="'+m.url+'" target="_blank" rel="noopener"><span class="lk-ico">'+m.ico+'</span><div class="lk-n">'+m.n+'</div><div class="lk-d">'+m.d+'</div></a>';
+  });
+  document.getElementById('grid-tel').innerHTML = html;
+  document.getElementById('res-tel').style.display = 'block';
+  toast('Fuentes activadas');
+}
+document.getElementById('inp-tel').addEventListener('keydown', function(e){ if(e.key==='Enter') buscarTel(); });
+
+// Dorks
+function generarDorks() {
+  var n = document.getElementById('d-n').value.trim();
+  var c = document.getElementById('d-c').value.trim();
+  var e = document.getElementById('d-e').value.trim();
+  var emp = document.getElementById('d-emp').value.trim();
+  if (!n && !c && !e) { toast('Ingresa al menos un dato'); return; }
+  var D = [];
+  if (n) {
+    D.push({l:'Nombre exacto', q:'"'+n+'"'});
+    D.push({l:'Nombre en PDFs', q:'"'+n+'" filetype:pdf'});
+    D.push({l:'Nombre en gov.co', q:'"'+n+'" site:gov.co'});
+    D.push({l:'Nombre en contratos', q:'"'+n+'" "contrato" OR "licitacion" site:gov.co'});
+    D.push({l:'Nombre en redes', q:'"'+n+'" site:linkedin.com OR site:facebook.com OR site:twitter.com'});
+    D.push({l:'Nombre en noticias CO', q:'"'+n+'" site:eltiempo.com OR site:semana.com OR site:elespectador.com'});
+    D.push({l:'Nombre en educacion', q:'"'+n+'" site:sena.edu.co OR site:icfes.gov.co OR site:mineducacion.gov.co'});
+    D.push({l:'Nombre en universidades', q:'"'+n+'" site:unal.edu.co OR site:udea.edu.co OR site:javeriana.edu.co'});
+    if (emp) D.push({l:'Nombre + empresa', q:'"'+n+'" "'+emp+'"'});
+  }
+  if (c) {
+    D.push({l:'Cedula exacta', q:'"'+c+'"'});
+    D.push({l:'Cedula en PDFs', q:'"'+c+'" filetype:pdf'});
+    D.push({l:'Cedula en gov.co', q:'"'+c+'" site:gov.co'});
+    if (n) D.push({l:'Nombre + cedula', q:'"'+n+'" "'+c+'"'});
+  }
+  if (e) {
+    D.push({l:'Email exacto', q:'"'+e+'"'});
+    D.push({l:'Email en filtraciones', q:'"'+e+'" site:pastebin.com'});
+  }
+  var html = '<div class="block"><div class="stitle">'+D.length+' dorks generados</div>';
+  D.forEach(function(d, i) {
+    html += '<div class="dork-lbl">'+esc(d.l)+'</div>'
+      + '<div class="dork-box" id="dq'+i+'">'+esc(d.q)+'</div>'
+      + '<div class="dork-row">'
+      + '<button class="btn btn-g btn-sm" onclick="cpD('+i+',this)">Copiar</button>'
+      + '<a class="btn btn-g btn-sm" href="https://www.google.com/search?q='+encodeURIComponent(d.q)+'" target="_blank" rel="noopener">Google</a>'
+      + '<a class="btn btn-g btn-sm" href="https://duckduckgo.com/?q='+encodeURIComponent(d.q)+'" target="_blank" rel="noopener">DDG</a>'
+      + '</div>'
+      + (i < D.length-1 ? '<div class="sep"></div>' : '');
+  });
+  html += '</div>';
+  document.getElementById('res-dorks').innerHTML = html;
+  document.getElementById('res-dorks').style.display = 'block';
   toast(D.length+' dorks listos');
 }
-function cpD(i,btn){
-  navigator.clipboard.writeText(document.getElementById('dq'+i).textContent).then(()=>{const o=btn.textContent;btn.textContent='✅ Copiado';setTimeout(()=>btn.textContent=o,1800)}).catch(()=>toast('Error','⚠️'));
+function cpD(i, btn) {
+  var el = document.getElementById('dq'+i);
+  navigator.clipboard.writeText(el.textContent).then(function(){
+    var o = btn.textContent;
+    btn.textContent = 'Copiado!';
+    setTimeout(function(){ btn.textContent = o; }, 1800);
+  }).catch(function(){ toast('Error al copiar'); });
 }
-['d-nombre','d-cedula','d-email','d-tel2','d-empresa','d-sitio'].forEach(id=>{
-  const el=document.getElementById(id);
-  if(el)el.addEventListener('keydown',e=>{if(e.key==='Enter')generarDorks()});
+['d-n','d-c','d-e','d-emp'].forEach(function(id) {
+  var el = document.getElementById(id);
+  if (el) el.addEventListener('keydown', function(e){ if(e.key==='Enter') generarDorks(); });
 });
+
+// Exponer activar globalmente para el onclick del boton
+document.getElementById('btnActivar').addEventListener('click', activar);
 </script>
 </body>
 </html>
