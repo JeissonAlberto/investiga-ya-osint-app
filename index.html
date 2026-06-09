@@ -317,7 +317,11 @@ ol.steps li::before{content:counter(s);position:absolute;left:6px;top:50%;transf
     <div class="blk" id="blk-emp"><div class="blk-head"><span class="blk-ico">🏢</span><span class="blk-title">Empresas y bienes</span></div><div id="body-emp"></div></div>
   </div>
 
-  <div class="blk hit"><div class="blk-head"><span class="blk-ico">🌐</span><span class="blk-title">Redes sociales</span></div><div id="body-redes"></div></div>
+  <div class="blk hit"><div class="blk-head"><span class="blk-ico">🌐</span><span class="blk-title">Redes sociales — perfil completo</span></div><div id="body-redes"></div></div>
+  <div class="blk hit"><div class="blk-head"><span class="blk-ico">🏥</span><span class="blk-title">Salud — Hospitales, EPS, profesionales</span></div><div id="body-salud"></div></div>
+  <div class="blk hit"><div class="blk-head"><span class="blk-ico">🏫</span><span class="blk-title">Educacion — Colegios, universidades, ICFES</span></div><div id="body-educ2"></div></div>
+  <div class="blk hit"><div class="blk-head"><span class="blk-ico">🏛</span><span class="blk-title">Gobierno local — Alcaldias y Gobernaciones</span></div><div id="body-govt"></div></div>
+  <div class="blk hit"><div class="blk-head"><span class="blk-ico">💳</span><span class="blk-title">Historial crediticio y financiero</span></div><div id="body-credito"></div></div>
   <div class="blk hit"><div class="blk-head"><span class="blk-ico">📰</span><span class="blk-title">Noticias y web publica</span></div><div id="body-noticias"></div></div>
 
   <div class="blk"><div class="blk-head"><span class="blk-ico">🖼</span><span class="blk-title">Reconocimiento visual</span></div>
@@ -769,32 +773,183 @@ function buildReport(){
 
   // Redes
   var qe=enc(G.nombre||q);
+  var qn=enc(G.nombre||q);
   document.getElementById('body-redes').innerHTML=
     '<div style="display:flex;flex-wrap:wrap;gap:5px">'
+    +'<div style="width:100%;font-size:.6rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:1px;padding:2px 0 4px">Principales</div>'
     +'<a class="btn btn-g btn-sm" href="https://www.linkedin.com/search/results/people/?keywords='+qe+'" target="_blank" rel="noopener">LinkedIn</a>'
     +'<a class="btn btn-g btn-sm" href="https://www.facebook.com/search/people/?q='+qe+'" target="_blank" rel="noopener">Facebook</a>'
     +'<a class="btn btn-g btn-sm" href="https://twitter.com/search?q='+enc('"'+(G.nombre||q)+'"')+'&f=user" target="_blank" rel="noopener">Twitter/X</a>'
     +'<a class="btn btn-g btn-sm" href="https://www.instagram.com/explore/search/?q='+qe+'" target="_blank" rel="noopener">Instagram</a>'
     +'<a class="btn btn-g btn-sm" href="https://www.tiktok.com/search?q='+qe+'" target="_blank" rel="noopener">TikTok</a>'
-    +'<a class="btn btn-g btn-sm" href="https://scholar.google.com/scholar?q='+qe+'" target="_blank" rel="noopener">Scholar</a>'
     +'<a class="btn btn-g btn-sm" href="https://www.youtube.com/results?search_query='+qe+'" target="_blank" rel="noopener">YouTube</a>'
-    +'<a class="btn btn-g btn-sm" href="https://github.com/search?q='+enc(G.nombre||q)+'" target="_blank" rel="noopener">GitHub</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.pinterest.com/search/users/?q='+qe+'" target="_blank" rel="noopener">Pinterest</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.snapchat.com/search?q='+qe+'" target="_blank" rel="noopener">Snapchat</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.threads.net/search?q='+qe+'" target="_blank" rel="noopener">Threads</a>'
+    +'<a class="btn btn-g btn-sm" href="https://bsky.app/search?q='+qe+'" target="_blank" rel="noopener">Bluesky</a>'
+    +'<div style="width:100%;font-size:.6rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:1px;padding:6px 0 4px">Profesionales</div>'
+    +'<a class="btn btn-g btn-sm" href="https://scholar.google.com/scholar?q='+qe+'" target="_blank" rel="noopener">Google Scholar</a>'
+    +'<a class="btn btn-g btn-sm" href="https://github.com/search?q='+enc(G.nombre||q)+'&type=users" target="_blank" rel="noopener">GitHub</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.researchgate.net/search/researcher?q='+qe+'" target="_blank" rel="noopener">ResearchGate</a>'
+    +'<a class="btn btn-g btn-sm" href="https://orcid.org/orcid-search/search?searchQuery='+qe+'" target="_blank" rel="noopener">ORCID</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.xing.com/search/members?q='+qe+'" target="_blank" rel="noopener">Xing</a>'
+    +'<div style="width:100%;font-size:.6rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:1px;padding:6px 0 4px">Mensajeria y foros</div>'
+    +'<a class="btn btn-g btn-sm" href="https://www.reddit.com/search/?q='+qe+'&type=user" target="_blank" rel="noopener">Reddit</a>'
+    +'<a class="btn btn-g btn-sm" href="https://taringa.net/buscar?q='+qe+'" target="_blank" rel="noopener">Taringa</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.quora.com/search?q='+qe+'" target="_blank" rel="noopener">Quora</a>'
+    +'<div style="width:100%;font-size:.6rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:1px;padding:6px 0 4px">Colombia</div>'
+    +'<a class="btn btn-g btn-sm" href="https://www.elempleo.com/co/buscar/?q='+qe+'" target="_blank" rel="noopener">ElEmpleo</a>'
+    +'<a class="btn btn-g btn-sm" href="https://co.computrabajo.com/buscar?q='+qe+'" target="_blank" rel="noopener">Computrabajo</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.olx.com.co/items/q-'+qe+'" target="_blank" rel="noopener">OLX Colombia</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.fincaraiz.com.co/busqueda/?q='+qe+'" target="_blank" rel="noopener">Finca Raiz</a>'
+    +'</div>';
+
+  // Salud
+  document.getElementById('body-salud').innerHTML=
+    '<div style="font-size:.62rem;color:var(--muted);margin-bottom:6px;padding:4px 6px;background:rgba(34,197,94,.06);border-radius:5px">Verificacion profesionales de salud, afiliacion EPS/IPS</div>'
+    +'<div style="display:flex;flex-wrap:wrap;gap:5px">'
+    +'<div style="width:100%;font-size:.6rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:1px;padding:2px 0 4px">Registros oficiales</div>'
+    +'<a class="btn btn-g btn-sm" href="https://www.sispro.gov.co/central-prestadores-de-servicios/Pages/ReTHUS-Registro-de-Talento-Humano-en-Salud.aspx" target="_blank" rel="noopener">RETHUS — Profesional salud</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.adres.gov.co/BDUA/Paginas/ConsultaAfiliados.aspx" target="_blank" rel="noopener">ADRES — Afiliacion EPS</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.minsalud.gov.co/salud/publica/ssr/Paginas/Registro-Especial-de-Prestadores-de-Servicios-de-Salud.aspx" target="_blank" rel="noopener">REPS — Prestadores IPS</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.supersalud.gov.co/" target="_blank" rel="noopener">Supersalud</a>'
+    +'<a class="btn btn-g btn-sm" href="https://sispro.gov.co/" target="_blank" rel="noopener">SISPRO</a>'
+    +'<div style="width:100%;font-size:.6rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:1px;padding:6px 0 4px">EPS principales</div>'
+    +'<a class="btn btn-g btn-sm" href="https://www.nuevaeps.com.co/" target="_blank" rel="noopener">Nueva EPS</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.suraeps.com/" target="_blank" rel="noopener">EPS Sura</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.compensar.com/salud/" target="_blank" rel="noopener">EPS Compensar</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.coosalud.com.co/" target="_blank" rel="noopener">Coosalud</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.sanitas.com.co/" target="_blank" rel="noopener">Sanitas</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.salud-total.com.co/" target="_blank" rel="noopener">Salud Total</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.famisanar.com.co/" target="_blank" rel="noopener">Famisanar</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.comfenalcovalle.com.co/" target="_blank" rel="noopener">Comfenalco Valle</a>'
+    +'<div style="width:100%;font-size:.6rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:1px;padding:6px 0 4px">Hospitales y clinicas</div>'
+    +'<a class="btn btn-g btn-sm" href="https://www.husi.org.co/" target="_blank" rel="noopener">Hospital San Ignacio</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.hospitalflorencia.gov.co/" target="_blank" rel="noopener">Hospital Florencia</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.google.com/search?q='+enc('"'+(G.nombre||q)+'"')+'+hospital+OR+clinica+site:gov.co" target="_blank" rel="noopener">Buscar en hospitales gov.co</a>'
+    +'</div>';
+
+  // Educacion ampliada
+  document.getElementById('body-educ2').innerHTML=
+    '<div style="display:flex;flex-wrap:wrap;gap:5px">'
+    +'<div style="width:100%;font-size:.6rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:1px;padding:2px 0 4px">Consultas oficiales</div>'
+    +'<a class="btn btn-g btn-sm" href="https://certificados.sena.edu.co/" target="_blank" rel="noopener">SENA Certificados</a>'
+    +'<a class="btn btn-g btn-sm" href="https://sep.sena.edu.co/Certificados.aspx" target="_blank" rel="noopener">SENA SEP cedula</a>'
+    +'<a class="btn btn-g btn-sm" href="https://snies.mineducacion.gov.co/" target="_blank" rel="noopener">SNIES Titulos</a>'
+    +'<a class="btn btn-g btn-sm" href="https://resultados.icfes.edu.co/resultados-saber2016-web/pages/publicacionResultados/autenticacion/consultaSnp.jsf" target="_blank" rel="noopener">ICFES Saber 11</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www2.icfes.gov.co/en/icfes-interactivo-new" target="_blank" rel="noopener">ICFES Saber Pro</a>'
+    +'<a class="btn btn-g btn-sm" href="https://hecaa.mineducacion.gov.co/consultasPublicas/content/colombiano/index.jsf" target="_blank" rel="noopener">HECAA Egresados</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.mineducacion.gov.co/" target="_blank" rel="noopener">Min Educacion</a>'
+    +'<div style="width:100%;font-size:.6rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:1px;padding:6px 0 4px">Universidades</div>'
+    +'<a class="btn btn-g btn-sm" href="https://www.unal.edu.co/" target="_blank" rel="noopener">UNAL</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.udea.edu.co/" target="_blank" rel="noopener">UdeA</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.javeriana.edu.co/" target="_blank" rel="noopener">Javeriana</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.uniandes.edu.co/" target="_blank" rel="noopener">Uniandes</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.urosario.edu.co/" target="_blank" rel="noopener">U. Rosario</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.uninorte.edu.co/" target="_blank" rel="noopener">Uninorte</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.uptc.edu.co/" target="_blank" rel="noopener">UPTC</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.usta.edu.co/" target="_blank" rel="noopener">Santo Tomas</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.ces.edu.co/" target="_blank" rel="noopener">CES</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.google.com/search?q='+enc('"'+(G.nombre||q)+'"')+'+site:unal.edu.co+OR+site:udea.edu.co+OR+site:javeriana.edu.co" target="_blank" rel="noopener">Buscar en universidades</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.google.com/search?q='+enc('"'+(G.nombre||q)+'"')+'+tesis+OR+monografia+filetype:pdf" target="_blank" rel="noopener">Tesis y monografias</a>'
+    +'<div style="width:100%;font-size:.6rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:1px;padding:6px 0 4px">Colegios</div>'
+    +'<a class="btn btn-g btn-sm" href="https://www.mineducacion.gov.co/portal/Preescolar-basica-y-media/Matriculas-y-Colegios/328877:Busqueda-de-colegios" target="_blank" rel="noopener">Buscar colegios Min Edu</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.google.com/search?q='+enc('"'+(G.nombre||q)+'"')+'+colegio+OR+bachiller+site:gov.co" target="_blank" rel="noopener">Nombre en colegios gov.co</a>'
+    +'</div>';
+
+  // Gobierno local
+  document.getElementById('body-govt').innerHTML=
+    '<div style="display:flex;flex-wrap:wrap;gap:5px">'
+    +'<div style="width:100%;font-size:.6rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:1px;padding:2px 0 4px">Portales nacionales</div>'
+    +'<a class="btn btn-g btn-sm" href="https://www.contratos.gov.co/" target="_blank" rel="noopener">Colombia Compra Eficiente</a>'
+    +'<a class="btn btn-g btn-sm" href="https://spi.dnp.gov.co/" target="_blank" rel="noopener">DNP Proyectos</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.sgr.gov.co/" target="_blank" rel="noopener">SGR Regalias</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.datos.gov.co/browse?q='+enc(G.nombre||q)+'" target="_blank" rel="noopener">Datos.gov.co</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.google.com/search?q='+enc('"'+(G.nombre||q)+'"')+'+site:gov.co" target="_blank" rel="noopener">Todos los .gov.co</a>'
+    +'<div style="width:100%;font-size:.6rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:1px;padding:6px 0 4px">Gobernaciones</div>'
+    +'<a class="btn btn-g btn-sm" href="https://www.cundinamarca.gov.co/" target="_blank" rel="noopener">Cundinamarca</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.antioquia.gov.co/" target="_blank" rel="noopener">Antioquia</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.valledelcauca.gov.co/" target="_blank" rel="noopener">Valle del Cauca</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.atlantico.gov.co/" target="_blank" rel="noopener">Atlantico</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.arauca.gov.co/" target="_blank" rel="noopener">Arauca</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.santander.gov.co/" target="_blank" rel="noopener">Santander</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.boyaca.gov.co/" target="_blank" rel="noopener">Boyaca</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.narino.gov.co/" target="_blank" rel="noopener">Narino</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.cordoba.gov.co/" target="_blank" rel="noopener">Cordoba</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.bolivar.gov.co/" target="_blank" rel="noopener">Bolivar</a>'
+    +'<div style="width:100%;font-size:.6rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:1px;padding:6px 0 4px">Alcaldias principales</div>'
+    +'<a class="btn btn-g btn-sm" href="https://bogota.gov.co/" target="_blank" rel="noopener">Bogota</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.medellin.gov.co/" target="_blank" rel="noopener">Medellin</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.cali.gov.co/" target="_blank" rel="noopener">Cali</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.barranquilla.gov.co/" target="_blank" rel="noopener">Barranquilla</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.bucaramanga.gov.co/" target="_blank" rel="noopener">Bucaramanga</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.arauca-arauca.gov.co/" target="_blank" rel="noopener">Arauca</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.cartagena.gov.co/" target="_blank" rel="noopener">Cartagena</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.pereira.gov.co/" target="_blank" rel="noopener">Pereira</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.manizales.gov.co/" target="_blank" rel="noopener">Manizales</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.ibague.gov.co/" target="_blank" rel="noopener">Ibague</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.tunja-boyaca.gov.co/" target="_blank" rel="noopener">Tunja</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.cucuta-nortedesantander.gov.co/" target="_blank" rel="noopener">Cucuta</a>'
+    +'</div>';
+
+  // Historial crediticio
+  document.getElementById('body-credito').innerHTML=
+    '<div style="font-size:.62rem;color:var(--muted);margin-bottom:6px;padding:4px 8px;background:var(--redsub);border-left:2px solid var(--red);border-radius:5px">'
+    +'Ley 1266/2008: Centrales de riesgo requieren autorizacion del titular. UGPP y DIAN son consultas publicas.'
+    +'</div>'
+    +'<div style="display:flex;flex-wrap:wrap;gap:5px">'
+    +'<div style="width:100%;font-size:.6rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:1px;padding:2px 0 4px">Centrales de riesgo</div>'
+    +'<a class="btn btn-g btn-sm" href="https://www.midatacredito.com/" target="_blank" rel="noopener">Datacredito / Experian</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.transunion.co/" target="_blank" rel="noopener">TransUnion</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.cifin.com.co/" target="_blank" rel="noopener">CIFIN / Asobancaria</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.procredicolombia.com/" target="_blank" rel="noopener">ProCredito</a>'
+    +'<div style="width:100%;font-size:.6rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:1px;padding:6px 0 4px">Entidades publicas</div>'
+    +'<a class="btn btn-g btn-sm" href="https://www.ugpp.gov.co/" target="_blank" rel="noopener">UGPP Parafiscales</a>'
+    +'<a class="btn btn-g btn-sm" href="https://muisca.dian.gov.co/WebArquitectura/index.jsp" target="_blank" rel="noopener">DIAN RUT y deudas</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.superfinanciera.gov.co/" target="_blank" rel="noopener">Superfinanciera</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.supersociedades.gov.co/nuestra_entidad/servicios-en-linea/Paginas/consultar-informacion-empresa.aspx" target="_blank" rel="noopener">Supersociedades</a>'
+    +'<div style="width:100%;font-size:.6rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:1px;padding:6px 0 4px">Bancos y credito</div>'
+    +'<a class="btn btn-g btn-sm" href="https://www.bancolombia.com/" target="_blank" rel="noopener">Bancolombia</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.davivienda.com/" target="_blank" rel="noopener">Davivienda</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.bbva.com.co/" target="_blank" rel="noopener">BBVA</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.bancodebogota.com/" target="_blank" rel="noopener">Banco de Bogota</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.avvillas.com.co/" target="_blank" rel="noopener">AV Villas</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.itau.co/" target="_blank" rel="noopener">Itau</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.scotiabank.com.co/" target="_blank" rel="noopener">Scotiabank Colpatria</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.sistecredito.com/" target="_blank" rel="noopener">Sistecredito</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.tuya.com.co/" target="_blank" rel="noopener">Tuya Exito</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.falabella.com.co/falabella-co/category/cat40205/CMR-Falabella" target="_blank" rel="noopener">CMR Falabella</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.nequi.com.co/" target="_blank" rel="noopener">Nequi</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.daviplata.com/" target="_blank" rel="noopener">Daviplata</a>'
     +'</div>';
 
   // Noticias
   var qq=enc('"'+(G.nombre||q)+'"');
-  var qn=enc(G.nombre||q);
   document.getElementById('body-noticias').innerHTML=
     '<div style="display:flex;flex-wrap:wrap;gap:5px">'
+    +'<div style="width:100%;font-size:.6rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:1px;padding:2px 0 4px">Busquedas precisas</div>'
     +'<a class="btn btn-g btn-sm" href="https://www.google.com/search?q='+qq+'" target="_blank" rel="noopener">Google exacto</a>'
     +'<a class="btn btn-g btn-sm" href="https://news.google.com/search?q='+qn+'" target="_blank" rel="noopener">Google News</a>'
-    +'<a class="btn btn-g btn-sm" href="https://www.google.com/search?q='+qq+'+filetype:pdf" target="_blank" rel="noopener">PDFs</a>'
-    +'<a class="btn btn-g btn-sm" href="https://www.google.com/search?q='+qq+'+site:gov.co" target="_blank" rel="noopener">gov.co</a>'
-    +'<a class="btn btn-g btn-sm" href="https://www.google.com/search?q='+qq+'+site:eltiempo.com+OR+site:semana.com+OR+site:elespectador.com" target="_blank" rel="noopener">Medios CO</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.google.com/search?q='+qq+'+filetype:pdf" target="_blank" rel="noopener">PDFs publicos</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.google.com/search?q='+qq+'+site:gov.co" target="_blank" rel="noopener">Solo gov.co</a>'
+    +'<a class="btn btn-g btn-sm" href="https://duckduckgo.com/?q='+qq+'" target="_blank" rel="noopener">DuckDuckGo</a>'
+    +'<a class="btn btn-g btn-sm" href="https://web.archive.org/web/*/'+qn+'" target="_blank" rel="noopener">Wayback Machine</a>'
+    +'<div style="width:100%;font-size:.6rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:1px;padding:6px 0 4px">Medios colombianos</div>'
+    +'<a class="btn btn-g btn-sm" href="https://www.eltiempo.com/buscar/'+qn+'" target="_blank" rel="noopener">El Tiempo</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.semana.com/buscador/?q='+qn+'" target="_blank" rel="noopener">Semana</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.elespectador.com/buscador/?q='+qn+'" target="_blank" rel="noopener">El Espectador</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.rcnradio.com/?s='+qn+'" target="_blank" rel="noopener">RCN Radio</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.caracol.com.co/buscar/'+qn+'" target="_blank" rel="noopener">Caracol</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.pulzo.com/busca?q='+qn+'" target="_blank" rel="noopener">Pulzo</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.larepublica.co/buscar?q='+qn+'" target="_blank" rel="noopener">La Republica</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.elcolombiano.com/?s='+qn+'" target="_blank" rel="noopener">El Colombiano</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.portafolio.co/buscar/'+qn+'" target="_blank" rel="noopener">Portafolio</a>'
+    +'<div style="width:100%;font-size:.6rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:1px;padding:6px 0 4px">Investigacion</div>'
     +'<a class="btn btn-g btn-sm" href="https://www.verdadabierta.com/?s='+qn+'" target="_blank" rel="noopener">Verdad Abierta</a>'
     +'<a class="btn btn-g btn-sm" href="https://colombiacheck.com/?s='+qn+'" target="_blank" rel="noopener">ColombiaCheck</a>'
-    +'<a class="btn btn-g btn-sm" href="https://www.elespectador.com/buscador/?q='+qn+'" target="_blank" rel="noopener">El Espectador</a>'
-    +'<a class="btn btn-g btn-sm" href="https://web.archive.org/web/*/'+qn+'" target="_blank" rel="noopener">Wayback</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.las2orillas.co/?s='+qn+'" target="_blank" rel="noopener">Las2Orillas</a>'
+    +'<a class="btn btn-g btn-sm" href="https://cerosetenta.uniandes.edu.co/?s='+qn+'" target="_blank" rel="noopener">Cerosetenta</a>'
+    +'<a class="btn btn-g btn-sm" href="https://www.infobae.com/buscar/?q='+qn+'" target="_blank" rel="noopener">Infobae CO</a>'
     +'</div>';
 
   // Imagen
@@ -820,19 +975,23 @@ function buildReport(){
     {ico:'🎓',n:'SENA',d:'Certificados',url:'https://certificados.sena.edu.co/'},
     {ico:'🏫',n:'SNIES',d:'Titulos',url:'https://snies.mineducacion.gov.co/'},
     {ico:'🩺',n:'RETHUS',d:'Salud',url:'https://www.sispro.gov.co/central-prestadores-de-servicios/Pages/ReTHUS-Registro-de-Talento-Humano-en-Salud.aspx'},
+    {ico:'🏥',n:'ADRES',d:'Afiliacion EPS',url:'https://www.adres.gov.co/BDUA/Paginas/ConsultaAfiliados.aspx'},
     {ico:'🏢',n:'RUES',d:'Empresas',url:ruesUrl},
     {ico:'🏠',n:'VUR',d:'Inmuebles',url:'https://www.vur.gov.co/'},
     {ico:'🚗',n:'RUNT',d:'Vehiculos',url:'https://www.runt.com.co/consultaCiudadana/'},
     {ico:'💳',n:'Datacredito',d:'Credito',url:'https://www.midatacredito.com/'},
     {ico:'💼',n:'DIAN RUT',d:'Tributario',url:'https://muisca.dian.gov.co/WebArquitectura/index.jsp'},
+    {ico:'💰',n:'UGPP',d:'Parafiscales',url:'https://www.ugpp.gov.co/'},
     {ico:'🔍',n:'Verdad Abierta',d:'Conflicto CO',url:'https://www.verdadabierta.com/?s='+qn},
     {ico:'✅',n:'ColombiaCheck',d:'Fact-check',url:'https://colombiacheck.com/?s='+qn},
     {ico:'🗃',n:'Wayback',d:'Historial web',url:'https://web.archive.org/web/*/'+qn},
-    {ico:'💰',n:'UGPP',d:'Parafiscales',url:'https://www.ugpp.gov.co/'},
+    {ico:'📊',n:'DNP Proyectos',d:'Inversion',url:'https://spi.dnp.gov.co/'},
+    {ico:'🎓',n:'HECAA',d:'Egresados',url:'https://hecaa.mineducacion.gov.co/consultasPublicas/content/colombiano/index.jsf'},
   ];
   var mh='';
   mlinks.forEach(function(l){mh+='<a class="lk" href="'+esc(l.url)+'" target="_blank" rel="noopener noreferrer"><span class="lk-ico">'+l.ico+'</span><div class="lk-n">'+l.n+'</div><div class="lk-d">'+l.d+'</div></a>';});
   document.getElementById('body-manual').innerHTML=mh;
+
 
   document.getElementById('informe').style.display='block';
   setTimeout(function(){document.getElementById('informe').scrollIntoView({behavior:'smooth',block:'start'});},300);
