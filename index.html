@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>ARGOS v5 — Motor OSINT Colombia</title>
+<title>ARGOS v6 — Motor OSINT Colombia</title>
 <meta name="theme-color" content="#060608"/>
 <link rel="icon" type="image/svg+xml" href="logo-icon.svg"/>
 <style>
@@ -249,6 +249,51 @@ ol.steps li::before{content:counter(s);position:absolute;left:7px;top:50%;transf
 #top-btn.show{display:flex}
 @media print{header,#top-btn,#toast,.tabs,.rep-acts,.sw,.estado,.certeza-wrap,.hist-wrap{display:none!important}.panel,.informe{display:block!important}body{background:#fff;color:#111}}
 
+
+/* ANIMACIONES */
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(224,32,32,.3)}50%{box-shadow:0 0 0 8px rgba(224,32,32,0)}}
+.blk{animation:fadeIn .35s ease both}
+.blk:nth-child(1){animation-delay:.05s}.blk:nth-child(2){animation-delay:.1s}
+.blk:nth-child(3){animation-delay:.15s}.blk:nth-child(4){animation-delay:.2s}
+.blk:nth-child(5){animation-delay:.25s}.blk:nth-child(6){animation-delay:.3s}
+.dato{animation:fadeIn .3s ease both}
+.sbtn.loading{animation:pulse 1s infinite}
+/* HIGHLIGHT ACTIVO */
+.tab.active{position:relative}
+.tab.active::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:2px;background:var(--red);border-radius:2px 2px 0 0}
+/* CARD HOVER */
+.stat-card:hover{border-color:var(--red);transform:translateY(-2px)}
+.stat-card{transition:all .2s}
+/* INPUT BUSQUEDA - efecto scan */
+.sb input:focus{background:rgba(224,32,32,.04)}
+/* NUMERO CERTEZA GLOW */
+.cert-num{text-shadow:0 0 20px rgba(224,32,32,.5)}
+/* TABLA ZEBRA */
+.ft tr:nth-child(even) td{background:rgba(255,255,255,.015)}
+/* CHIP HISTORIAL ANIMADO */
+.hchip{transition:all .15s;animation:fadeIn .2s ease both}
+/* BOTTOM NAV FEEL */
+.tabs{position:sticky;top:54px;z-index:100}
+/* PERFIL AVATAR PULSE EN HIT */
+.pav.has-hit{animation:pulse 2s infinite}
+/* LINK HOVER SCALE */
+.lk:hover{box-shadow:0 4px 16px rgba(224,32,32,.15)}
+.ig:hover{box-shadow:0 4px 16px rgba(224,32,32,.15)}
+/* BOTÓN FLOTANTE */
+#top-btn{box-shadow:0 4px 20px rgba(224,32,32,.5)}
+/* ALERT */
+.alert{animation:fadeIn .3s ease both}
+/* RESPONSIVE PERFIL */
+@media(max-width:420px){.perfil{gap:10px}.pmeta{margin-left:0;align-items:flex-start;text-align:left}}
+/* MODO COMPACTO */
+.compact .blk{padding:10px}.compact .dato{padding:8px 10px}
+/* PRINT */
+@media print{
+  .perfil{border:2px solid #000!important;border-radius:0!important}
+  .blk{border:1px solid #ccc!important;border-radius:0!important;break-inside:avoid}
+  .blk-title{color:#000!important}.dato-money{color:#000!important;font-weight:900}
+}
 </style>
 </head>
 <body>
@@ -256,11 +301,11 @@ ol.steps li::before{content:counter(s);position:absolute;left:7px;top:50%;transf
   <div class="logo-w"><img src="logo-icon.svg" alt=""/></div>
   <div class="brand"><div class="bname">ARGOS</div><div class="bsub">Motor de Inteligencia</div></div>
   <div class="hstats">
-    <div class="hstat">APIs <span>5</span></div>
-    <div class="hstat">Fuentes <span>60+</span></div>
+    <div class="hstat">APIs <span>6</span></div>
+    <div class="hstat">Fuentes <span>65+</span></div>
     <div class="hstat">Colombia <span>✓</span></div>
   </div>
-  <span class="hbadge">v5.0 · 2026</span>
+  <span class="hbadge">v6.0 · 2026</span>
 </header>
 
 <div class="tabs">
@@ -280,7 +325,7 @@ ol.steps li::before{content:counter(s);position:absolute;left:7px;top:50%;transf
   <div class="aname">A<span>R</span>GOS</div>
   <div class="atag">Analisis · Rastreo · Geolocalizacion · OSINT · Sintesis</div>
   <p class="adesc">Motor que <strong>consulta 5 APIs publicas reales</strong> de Colombia y consolida los datos en un informe completo.</p>
-  <p class="aapis">SECOP II · SECOP Integrado · Convenios · PEP Funcion Publica · SIRI Procuraduria · +55 fuentes manuales</p>
+  <p class="aapis">SECOP II · SECOP Integrado · Convenios · PEP · SIRI · Contraloria · +60 fuentes manuales</p>
   <div class="sw">
     <div class="sb">
       <input type="text" id="q" placeholder="Nombre completo o numero de cedula..." autocomplete="off" spellcheck="false"/>
@@ -334,7 +379,7 @@ ol.steps li::before{content:counter(s);position:absolute;left:7px;top:50%;transf
     <div class="pmeta">
       <button class="pbtn" onclick="copiar()">📋 Copiar informe</button>
       <button class="pbtn" onclick="window.print()">🖨 Imprimir</button>
-      <div class="pmeta-algo">ARGOS v5.0 · InvestigaYa</div>
+      <div class="pmeta-algo">ARGOS v6.0 · InvestigaYa</div>
       <div class="pmeta-fecha" id="p-fecha">-</div>
     </div>
   </div>
@@ -519,7 +564,7 @@ function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').
 function fmt(n){try{return Number(n).toLocaleString('es-CO',{style:'currency',currency:'COP',maximumFractionDigits:0});}catch(e){return String(n||'');}}
 function ri(l,v){return '<div class="row-item"><span class="rl">'+l+'</span><span class="rv">'+v+'</span></div>';}
 function badge(t,cls){return '<span class="dbadge '+cls+'">'+esc(t)+'</span>';}
-function toast(m){var t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(function(){t.classList.remove('show');},3000);}
+function toast(m,tp){var t=document.getElementById('toast');t.textContent=m;t.style.borderLeftColor=tp==='ok'?'var(--green)':tp==='warn'?'var(--yellow)':'var(--red)';t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(function(){t.classList.remove('show');},3000);}
 function enc(s){return encodeURIComponent(s||'');}
 
 window.addEventListener('scroll',function(){document.getElementById('top-btn').classList.toggle('show',window.scrollY>260);},{passive:true});
