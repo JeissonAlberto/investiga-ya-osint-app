@@ -340,11 +340,11 @@ ol.steps li::before{content:counter(s);position:absolute;left:7px;top:50%;transf
   <div class="logo-w"><img src="logo-icon.svg" alt=""/></div>
   <div class="brand"><div class="bname">ARGOS</div><div class="bsub">Motor de Inteligencia</div></div>
   <div class="hstats">
-    <div class="hstat">APIs <span>11</span></div>
+    <div class="hstat">APIs <span>14</span></div>
     <div class="hstat">Fuentes <span>95+</span></div>
     <div class="hstat">Colombia <span>✓</span></div>
   </div>
-  <span class="hbadge">v9.0 · 2026</span>
+  <span class="hbadge">v10.0 · 2026</span>
 </header>
 
 <div class="tabs">
@@ -421,7 +421,7 @@ ol.steps li::before{content:counter(s);position:absolute;left:7px;top:50%;transf
     <div class="pmeta">
       <button class="pbtn" onclick="copiar()">📋 Copiar informe</button>
       <button class="pbtn" onclick="window.print()">🖨 Imprimir</button>
-      <div class="pmeta-algo">ARGOS v9.0 · InvestigaYa</div>
+      <div class="pmeta-algo">ARGOS v10.0 · InvestigaYa</div>
       <div class="pmeta-fecha" id="p-fecha">-</div>
     </div>
   </div>
@@ -532,6 +532,25 @@ ol.steps li::before{content:counter(s);position:absolute;left:7px;top:50%;transf
     <button class="btn btn-r btn-full" onclick="buscarPlaca()">🔍 Consultar placa</button>
   </div>
   <div id="res-placa" style="display:none"><div class="lk-grid" id="grid-placa"></div></div>
+</div>
+</div>
+
+<!-- TELEPATIA -->
+<div class="panel" id="panel-telepatia" style="display:none">
+<div style="padding-top:16px">
+  <div class="sb" style="margin-bottom:12px">
+    <input type="text" id="q-telepatia" placeholder="Username / nickname (ej: jeissonalberto)" autocomplete="off" spellcheck="false"/>
+    <button class="sbtn" onclick="buscarTelepatia()">&#128273; Escanear</button>
+  </div>
+  <p class="snote">Busca la huella digital de un username en 29 redes sociales. <em>Metodologia Sherlock/Maigret open source.</em></p>
+  <div style="margin-bottom:8px;display:flex;gap:8px;align-items:center">
+    <div style="flex:1;background:var(--card2);border-radius:6px;height:5px;overflow:hidden">
+      <div id="tel-pbar" style="height:100%;width:0%;background:var(--blue2);transition:width .2s"></div>
+    </div>
+    <span id="tel-plbl" style="font-size:.6rem;color:var(--muted);white-space:nowrap"></span>
+    <button class="sbtn" style="font-size:.6rem;padding:4px 8px" onclick="cpTelepatia()">&#128203; Copiar</button>
+  </div>
+  <div id="res-telepatia" style="display:none"><div id="cnt-telepatia"></div></div>
 </div>
 </div>
 
@@ -741,32 +760,25 @@ function activar(){
 function correrConsultas(){
   var cc=G.cc,nm=G.nm,q=G.q;
   var BASE='https://www.datos.gov.co/resource/';
-  var APIS_N=11,done=0;
-  var cacheKey='argos9_'+q;
+  var APIS_N=14,done=0;
+  var cacheKey='argos10_'+q;
   try{var c2=JSON.parse(sessionStorage.getItem(cacheKey)||'null');if(c2&&(Date.now()-c2.ts)<600000){Object.assign(G,c2.data);setP(100,'Cache \u26a1');finalizarYMostrar();return;}}catch(e){}
 
-  // ── Normalizar ───────────────────────────────────────────
   function normQ(s){return s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase().trim();}
   function enc1(s){return encodeURIComponent("'"+normQ(s)+"'");}
   function encL(s){return encodeURIComponent('%'+normQ(s)+'%');}
   function andLike(field,val){return 'upper('+field+')%20like%20upper('+encL(val)+')';}
+  function andQ(f1,v1,f2,v2){return andLike(f1,v1)+'%20AND%20'+andLike(f2,v2);}
 
-  // ── Parsear nombre en tokens útiles ──────────────────────
-  // Partículas a ignorar en ordenamiento por longitud
   var PARTICULAS=['DE','LA','LOS','DEL','LAS','Y','E','O'];
   var tokens=normQ(nm).split(/\s+/).filter(function(w){return w.length>1;});
-  // Tokens principales: ordenados por longitud DESC, sin partículas primero
   var mainTokens=tokens.slice().sort(function(a,b){
-    var aP=PARTICULAS.indexOf(a)>=0?1:0;
-    var bP=PARTICULAS.indexOf(b)>=0?1:0;
+    var aP=PARTICULAS.indexOf(a)>=0?1:0,bP=PARTICULAS.indexOf(b)>=0?1:0;
     if(aP!==bP)return aP-bP;
     return b.length-a.length;
   });
-  var t1=mainTokens[0]||'';  // apellido 1 (más largo/importante)
-  var t2=mainTokens[1]||t1;  // apellido 2 o nombre
-  var t3=mainTokens[2]||'';  // extra
+  var t1=mainTokens[0]||'',t2=mainTokens[1]||t1,t3=mainTokens[2]||'';
 
-  // ── Filtro post-API: solo resultados que contengan ≥2 tokens del input ──
   function scoreMatch(str,minHits){
     if(!str)return false;
     var s=normQ(str);
@@ -774,13 +786,8 @@ function correrConsultas(){
     return hits>=(minHits||Math.min(2,tokens.length));
   }
   function filterArr(arr,fields,minHits){
-    return arr.filter(function(r){
-      return fields.some(function(f){return scoreMatch(r[f],minHits);});
-    });
+    return arr.filter(function(r){return fields.some(function(f){return scoreMatch(r[f],minHits);});});
   }
-
-  // ── Query AND para dos campos ─────────────────────────────
-  function andQ(f1,v1,f2,v2){return andLike(f1,v1)+'%20AND%20'+andLike(f2,v2);}
 
   function done_one(){
     done++;setP(Math.round(10+done/APIS_N*82),'API '+done+'/'+APIS_N+'...');
@@ -789,16 +796,18 @@ function correrConsultas(){
       try{sessionStorage.setItem(cacheKey,JSON.stringify({ts:Date.now(),data:{
         pep:G.pep,siri:G.siri,s2:G.s2,si:G.si,conv:G.conv,contraloria:G.contraloria,
         sena_api:G.sena_api,policia:G.policia,personal:G.personal,regalias:G.regalias,ugpp:G.ugpp,
+        proveedor:G.proveedor,patrimonial:G.patrimonial,conflictos:G.conflictos,
         nombre:G.nombre,domicilio:G.domicilio,genero:G.genero,cargo:G.cargo,entidad:G.entidad,
-        totalContratos:G.totalContratos,numContratos:G.numContratos,hits:G.hits,
-        matchQuality:G.matchQuality}}));}catch(e){}
+        correo:G.correo,telefono:G.telefono,direccion:G.direccion,ciudad:G.ciudad,
+        totalContratos:G.totalContratos,numContratos:G.numContratos,
+        hits:G.hits,matchQuality:G.matchQuality}}));}catch(e){}
       finalizarYMostrar();
     }
   }
 
   function callAPI(id,url,cb){
     setFuente(id,'running');
-    var ctrl=new AbortController();var tid=setTimeout(function(){ctrl.abort();},12000);
+    var ctrl=new AbortController();var tid=setTimeout(function(){ctrl.abort();},13000);
     fetch(url,{signal:ctrl.signal})
       .then(function(r){clearTimeout(tid);if(!r.ok)throw new Error(r.status);return r.json();})
       .then(function(d){
@@ -808,12 +817,12 @@ function correrConsultas(){
       }).catch(function(){cb([]);setFuente(id,'miss');done_one();});
   }
 
-  G.contraloria=[];G.sena_api=[];G.policia=[];G.personal=[];G.regalias=[];G.ugpp=[];G.matchQuality=0;
+  G.contraloria=[];G.sena_api=[];G.policia=[];G.personal=[];G.regalias=[];G.ugpp=[];
+  G.proveedor=[];G.patrimonial=[];G.conflictos=[];
+  G.correo='';G.telefono='';G.direccion='';G.ciudad='';G.matchQuality=0;
 
-  // ════════════════════════════════════════════════════════
-  // RAMA CÉDULA — exacta, máxima confianza
-  // ════════════════════════════════════════════════════════
   if(cc){
+    // ── RAMA CC: 14 APIs exactas ─────────────────────────────
     callAPI('pep',BASE+'3qxn-uc22.json?$where=numero_documento='+enc1(cc)+'&$limit=10',function(d){
       G.pep=d;if(d.length){G.cargo=G.cargo||d[0].cargo||d[0].u_cargo||'';G.entidad=G.entidad||d[0].entidad||d[0].u_entidad||'';G.matchQuality=100;}});
     callAPI('siri',BASE+'iaeu-rcn6.json?$where=trim(numero_identificacion)='+enc1(cc)+'&$limit=10',function(d){G.siri=d;if(d.length)G.matchQuality=100;});
@@ -834,73 +843,69 @@ function correrConsultas(){
       G.personal=d;if(d.length){G.cargo=G.cargo||d[0].cargo||d[0].denominacion_cargo||'';G.entidad=G.entidad||d[0].nombre_entidad||d[0].entidad||'';if(!G.nombre)G.nombre=d[0].nombre||d[0].nombres||'';}});
     callAPI('regalias',BASE+'xgmd-ut58.json?$where=identificacion='+enc1(cc)+'&$limit=10',function(d){G.regalias=d;});
     callAPI('ugpp',BASE+'m2fs-xk8z.json?$where=numero_identificacion='+enc1(cc)+'&$limit=10',function(d){G.ugpp=d;});
+    // NUEVAS API v10
+    callAPI('proveedor',BASE+'qmzu-gj57.json?$where=n_mero_doc_representante_legal='+enc1(cc)+'&$limit=5',function(d){
+      G.proveedor=d;if(d.length){
+        if(!G.nombre)G.nombre=d[0].nombre||'';
+        G.correo=G.correo||d[0].correo||'';
+        G.telefono=G.telefono||d[0].telefono||'';
+        G.direccion=G.direccion||d[0].direccion||'';
+        G.ciudad=G.ciudad||d[0].municipio||'';}});
+    callAPI('patrimonial',BASE+'8tz7-h3eu.json?$where=numero_documento='+enc1(cc)+'&$limit=10',function(d){
+      G.patrimonial=d;if(d.length){G.cargo=G.cargo||d[0].cargo_declarante||'';G.entidad=G.entidad||d[0].nombre_entidad||'';}});
+    callAPI('conflictos',BASE+'gbry-rnq4.json?$where=numero_documento='+enc1(cc)+'&$limit=10',function(d){G.conflictos=d;});
 
-  // ════════════════════════════════════════════════════════
-  // RAMA NOMBRE — AND por tokens + filtro post-API
-  // ════════════════════════════════════════════════════════
   }else{
-    // PEP: AND de los 2 tokens principales en nombre_pep
+    // ── RAMA NOMBRE: AND queries + filtro post-API ──────────
     var pepQ=t2?andQ('nombre_pep',t1,'nombre_pep',t2):andLike('nombre_pep',t1);
     callAPI('pep',BASE+'3qxn-uc22.json?$where='+pepQ+'&$limit=20',function(d){
-      var f=filterArr(d,['nombre_pep'],2);
-      G.pep=f;if(f.length){G.cargo=G.cargo||f[0].cargo||'';G.entidad=G.entidad||f[0].entidad||'';}
+      var f=filterArr(d,['nombre_pep'],2);G.pep=f;
+      if(f.length){G.cargo=G.cargo||f[0].cargo||'';G.entidad=G.entidad||f[0].entidad||'';}
       G.matchQuality=Math.max(G.matchQuality,f.length?75:0);});
-
-    // SIRI: busca por primer_apellido=t1 AND segundo_apellido=t2
     var siriQ=t2?andQ('primer_apellido',t1,'segundo_apellido',t2):andLike('primer_apellido',t1);
     callAPI('siri',BASE+'iaeu-rcn6.json?$where='+siriQ+'&$limit=10',function(d){
       G.siri=filterArr(d,['primer_apellido','segundo_apellido','primer_nombre'],1);});
-
-    // SECOP II: busca por t1 AND t2 en proveedor
     var s2Q=t2?andQ('proveedor_adjudicado',t1,'proveedor_adjudicado',t2):andLike('proveedor_adjudicado',t1);
     callAPI('s2',BASE+'jbjy-vk9h.json?$where='+s2Q+'&$limit=20&$order=fecha_de_firma%20DESC',function(d){
-      var f=filterArr(d,['proveedor_adjudicado','nombre_representante_legal'],2);
-      G.s2=f;if(f.length){G.nombre=G.nombre||f[0].proveedor_adjudicado||'';}
+      var f=filterArr(d,['proveedor_adjudicado','nombre_representante_legal'],2);G.s2=f;
+      if(f.length)G.nombre=G.nombre||f[0].proveedor_adjudicado||'';
       f.forEach(function(c){var v=parseFloat(c.valor_del_contrato||0);if(!isNaN(v)&&v>0){G.totalContratos+=v;G.numContratos++;}});
       G.matchQuality=Math.max(G.matchQuality,f.length?80:0);});
-
-    // SECOP I: AND en nom_raz_social
     var siQ=t2?andQ('nom_raz_social_contratista',t1,'nom_raz_social_contratista',t2):andLike('nom_raz_social_contratista',t1);
     callAPI('si',BASE+'rpmr-utcd.json?$where='+siQ+'&$limit=20',function(d){
-      var f=filterArr(d,['nom_raz_social_contratista'],2);
-      G.si=f;if(f.length&&!G.nombre)G.nombre=f[0].nom_raz_social_contratista||'';
+      var f=filterArr(d,['nom_raz_social_contratista'],2);G.si=f;
+      if(f.length&&!G.nombre)G.nombre=f[0].nom_raz_social_contratista||'';
       f.forEach(function(c){var v=parseFloat(c.valor_contrato||0);if(!isNaN(v)&&v>0){G.totalContratos+=v;G.numContratos++;}});});
-
-    // Convenios
     var convQ=t2?andQ('nombre_contratista',t1,'nombre_contratista',t2):andLike('nombre_contratista',t1);
-    callAPI('conv',BASE+'s484-c9k3.json?$where='+convQ+'&$limit=10',function(d){
-      G.conv=filterArr(d,['nombre_contratista'],2);});
-
-    // Contraloria: AND en nombre
+    callAPI('conv',BASE+'s484-c9k3.json?$where='+convQ+'&$limit=10',function(d){G.conv=filterArr(d,['nombre_contratista'],2);});
     var contrQ=t2?andQ('nombre',t1,'nombre',t2):andLike('nombre',t1);
-    callAPI('contraloria',BASE+'8aqu-idqj.json?$where='+contrQ+'&$limit=10',function(d){
-      G.contraloria=filterArr(d,['nombre'],2);});
-
-    // SENA: AND en nombre_aprendiz
+    callAPI('contraloria',BASE+'8aqu-idqj.json?$where='+contrQ+'&$limit=10',function(d){G.contraloria=filterArr(d,['nombre'],2);});
     var senaQ=t2?andQ('nombre_aprendiz',t1,'nombre_aprendiz',t2):andLike('nombre_aprendiz',t1);
-    callAPI('sena_api',BASE+'m8ah-mniv.json?$where='+senaQ+'&$limit=10',function(d){
-      G.sena_api=filterArr(d,['nombre_aprendiz'],2);});
-
-    // Policia: AND en nombre
+    callAPI('sena_api',BASE+'m8ah-mniv.json?$where='+senaQ+'&$limit=10',function(d){G.sena_api=filterArr(d,['nombre_aprendiz'],2);});
     var polQ=t2?andQ('nombre',t1,'nombre',t2):andLike('nombre',t1);
-    callAPI('policia',BASE+'n5ky-2tue.json?$where='+polQ+'&$limit=10',function(d){
-      G.policia=filterArr(d,['nombre'],2);});
-
-    // Personal publico: AND en nombre
+    callAPI('policia',BASE+'n5ky-2tue.json?$where='+polQ+'&$limit=10',function(d){G.policia=filterArr(d,['nombre'],2);});
     var perQ=t2?andQ('nombre',t1,'nombre',t2):andLike('nombre',t1);
     callAPI('personal',BASE+'gdxc-w37w.json?$where='+perQ+'&$limit=10',function(d){
-      var f=filterArr(d,['nombre'],2);
-      G.personal=f;if(f.length){G.cargo=G.cargo||f[0].cargo||'';G.entidad=G.entidad||f[0].nombre_entidad||'';}});
-
-    // Regalias
+      var f=filterArr(d,['nombre'],2);G.personal=f;
+      if(f.length){G.cargo=G.cargo||f[0].cargo||'';G.entidad=G.entidad||f[0].nombre_entidad||'';}});
     var regQ=t2?andQ('nombre_beneficiario',t1,'nombre_beneficiario',t2):andLike('nombre_beneficiario',t1);
-    callAPI('regalias',BASE+'xgmd-ut58.json?$where='+regQ+'&$limit=10',function(d){
-      G.regalias=filterArr(d,['nombre_beneficiario'],2);});
-
-    // UGPP
+    callAPI('regalias',BASE+'xgmd-ut58.json?$where='+regQ+'&$limit=10',function(d){G.regalias=filterArr(d,['nombre_beneficiario'],2);});
     var ugppQ=t2?andQ('nombre',t1,'nombre',t2):andLike('nombre',t1);
-    callAPI('ugpp',BASE+'m2fs-xk8z.json?$where='+ugppQ+'&$limit=10',function(d){
-      G.ugpp=filterArr(d,['nombre'],2);});
+    callAPI('ugpp',BASE+'m2fs-xk8z.json?$where='+ugppQ+'&$limit=10',function(d){G.ugpp=filterArr(d,['nombre'],2);});
+    // NUEVAS API v10 - nombre
+    var provQ=t2?andQ('nombre',t1,'nombre',t2):andLike('nombre',t1);
+    callAPI('proveedor',BASE+'qmzu-gj57.json?$where='+provQ+'&$limit=10',function(d){
+      var f=filterArr(d,['nombre'],2);G.proveedor=f;
+      if(f.length){if(!G.nombre)G.nombre=f[0].nombre||'';
+        G.correo=G.correo||f[0].correo||'';G.telefono=G.telefono||f[0].telefono||'';
+        G.direccion=G.direccion||f[0].direccion||'';G.ciudad=G.ciudad||f[0].municipio||'';}});
+    var patQ=t2?andQ('primer_apellido_declarante',t1,'segundo_apellido_declarante',t2):andLike('primer_apellido_declarante',t1);
+    callAPI('patrimonial',BASE+'8tz7-h3eu.json?$where='+patQ+'&$limit=10',function(d){
+      var f=filterArr(d,['primer_apellido_declarante','segundo_apellido_declarante'],1);
+      G.patrimonial=f;if(f.length){G.cargo=G.cargo||f[0].cargo_declarante||'';G.entidad=G.entidad||f[0].nombre_entidad||'';}});
+    var confQ=t2?andQ('primer_apellido_declarante',t1,'segundo_apellido_declarante',t2):andLike('primer_apellido_declarante',t1);
+    callAPI('conflictos',BASE+'gbry-rnq4.json?$where='+confQ+'&$limit=10',function(d){
+      G.conflictos=filterArr(d,['primer_apellido_declarante','segundo_apellido_declarante'],1);});
   }
   ['regist','rama','simit','snies','rethus','rues','runt','dian'].forEach(function(id){setFuente(id,'hit');});
 }
@@ -915,7 +920,7 @@ function postProcesar(){
   // Certeza ponderada: base por tipo + fuentes con datos + calidad del match
   var s=0;
   if(G.esCedula){s+=35;}else{s+=5+(G.matchQuality||0)*0.15;}
-  var apis=[G.pep,G.siri,G.s2,G.si,G.conv,G.contraloria,G.personal,G.policia,G.sena_api,G.regalias,G.ugpp];
+  var apis=[G.pep,G.siri,G.s2,G.si,G.conv,G.contraloria,G.personal,G.policia,G.sena_api,G.regalias,G.ugpp,G.proveedor,G.patrimonial,G.conflictos];
   apis.forEach(function(a){if(a&&a.length)s+=Math.min(a.length*3,12);});
   if(G.nombre)s+=5;
   // Bonus si hay datos de identidad cruzados (2+ fuentes coinciden en nombre)
@@ -944,10 +949,71 @@ function finalizarYMostrar(){
   if((G.s2||[]).length||(G.si||[]).length)tags.push({l:'Contratista Estado',c:'tag-blue'});
   if((G.sena_api||[]).length)tags.push({l:'Aprendiz SENA',c:'tag-green'});
   if((G.regalias||[]).length)tags.push({l:'SGR Regal\u00edas',c:'tag-blue'});
+  if((G.patrimonial||[]).length)tags.push({l:'Decl. Patrimonial',c:'tag-blue'});
+  if((G.conflictos||[]).length)tags.push({l:'Conflicto Interés',c:'tag-warn'});
+  if((G.proveedor||[]).length)tags.push({l:'Proveedor SECOP',c:'tag-green'});
+  if((G.ugpp||[]).length)tags.push({l:'Parafiscales UGPP',c:'tag-blue'});
   if(!tags.length)tags.push({l:'Sin registros API',c:'tag-muted'});
   var pt=document.getElementById('p-tags');if(pt)pt.innerHTML=tags.map(function(t){return '<span class="tag '+t.c+'">'+t.l+'</span>';}).join('');
   var pf=document.getElementById('p-fecha');if(pf)pf.textContent='ARGOS '+new Date().toLocaleDateString('es-CO',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
   buildReport();
+  // PROVEEDOR SECOP
+  buildBlk('proveedor','blk-proveedor','cnt-proveedor',G.proveedor,function(p){
+    return '<div class="dato"><div class="dato-title">'+esc(p.nombre||'-')+'</div>'
+      +'<div class="dato-rows">'
+      +ri('NIT/CC',esc(p.nit||p.codigo||'-'))
+      +ri('Correo',esc(p.correo||'-'))
+      +ri('Telefono',esc(p.telefono||'-'))
+      +ri('Direccion',esc(p.direccion||'-'))
+      +ri('Ciudad',esc(p.municipio||'-'))
+      +ri('Tipo empresa',esc(p.tipo_empresa||'-'))
+      +ri('Pyme',esc(p.espyme||'-'))
+      +ri('Sitio web',esc(p.sitio_web||'-'))
+      +ri('Rep. legal',esc(p.nombre_representante_legal||'-'))
+      +'</div></div>';
+  },'Sin registro como proveedor SECOP.');
+  // DECLARACION PATRIMONIAL
+  buildBlk('patrimonial','blk-patrimonial','cnt-patrimonial',G.patrimonial,function(p){
+    return '<div class="dato"><div class="dato-title">'+esc(p.tipo_declaracion||'Declaracion')+
+      badge(p.estado_declaracion||'','dbr')+'</div>'
+      +'<div class="dato-rows">'
+      +ri('Entidad',esc(p.nombre_entidad||'-'))
+      +ri('Cargo',esc(p.cargo_declarante||'-'))
+      +ri('Anio gravable',esc(p.ano_gravable_declarac_iyr||'-'))
+      +ri('Fecha publ.',esc((p.fecha_publicac_declarac||'').split('T')[0]||'-'))
+      +ri('Reporta ingresos',esc(p.reporto_ingresos||'-'))
+      +ri('Cuentas bancarias',esc(p.ctas_bancarias_pn||'-'))
+      +ri('Bienes patrimoniales',esc(p.bienes_patrimoniales_pn||'-'))
+      +ri('Participaciones',esc(p.particip_corp_socied_asoc||'-'))
+      +'</div></div>';
+  },'Sin declaracion patrimonial publica.');
+  // CONFLICTO DE INTERES
+  buildBlk('conflictos','blk-conflictos','cnt-conflictos',G.conflictos,function(p){
+    return '<div class="dato"><div class="dato-title">'+esc(p.tipo_declaracion||'Conflicto')+
+      badge(p.estado_declaracion||'','dbr')+'</div>'
+      +'<div class="dato-rows">'
+      +ri('Entidad',esc(p.nombre_entidad||'-'))
+      +ri('Cargo',esc(p.cargo_declarante||'-'))
+      +ri('Anio',esc(p.ano_gravable_declarac_iyr||'-'))
+      +ri('Conyuge',esc(p.conyuge_companero_permanente||p.tiene_conyuge_companero||'-'))
+      +ri('Parientes',esc(p.parientes_conflictos_interes||'-'))
+      +ri('Otros posibles',esc(p.descripc_otros_posibles||p.otros_posibles_conflictos||'-'))
+      +'</div></div>';
+  },'Sin declaracion de conflicto de interes.');
+  // CONTACTO de proveedor
+  (function(){
+    var cblk=document.getElementById('blk-contacto');
+    var cbdy=document.getElementById('cnt-contacto');
+    if(cblk&&cbdy&&(G.correo||G.telefono||G.direccion)){
+      cblk.className='blk hit';
+      cbdy.innerHTML='<div class="dato-rows">'
+        +(G.correo?ri('Correo (SECOP)','<a href="mailto:'+esc(G.correo)+'" style="color:var(--blue2)">'+esc(G.correo)+'</a>'):'')
+        +(G.telefono?ri('Telefono (SECOP)',esc(G.telefono)):'')
+        +(G.direccion?ri('Direccion (SECOP)',esc(G.direccion)):'')
+        +(G.ciudad?ri('Ciudad',esc(G.ciudad)):'')
+        +'</div>';
+    }
+  })();
   document.getElementById('informe').style.display='block';
   setTimeout(function(){document.getElementById('informe').scrollIntoView({behavior:'smooth',block:'start'});},300);
   renderH();
@@ -1381,7 +1447,8 @@ function buildReport(){
   setTimeout(function(){document.getElementById('informe').scrollIntoView({behavior:'smooth',block:'start'});},300);
   var tot=G.pep.length+G.siri.length+G.s2.length+G.si.length+G.conv.length;
   renderH();
-  toast('ARGOS: '+tot+' hallazgos en APIs | '+G.certeza+'% certeza');
+  var allTot=G.pep.length+G.siri.length+G.s2.length+G.si.length+G.conv.length+(G.proveedor||[]).length+(G.patrimonial||[]).length+(G.conflictos||[]).length;
+  toast('ARGOS v10: '+allTot+' hallazgos | '+G.certeza+'% certeza');
 }
 
 function buildBlk(src,blkId,cntId,arr,renderer,emptyMsg){
@@ -1527,6 +1594,106 @@ function buscarFoto(){
   toast('Abralos en paralelo para mayor cobertura');
 }
 document.getElementById('inp-foto').addEventListener('keydown',function(e){if(e.key==='Enter')buscarFoto();});
+
+// ══ TELEPATIA: búsqueda de huella digital por username ══
+var SOCIAL_SITES=[
+  {n:'LinkedIn',       u:'https://www.linkedin.com/in/{}',           m:'public'},
+  {n:'GitHub',         u:'https://github.com/{}',                     m:'public'},
+  {n:'Twitter / X',    u:'https://twitter.com/{}',                    m:'public'},
+  {n:'Instagram',      u:'https://www.instagram.com/{}/',             m:'public'},
+  {n:'Facebook',       u:'https://www.facebook.com/{}',               m:'public'},
+  {n:'TikTok',         u:'https://www.tiktok.com/@{}',                m:'public'},
+  {n:'YouTube',        u:'https://www.youtube.com/@{}',               m:'public'},
+  {n:'Pinterest',      u:'https://www.pinterest.com/{}/'},
+  {n:'Reddit',         u:'https://www.reddit.com/user/{}'},
+  {n:'Twitch',         u:'https://www.twitch.tv/{}'},
+  {n:'Spotify',        u:'https://open.spotify.com/user/{}'},
+  {n:'SoundCloud',     u:'https://soundcloud.com/{}'},
+  {n:'Behance',        u:'https://www.behance.net/{}'},
+  {n:'Dribbble',       u:'https://dribbble.com/{}'},
+  {n:'DeviantArt',     u:'https://www.deviantart.com/{}'},
+  {n:'Flickr',         u:'https://www.flickr.com/people/{}'},
+  {n:'Tumblr',         u:'https://www.tumblr.com/{}'},
+  {n:'Medium',         u:'https://medium.com/@{}'},
+  {n:'Quora',          u:'https://www.quora.com/profile/{}'},
+  {n:'Stack Overflow', u:'https://stackoverflow.com/users/{}'},
+  {n:'Telegram',       u:'https://t.me/{}'},
+  {n:'WhatsApp',       u:'https://wa.me/{}'},
+  {n:'Vimeo',          u:'https://vimeo.com/{}'},
+  {n:'GitLab',         u:'https://gitlab.com/{}'},
+  {n:'HackerNews',     u:'https://news.ycombinator.com/user?id={}'},
+  {n:'ProductHunt',    u:'https://www.producthunt.com/@{}'},
+  {n:'Keybase',        u:'https://keybase.io/{}'},
+  {n:'About.me',       u:'https://about.me/{}'},
+  {n:'Gravatar',       u:'https://en.gravatar.com/{}'},
+];
+
+function buscarTelepatia(){
+  var raw=document.getElementById('q-telepatia').value.trim();
+  if(!raw){toast('Ingresa un username o nombre de usuario');return;}
+  var usr=raw.replace(/\s+/g,'').toLowerCase();
+  var wrap=document.getElementById('res-telepatia');
+  var cont=document.getElementById('cnt-telepatia');
+  if(!wrap||!cont)return;
+  cont.innerHTML='<div style="padding:20px;text-align:center;color:var(--muted)"><div class="spin"></div><br>Escaneando '+SOCIAL_SITES.length+' redes...</div>';
+  wrap.style.display='block';
+  var total=SOCIAL_SITES.length,done2=0,found=[];
+  var bar=document.getElementById('tel-pbar');
+  var lbl=document.getElementById('tel-plbl');
+
+  SOCIAL_SITES.forEach(function(site){
+    var url=site.u.replace('{}',encodeURIComponent(usr));
+    var displayUrl=site.u.replace('{}',usr);
+    var ctrl=new AbortController();
+    var tid=setTimeout(function(){ctrl.abort();},8000);
+    fetch(url,{method:'HEAD',signal:ctrl.signal,mode:'no-cors'})
+      .then(function(){
+        clearTimeout(tid);
+        found.push({n:site.n,url:displayUrl,status:'found'});
+        renderTelepatia(found,done2,total,bar,lbl,cont,usr);
+        done2++;updateTelBar(done2,total,bar,lbl);
+      })
+      .catch(function(e){
+        clearTimeout(tid);
+        if(e.name==='AbortError'){
+          // timeout = probablemente existe pero tarda
+          found.push({n:site.n,url:displayUrl,status:'timeout'});
+          renderTelepatia(found,done2,total,bar,lbl,cont,usr);
+        }
+        done2++;updateTelBar(done2,total,bar,lbl);
+      });
+  });
+}
+
+function updateTelBar(done2,total,bar,lbl){
+  if(bar)bar.style.width=Math.round(done2/total*100)+'%';
+  if(lbl)lbl.textContent='Escaneando... '+done2+'/'+total;
+  if(done2>=total&&lbl)lbl.textContent='Scan completado \u2713';
+}
+
+function renderTelepatia(found,done2,total,bar,lbl,cont,usr){
+  if(!found.length){
+    cont.innerHTML='<div class="msg-ok">No se encontraron perfiles para @'+esc(usr)+'</div>';
+    return;
+  }
+  var rows=found.map(function(r){
+    var ic=r.status==='found'?'<span style="color:var(--green)">&#9679;</span>':'<span style="color:var(--yellow)">&#9679;</span>';
+    return '<div class="dato-rows" style="padding:6px 0;border-bottom:1px solid var(--border)">'
+      +'<div style="display:flex;align-items:center;gap:8px">'
+      +ic
+      +'<span style="font-weight:700;min-width:110px;font-size:.7rem">'+esc(r.n)+'</span>'
+      +'<a href="'+esc(r.url)+'" target="_blank" rel="noopener" style="color:var(--blue2);font-size:.65rem;word-break:break-all">'+esc(r.url)+'</a>'
+      +(r.status==='timeout'?'<span style="font-size:.58rem;color:var(--muted);margin-left:4px">(sin confirmar)</span>':'')
+      +'</div></div>';
+  }).join('');
+  cont.innerHTML='<div style="margin-bottom:6px;font-size:.65rem;color:var(--muted)">'+found.length+' perfiles generados para <strong>@'+esc(usr)+'</strong></div>'+rows;
+}
+
+function cpTelepatia(){
+  var usr=document.getElementById('q-telepatia').value.trim().replace(/\s+/g,'').toLowerCase();
+  var txt=SOCIAL_SITES.map(function(s){return s.n+': '+s.u.replace('{}',usr);}).join('\n');
+  navigator.clipboard.writeText(txt).then(function(){toast('URLs copiadas');});
+}
 
 function buscarTel(){
   var t=document.getElementById('inp-tel').value.trim().replace(/\s/g,'');
