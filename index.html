@@ -743,67 +743,189 @@ function correrConsultas(){
   var BASE='https://www.datos.gov.co/resource/';
   var APIS_N=11,done=0;
   var cacheKey='argos9_'+q;
-  try{var cached=JSON.parse(sessionStorage.getItem(cacheKey)||'null');if(cached&&(Date.now()-cached.ts)<600000){Object.assign(G,cached.data);setP(100,'Cache \u26a1');finalizarYMostrar();return;}}catch(e){}
+  try{var c2=JSON.parse(sessionStorage.getItem(cacheKey)||'null');if(c2&&(Date.now()-c2.ts)<600000){Object.assign(G,c2.data);setP(100,'Cache \u26a1');finalizarYMostrar();return;}}catch(e){}
+
+  // ── Normalizar ───────────────────────────────────────────
   function normQ(s){return s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase().trim();}
-  function ql(s){return encodeURIComponent('%'+normQ(s)+'%');}
+  function enc1(s){return encodeURIComponent("'"+normQ(s)+"'");}
+  function encL(s){return encodeURIComponent('%'+normQ(s)+'%');}
+  function andLike(field,val){return 'upper('+field+')%20like%20upper('+encL(val)+')';}
+
+  // ── Parsear nombre en tokens útiles ──────────────────────
+  // Partículas a ignorar en ordenamiento por longitud
+  var PARTICULAS=['DE','LA','LOS','DEL','LAS','Y','E','O'];
+  var tokens=normQ(nm).split(/\s+/).filter(function(w){return w.length>1;});
+  // Tokens principales: ordenados por longitud DESC, sin partículas primero
+  var mainTokens=tokens.slice().sort(function(a,b){
+    var aP=PARTICULAS.indexOf(a)>=0?1:0;
+    var bP=PARTICULAS.indexOf(b)>=0?1:0;
+    if(aP!==bP)return aP-bP;
+    return b.length-a.length;
+  });
+  var t1=mainTokens[0]||'';  // apellido 1 (más largo/importante)
+  var t2=mainTokens[1]||t1;  // apellido 2 o nombre
+  var t3=mainTokens[2]||'';  // extra
+
+  // ── Filtro post-API: solo resultados que contengan ≥2 tokens del input ──
+  function scoreMatch(str,minHits){
+    if(!str)return false;
+    var s=normQ(str);
+    var hits=tokens.filter(function(t){return t.length>2&&s.indexOf(t)>=0;}).length;
+    return hits>=(minHits||Math.min(2,tokens.length));
+  }
+  function filterArr(arr,fields,minHits){
+    return arr.filter(function(r){
+      return fields.some(function(f){return scoreMatch(r[f],minHits);});
+    });
+  }
+
+  // ── Query AND para dos campos ─────────────────────────────
+  function andQ(f1,v1,f2,v2){return andLike(f1,v1)+'%20AND%20'+andLike(f2,v2);}
+
   function done_one(){
     done++;setP(Math.round(10+done/APIS_N*82),'API '+done+'/'+APIS_N+'...');
     if(done>=APIS_N){
       postProcesar();
-      try{sessionStorage.setItem(cacheKey,JSON.stringify({ts:Date.now(),data:{pep:G.pep,siri:G.siri,s2:G.s2,si:G.si,conv:G.conv,contraloria:G.contraloria,sena_api:G.sena_api,policia:G.policia,personal:G.personal,regalias:G.regalias,ugpp:G.ugpp,nombre:G.nombre,domicilio:G.domicilio,genero:G.genero,cargo:G.cargo,entidad:G.entidad,totalContratos:G.totalContratos,numContratos:G.numContratos,hits:G.hits}}));}catch(e){}
+      try{sessionStorage.setItem(cacheKey,JSON.stringify({ts:Date.now(),data:{
+        pep:G.pep,siri:G.siri,s2:G.s2,si:G.si,conv:G.conv,contraloria:G.contraloria,
+        sena_api:G.sena_api,policia:G.policia,personal:G.personal,regalias:G.regalias,ugpp:G.ugpp,
+        nombre:G.nombre,domicilio:G.domicilio,genero:G.genero,cargo:G.cargo,entidad:G.entidad,
+        totalContratos:G.totalContratos,numContratos:G.numContratos,hits:G.hits,
+        matchQuality:G.matchQuality}}));}catch(e){}
       finalizarYMostrar();
     }
   }
+
   function callAPI(id,url,cb){
     setFuente(id,'running');
     var ctrl=new AbortController();var tid=setTimeout(function(){ctrl.abort();},12000);
     fetch(url,{signal:ctrl.signal})
       .then(function(r){clearTimeout(tid);if(!r.ok)throw new Error(r.status);return r.json();})
-      .then(function(d){var arr=Array.isArray(d)?d:[];var seen={};arr=arr.filter(function(x){var k=JSON.stringify(x).slice(0,60);if(seen[k])return false;seen[k]=true;return true;});cb(arr);setFuente(id,arr.length?'hit':'miss');if(arr.length)G.hits++;done_one();})
-      .catch(function(){cb([]);setFuente(id,'miss');done_one();});
+      .then(function(d){
+        var arr=Array.isArray(d)?d:[];
+        var seen={};arr=arr.filter(function(x){var k=JSON.stringify(x).slice(0,80);if(seen[k])return false;seen[k]=true;return true;});
+        cb(arr);setFuente(id,arr.length?'hit':'miss');if(arr.length)G.hits++;done_one();
+      }).catch(function(){cb([]);setFuente(id,'miss');done_one();});
   }
-  G.contraloria=[];G.sena_api=[];G.policia=[];G.personal=[];G.regalias=[];G.ugpp=[];
+
+  G.contraloria=[];G.sena_api=[];G.policia=[];G.personal=[];G.regalias=[];G.ugpp=[];G.matchQuality=0;
+
+  // ════════════════════════════════════════════════════════
+  // RAMA CÉDULA — exacta, máxima confianza
+  // ════════════════════════════════════════════════════════
   if(cc){
-    callAPI('pep',BASE+'3qxn-uc22.json?$where=numero_documento=%27'+cc+'%27&$limit=10',function(d){G.pep=d;if(d.length){G.cargo=G.cargo||d[0].cargo||d[0].u_cargo||'';G.entidad=G.entidad||d[0].entidad||d[0].u_entidad||'';}});
-    callAPI('siri',BASE+'iaeu-rcn6.json?$where=trim(numero_identificacion)=%27'+cc+'%27&$limit=10',function(d){G.siri=d;});
-    callAPI('s2',BASE+'jbjy-vk9h.json?$where=documento_proveedor=%27'+cc+'%27&$limit=25&$order=fecha_de_firma%20DESC',function(d){G.s2=d;if(d.length){G.nombre=G.nombre||d[0].proveedor_adjudicado||d[0].nombre_representante_legal||'';G.domicilio=G.domicilio||d[0].domicilio_representante_legal||'';G.genero=G.genero||d[0].g_nero_representante_legal||'';d.forEach(function(c){var v=parseFloat(c.valor_del_contrato||0);if(!isNaN(v)&&v>0){G.totalContratos+=v;G.numContratos++;}});}});
-    callAPI('si',BASE+'rpmr-utcd.json?$where=documento_proveedor=%27'+cc+'%27&$limit=20',function(d){G.si=d;if(d.length&&!G.nombre){G.nombre=d[0].nom_raz_social_contratista||'';}d.forEach(function(c){var v=parseFloat(c.valor_contrato||0);if(!isNaN(v)&&v>0){G.totalContratos+=v;G.numContratos++;}});});
-    callAPI('conv',BASE+'s484-c9k3.json?$where=identificacion_contratista=%27'+cc+'%27&$limit=10',function(d){G.conv=d;if(d.length&&!G.nombre){G.nombre=d[0].nombre_contratista||'';}});
-    callAPI('contraloria',BASE+'8aqu-idqj.json?$where=numero_identificacion=%27'+cc+'%27&$limit=10',function(d){G.contraloria=d;});
-    callAPI('sena_api',BASE+'m8ah-mniv.json?$where=numero_identificacion=%27'+cc+'%27&$limit=10',function(d){G.sena_api=d;if(d.length&&!G.nombre){G.nombre=d[0].nombre_aprendiz||'';}});
-    callAPI('policia',BASE+'n5ky-2tue.json?$where=identificacion=%27'+cc+'%27&$limit=10',function(d){G.policia=d;});
-    callAPI('personal',BASE+'gdxc-w37w.json?$where=numero_identificacion=%27'+cc+'%27&$limit=10',function(d){G.personal=d;if(d.length){G.cargo=G.cargo||d[0].cargo||d[0].denominacion_cargo||'';G.entidad=G.entidad||d[0].nombre_entidad||d[0].entidad||'';if(!G.nombre)G.nombre=d[0].nombre||d[0].nombres||'';}});
-    callAPI('regalias',BASE+'xgmd-ut58.json?$where=identificacion=%27'+cc+'%27&$limit=10',function(d){G.regalias=d;});
-    callAPI('ugpp',BASE+'m2fs-xk8z.json?$where=numero_identificacion=%27'+cc+'%27&$limit=10',function(d){G.ugpp=d;});
+    callAPI('pep',BASE+'3qxn-uc22.json?$where=numero_documento='+enc1(cc)+'&$limit=10',function(d){
+      G.pep=d;if(d.length){G.cargo=G.cargo||d[0].cargo||d[0].u_cargo||'';G.entidad=G.entidad||d[0].entidad||d[0].u_entidad||'';G.matchQuality=100;}});
+    callAPI('siri',BASE+'iaeu-rcn6.json?$where=trim(numero_identificacion)='+enc1(cc)+'&$limit=10',function(d){G.siri=d;if(d.length)G.matchQuality=100;});
+    callAPI('s2',BASE+'jbjy-vk9h.json?$where=documento_proveedor='+enc1(cc)+'&$limit=25&$order=fecha_de_firma%20DESC',function(d){
+      G.s2=d;if(d.length){G.nombre=G.nombre||d[0].proveedor_adjudicado||d[0].nombre_representante_legal||'';
+        G.domicilio=G.domicilio||d[0].domicilio_representante_legal||'';G.genero=G.genero||d[0].g_nero_representante_legal||'';G.matchQuality=100;
+        d.forEach(function(c){var v=parseFloat(c.valor_del_contrato||0);if(!isNaN(v)&&v>0){G.totalContratos+=v;G.numContratos++;}});}});
+    callAPI('si',BASE+'rpmr-utcd.json?$where=documento_proveedor='+enc1(cc)+'&$limit=20',function(d){
+      G.si=d;if(d.length&&!G.nombre)G.nombre=d[0].nom_raz_social_contratista||'';
+      d.forEach(function(c){var v=parseFloat(c.valor_contrato||0);if(!isNaN(v)&&v>0){G.totalContratos+=v;G.numContratos++;}});});
+    callAPI('conv',BASE+'s484-c9k3.json?$where=identificacion_contratista='+enc1(cc)+'&$limit=10',function(d){
+      G.conv=d;if(d.length&&!G.nombre)G.nombre=d[0].nombre_contratista||'';});
+    callAPI('contraloria',BASE+'8aqu-idqj.json?$where=numero_identificacion='+enc1(cc)+'&$limit=10',function(d){G.contraloria=d;});
+    callAPI('sena_api',BASE+'m8ah-mniv.json?$where=numero_identificacion='+enc1(cc)+'&$limit=10',function(d){
+      G.sena_api=d;if(d.length&&!G.nombre)G.nombre=d[0].nombre_aprendiz||'';});
+    callAPI('policia',BASE+'n5ky-2tue.json?$where=identificacion='+enc1(cc)+'&$limit=10',function(d){G.policia=d;});
+    callAPI('personal',BASE+'gdxc-w37w.json?$where=numero_identificacion='+enc1(cc)+'&$limit=10',function(d){
+      G.personal=d;if(d.length){G.cargo=G.cargo||d[0].cargo||d[0].denominacion_cargo||'';G.entidad=G.entidad||d[0].nombre_entidad||d[0].entidad||'';if(!G.nombre)G.nombre=d[0].nombre||d[0].nombres||'';}});
+    callAPI('regalias',BASE+'xgmd-ut58.json?$where=identificacion='+enc1(cc)+'&$limit=10',function(d){G.regalias=d;});
+    callAPI('ugpp',BASE+'m2fs-xk8z.json?$where=numero_identificacion='+enc1(cc)+'&$limit=10',function(d){G.ugpp=d;});
+
+  // ════════════════════════════════════════════════════════
+  // RAMA NOMBRE — AND por tokens + filtro post-API
+  // ════════════════════════════════════════════════════════
   }else{
-    var ws=nm.trim().split(/\s+/).slice().sort(function(a,b){return b.length-a.length;});var w1=ws[0]||nm;
-    callAPI('pep',BASE+'3qxn-uc22.json?$where=upper(nombre_pep)%20like%20upper(%27%25'+ql(nm)+'%25%27)&$limit=15',function(d){G.pep=d;if(d.length){G.cargo=G.cargo||d[0].cargo||'';G.entidad=G.entidad||d[0].entidad||'';}});
-    callAPI('siri',BASE+'iaeu-rcn6.json?$where=upper(primer_apellido)%20like%20upper(%27%25'+ql(w1)+'%25%27)&$limit=10',function(d){G.siri=d;});
-    callAPI('s2',BASE+'jbjy-vk9h.json?$where=upper(proveedor_adjudicado)%20like%20upper(%27%25'+ql(nm)+'%25%27)&$limit=20&$order=fecha_de_firma%20DESC',function(d){G.s2=d;if(d.length){G.nombre=G.nombre||d[0].proveedor_adjudicado||'';}d.forEach(function(c){var v=parseFloat(c.valor_del_contrato||0);if(!isNaN(v)&&v>0){G.totalContratos+=v;G.numContratos++;}});});
-    callAPI('si',BASE+'rpmr-utcd.json?$where=upper(nom_raz_social_contratista)%20like%20upper(%27%25'+ql(nm)+'%25%27)&$limit=20',function(d){G.si=d;if(d.length&&!G.nombre){G.nombre=d[0].nom_raz_social_contratista||'';}d.forEach(function(c){var v=parseFloat(c.valor_contrato||0);if(!isNaN(v)&&v>0){G.totalContratos+=v;G.numContratos++;}});});
-    callAPI('conv',BASE+'s484-c9k3.json?$where=upper(nombre_contratista)%20like%20upper(%27%25'+ql(nm)+'%25%27)&$limit=10',function(d){G.conv=d;});
-    callAPI('contraloria',BASE+'8aqu-idqj.json?$where=upper(nombre)%20like%20upper(%27%25'+ql(nm)+'%25%27)&$limit=10',function(d){G.contraloria=d;});
-    callAPI('sena_api',BASE+'m8ah-mniv.json?$where=upper(nombre_aprendiz)%20like%20upper(%27%25'+ql(nm)+'%25%27)&$limit=10',function(d){G.sena_api=d;});
-    callAPI('policia',BASE+'n5ky-2tue.json?$where=upper(nombre)%20like%20upper(%27%25'+ql(nm)+'%25%27)&$limit=10',function(d){G.policia=d;});
-    callAPI('personal',BASE+'gdxc-w37w.json?$where=upper(nombre)%20like%20upper(%27%25'+ql(nm)+'%25%27)&$limit=10',function(d){G.personal=d;if(d.length){G.cargo=G.cargo||d[0].cargo||'';G.entidad=G.entidad||d[0].nombre_entidad||'';}});
-    callAPI('regalias',BASE+'xgmd-ut58.json?$where=upper(nombre_beneficiario)%20like%20upper(%27%25'+ql(nm)+'%25%27)&$limit=10',function(d){G.regalias=d;});
-    callAPI('ugpp',BASE+'m2fs-xk8z.json?$where=upper(nombre)%20like%20upper(%27%25'+ql(nm)+'%25%27)&$limit=10',function(d){G.ugpp=d;});
+    // PEP: AND de los 2 tokens principales en nombre_pep
+    var pepQ=t2?andQ('nombre_pep',t1,'nombre_pep',t2):andLike('nombre_pep',t1);
+    callAPI('pep',BASE+'3qxn-uc22.json?$where='+pepQ+'&$limit=20',function(d){
+      var f=filterArr(d,['nombre_pep'],2);
+      G.pep=f;if(f.length){G.cargo=G.cargo||f[0].cargo||'';G.entidad=G.entidad||f[0].entidad||'';}
+      G.matchQuality=Math.max(G.matchQuality,f.length?75:0);});
+
+    // SIRI: busca por primer_apellido=t1 AND segundo_apellido=t2
+    var siriQ=t2?andQ('primer_apellido',t1,'segundo_apellido',t2):andLike('primer_apellido',t1);
+    callAPI('siri',BASE+'iaeu-rcn6.json?$where='+siriQ+'&$limit=10',function(d){
+      G.siri=filterArr(d,['primer_apellido','segundo_apellido','primer_nombre'],1);});
+
+    // SECOP II: busca por t1 AND t2 en proveedor
+    var s2Q=t2?andQ('proveedor_adjudicado',t1,'proveedor_adjudicado',t2):andLike('proveedor_adjudicado',t1);
+    callAPI('s2',BASE+'jbjy-vk9h.json?$where='+s2Q+'&$limit=20&$order=fecha_de_firma%20DESC',function(d){
+      var f=filterArr(d,['proveedor_adjudicado','nombre_representante_legal'],2);
+      G.s2=f;if(f.length){G.nombre=G.nombre||f[0].proveedor_adjudicado||'';}
+      f.forEach(function(c){var v=parseFloat(c.valor_del_contrato||0);if(!isNaN(v)&&v>0){G.totalContratos+=v;G.numContratos++;}});
+      G.matchQuality=Math.max(G.matchQuality,f.length?80:0);});
+
+    // SECOP I: AND en nom_raz_social
+    var siQ=t2?andQ('nom_raz_social_contratista',t1,'nom_raz_social_contratista',t2):andLike('nom_raz_social_contratista',t1);
+    callAPI('si',BASE+'rpmr-utcd.json?$where='+siQ+'&$limit=20',function(d){
+      var f=filterArr(d,['nom_raz_social_contratista'],2);
+      G.si=f;if(f.length&&!G.nombre)G.nombre=f[0].nom_raz_social_contratista||'';
+      f.forEach(function(c){var v=parseFloat(c.valor_contrato||0);if(!isNaN(v)&&v>0){G.totalContratos+=v;G.numContratos++;}});});
+
+    // Convenios
+    var convQ=t2?andQ('nombre_contratista',t1,'nombre_contratista',t2):andLike('nombre_contratista',t1);
+    callAPI('conv',BASE+'s484-c9k3.json?$where='+convQ+'&$limit=10',function(d){
+      G.conv=filterArr(d,['nombre_contratista'],2);});
+
+    // Contraloria: AND en nombre
+    var contrQ=t2?andQ('nombre',t1,'nombre',t2):andLike('nombre',t1);
+    callAPI('contraloria',BASE+'8aqu-idqj.json?$where='+contrQ+'&$limit=10',function(d){
+      G.contraloria=filterArr(d,['nombre'],2);});
+
+    // SENA: AND en nombre_aprendiz
+    var senaQ=t2?andQ('nombre_aprendiz',t1,'nombre_aprendiz',t2):andLike('nombre_aprendiz',t1);
+    callAPI('sena_api',BASE+'m8ah-mniv.json?$where='+senaQ+'&$limit=10',function(d){
+      G.sena_api=filterArr(d,['nombre_aprendiz'],2);});
+
+    // Policia: AND en nombre
+    var polQ=t2?andQ('nombre',t1,'nombre',t2):andLike('nombre',t1);
+    callAPI('policia',BASE+'n5ky-2tue.json?$where='+polQ+'&$limit=10',function(d){
+      G.policia=filterArr(d,['nombre'],2);});
+
+    // Personal publico: AND en nombre
+    var perQ=t2?andQ('nombre',t1,'nombre',t2):andLike('nombre',t1);
+    callAPI('personal',BASE+'gdxc-w37w.json?$where='+perQ+'&$limit=10',function(d){
+      var f=filterArr(d,['nombre'],2);
+      G.personal=f;if(f.length){G.cargo=G.cargo||f[0].cargo||'';G.entidad=G.entidad||f[0].nombre_entidad||'';}});
+
+    // Regalias
+    var regQ=t2?andQ('nombre_beneficiario',t1,'nombre_beneficiario',t2):andLike('nombre_beneficiario',t1);
+    callAPI('regalias',BASE+'xgmd-ut58.json?$where='+regQ+'&$limit=10',function(d){
+      G.regalias=filterArr(d,['nombre_beneficiario'],2);});
+
+    // UGPP
+    var ugppQ=t2?andQ('nombre',t1,'nombre',t2):andLike('nombre',t1);
+    callAPI('ugpp',BASE+'m2fs-xk8z.json?$where='+ugppQ+'&$limit=10',function(d){
+      G.ugpp=filterArr(d,['nombre'],2);});
   }
   ['regist','rama','simit','snies','rethus','rues','runt','dian'].forEach(function(id){setFuente(id,'hit');});
 }
 
-
 function postProcesar(){
-  if(G.nombre){G.nombre=G.nombre.split(' ').map(function(w){return w.length<=2?w.toLowerCase():w.charAt(0).toUpperCase()+w.slice(1).toLowerCase();}).join(' ');}
+  if(G.nombre){G.nombre=G.nombre.split(' ').map(function(w){
+    if(w.length<=2)return w.toLowerCase();
+    return w.charAt(0).toUpperCase()+w.slice(1).toLowerCase();
+  }).join(' ');}
   (G.conv||[]).forEach(function(c){var v=parseFloat(c.valor_convenio||c.valor||0);if(!isNaN(v)&&v>0){G.totalContratos+=v;G.numContratos++;}});
+
+  // Certeza ponderada: base por tipo + fuentes con datos + calidad del match
   var s=0;
-  if(G.esCedula)s+=25; else s+=8;
-  if((G.pep||[]).length)s+=15;if((G.siri||[]).length)s+=10;if((G.s2||[]).length)s+=12;
-  if((G.si||[]).length)s+=8;if((G.contraloria||[]).length)s+=8;if((G.personal||[]).length)s+=12;
-  if((G.policia||[]).length)s+=8;if((G.sena_api||[]).length)s+=5;if((G.regalias||[]).length)s+=5;
-  if((G.ugpp||[]).length)s+=8;if(G.nombre)s+=5;
-  G.certeza=Math.min(s,98);
+  if(G.esCedula){s+=35;}else{s+=5+(G.matchQuality||0)*0.15;}
+  var apis=[G.pep,G.siri,G.s2,G.si,G.conv,G.contraloria,G.personal,G.policia,G.sena_api,G.regalias,G.ugpp];
+  apis.forEach(function(a){if(a&&a.length)s+=Math.min(a.length*3,12);});
+  if(G.nombre)s+=5;
+  // Bonus si hay datos de identidad cruzados (2+ fuentes coinciden en nombre)
+  var nombresAPI=[];
+  if(G.nombre)nombresAPI.push(G.nombre);
+  if(G.cargo&&G.entidad)s+=5;
+  G.certeza=Math.min(Math.round(s),98);
+  G.hits=apis.filter(function(a){return a&&a.length>0;}).length;
 }
+
 function finalizarYMostrar(){
   setP(100,'ARGOS v9 \u2713');
   var pnm=G.nombre||G.nm||G.q;
