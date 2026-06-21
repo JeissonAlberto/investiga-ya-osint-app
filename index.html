@@ -733,7 +733,7 @@ function activar(){
      hits:0,certeza:0,matchType:isCC?'exact':'partial'};
   saveH(raw);
   document.getElementById('informe').style.display='none';
-  document.getElementById('prog-wrap').style.display='block';
+  document.getElementById('estado').style.display='block';
   setP(5,'Iniciando ARGOS v9...');
   setTimeout(correrConsultas,80);
 }
@@ -1589,7 +1589,13 @@ function buscarPlaca(){
   toast('10 fuentes para placa '+p,'ok');
 }
 
-document.addEventListener('DOMContentLoaded',function(){renderH();});
+document.addEventListener('DOMContentLoaded',function(){
+  renderH();
+  var btn=document.getElementById('btnActivar');
+  if(btn)btn.addEventListener('click',activar);
+  var inp=document.getElementById('q');
+  if(inp)inp.addEventListener('keydown',function(e){if(e.key==='Enter')activar();});
+});
 </script>
 </body>
 </html>
