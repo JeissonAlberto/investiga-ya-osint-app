@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>ARGOS v6 — Motor OSINT Colombia</title>
+<title>ARGOS v8 — Motor OSINT Colombia</title>
 <meta name="theme-color" content="#060608"/>
 <link rel="icon" type="image/svg+xml" href="logo-icon.svg"/>
 <style>
@@ -294,6 +294,45 @@ ol.steps li::before{content:counter(s);position:absolute;left:7px;top:50%;transf
   .blk{border:1px solid #ccc!important;border-radius:0!important;break-inside:avoid}
   .blk-title{color:#000!important}.dato-money{color:#000!important;font-weight:900}
 }
+
+/* OPTIMIZACIONES v8 */
+.fuentes-grid{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}
+.fuente[data-auto="true"].hit{border-color:var(--green);background:var(--greenl)}
+.fuente[data-auto="true"].running{border-color:var(--yellow);background:var(--yellowl)}
+.blk{transition:border-color .2s,box-shadow .2s}
+.blk.hit:hover{box-shadow:0 2px 16px rgba(224,32,32,.1)}
+.dato+.dato{margin-top:6px}
+/* CACHE BADGE */
+.cache-badge{display:inline-flex;align-items:center;gap:4px;background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);color:#60a5fa;font-size:.56rem;padding:2px 8px;border-radius:20px;font-weight:700;margin-left:8px}
+/* TABS responsive */
+.tab{padding:10px 12px;font-size:.68rem}
+@media(max-width:400px){.tab{padding:9px 9px;font-size:.63rem}}
+/* BUSQUEDA — efecto typing */
+#q{caret-color:var(--red)}
+/* SPIN INLINE */
+.spin{width:9px;height:9px;border-width:1.5px}
+/* DATO ROWS dense */
+.dato-rows{gap:1px 10px}
+.dl{font-size:.59rem}.dv{font-size:.67rem}
+/* PERFIL compact en mobile */
+@media(max-width:380px){.pname{font-size:.9rem}.pav{width:44px;height:44px;font-size:1rem}}
+/* PRINT mejor */
+@media print{
+  .block,.blk{break-inside:avoid;border:1px solid #ccc!important}
+  .dato{border:1px solid #eee!important;page-break-inside:avoid}
+  a{color:#000!important;text-decoration:none!important}
+}
+
+.tag{display:inline-flex;align-items:center;padding:2px 8px;border-radius:20px;font-size:.56rem;font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin:2px 2px 2px 0}
+.tag-red{background:rgba(224,32,32,.15);color:var(--red);border:1px solid rgba(224,32,32,.3)}
+.tag-warn{background:rgba(234,179,8,.1);color:#fbbf24;border:1px solid rgba(234,179,8,.25)}
+.tag-blue{background:rgba(59,130,246,.12);color:#60a5fa;border:1px solid rgba(59,130,246,.2)}
+.tag-green{background:rgba(34,197,94,.1);color:#4ade80;border:1px solid rgba(34,197,94,.2)}
+.tag-muted{background:var(--card2);color:var(--muted);border:1px solid var(--border2)}
+.fuente[data-auto="true"].hit{border-color:var(--green)!important;background:rgba(34,197,94,.07)!important}
+.fuente[data-auto="true"].miss{opacity:.5}
+.fuente[data-auto="true"].running{border-color:#fbbf24!important}
+@media print{body{background:#fff!important}.blk,.dato{break-inside:avoid;border:1px solid #ccc!important;background:#fff!important}.dl,.dv{color:#000!important}.dfg{color:#16a34a!important}}
 </style>
 </head>
 <body>
@@ -301,17 +340,20 @@ ol.steps li::before{content:counter(s);position:absolute;left:7px;top:50%;transf
   <div class="logo-w"><img src="logo-icon.svg" alt=""/></div>
   <div class="brand"><div class="bname">ARGOS</div><div class="bsub">Motor de Inteligencia</div></div>
   <div class="hstats">
-    <div class="hstat">APIs <span>6</span></div>
-    <div class="hstat">Fuentes <span>65+</span></div>
+    <div class="hstat">APIs <span>11</span></div>
+    <div class="hstat">Fuentes <span>95+</span></div>
     <div class="hstat">Colombia <span>✓</span></div>
   </div>
-  <span class="hbadge">v6.0 · 2026</span>
+  <span class="hbadge">v9.0 · 2026</span>
 </header>
 
 <div class="tabs">
   <div class="tab active" data-tab="motor">🔴 ARGOS</div>
   <div class="tab" data-tab="foto">📷 Imagen</div>
   <div class="tab" data-tab="telefono">📱 Telefono</div>
+  <div class="tab" data-tab="email">📧 Email</div>
+  <div class="tab" data-tab="empresa">🏢 Empresa</div>
+  <div class="tab" data-tab="placa">🚗 Placa</div>
   <div class="tab" data-tab="dorks">🕵 Dorks</div>
   <div class="tab" data-tab="fuentes">📚 Fuentes</div>
   <div class="tab" data-tab="metodo">🗂 Metodo</div>
@@ -325,7 +367,7 @@ ol.steps li::before{content:counter(s);position:absolute;left:7px;top:50%;transf
   <div class="aname">A<span>R</span>GOS</div>
   <div class="atag">Analisis · Rastreo · Geolocalizacion · OSINT · Sintesis</div>
   <p class="adesc">Motor que <strong>consulta 5 APIs publicas reales</strong> de Colombia y consolida los datos en un informe completo.</p>
-  <p class="aapis">SECOP II · SECOP Integrado · Convenios · PEP · SIRI · Contraloria · +60 fuentes manuales</p>
+  <p class="aapis">SECOP II · SECOP Integrado · PEP · SIRI · Contraloria · SENA · Policia · Personal · SGR · +75 fuentes</p>
   <div class="sw">
     <div class="sb">
       <input type="text" id="q" placeholder="Nombre completo o numero de cedula..." autocomplete="off" spellcheck="false"/>
@@ -379,7 +421,7 @@ ol.steps li::before{content:counter(s);position:absolute;left:7px;top:50%;transf
     <div class="pmeta">
       <button class="pbtn" onclick="copiar()">📋 Copiar informe</button>
       <button class="pbtn" onclick="window.print()">🖨 Imprimir</button>
-      <div class="pmeta-algo">ARGOS v6.0 · InvestigaYa</div>
+      <div class="pmeta-algo">ARGOS v9.0 · InvestigaYa</div>
       <div class="pmeta-fecha" id="p-fecha">-</div>
     </div>
   </div>
@@ -444,6 +486,52 @@ ol.steps li::before{content:counter(s);position:absolute;left:7px;top:50%;transf
     <button class="btn btn-g" onclick="window.print()">🖨 Imprimir PDF</button>
     <button class="btn btn-g" onclick="nuevaBusqueda()">🔄 Nueva busqueda</button>
   </div>
+</div>
+</div>
+
+<!-- EMAIL -->
+<div class="panel" id="panel-email">
+<div style="padding-top:16px">
+  <div class="block">
+    <div class="stitle">Lookup de email</div>
+    <div class="info red">Solo fuentes publicas. No accede a bandejas privadas.</div>
+    <div class="field"><label>Correo electronico</label><input type="email" id="inp-email" placeholder="usuario@gmail.com"/></div>
+    <button class="btn btn-r btn-full" onclick="buscarEmail()">🔍 Investigar email</button>
+  </div>
+  <div id="res-email" style="display:none"><div class="lk-grid" id="grid-email"></div></div>
+</div>
+</div>
+
+<!-- EMPRESA -->
+<div class="panel" id="panel-empresa">
+<div style="padding-top:16px">
+  <div class="block">
+    <div class="stitle">Busqueda por empresa o NIT</div>
+    <div class="rowf">
+      <div class="field"><label>Nombre empresa</label><input type="text" id="inp-emp-n" placeholder="Empresa XYZ SAS"/></div>
+      <div class="field"><label>NIT</label><input type="text" id="inp-emp-nit" placeholder="900123456"/></div>
+    </div>
+    <button class="btn btn-r btn-full" onclick="buscarEmpresa()">🔍 Investigar empresa</button>
+  </div>
+  <div id="res-empresa" style="display:none">
+    <div id="blk-emp-api" class="blk" style="display:none">
+      <div class="blk-head"><span class="blk-ico">📑</span><span class="blk-title">SECOP II — Empresa/NIT</span><span class="blk-cnt cnt-none" id="cnt-emp-api">-</span></div>
+      <div id="body-emp-api"></div>
+    </div>
+    <div class="blk hit"><div class="blk-head"><span class="blk-ico">🔗</span><span class="blk-title">Fuentes directas</span></div><div class="lk-grid" id="grid-empresa"></div></div>
+  </div>
+</div>
+</div>
+
+<!-- PLACA -->
+<div class="panel" id="panel-placa">
+<div style="padding-top:16px">
+  <div class="block">
+    <div class="stitle">Consulta por placa de vehiculo</div>
+    <div class="field"><label>Placa Colombia</label><input type="text" id="inp-placa" placeholder="ABC123" style="text-transform:uppercase" maxlength="6"/></div>
+    <button class="btn btn-r btn-full" onclick="buscarPlaca()">🔍 Consultar placa</button>
+  </div>
+  <div id="res-placa" style="display:none"><div class="lk-grid" id="grid-placa"></div></div>
 </div>
 </div>
 
@@ -580,27 +668,34 @@ document.querySelectorAll('.tab').forEach(function(t){
 });
 document.getElementById('q').addEventListener('keydown',function(e){if(e.key==='Enter')activar();});
 
-var G={};
+var G={q:'',nm:'',cc:'',esCedula:false,
+  pep:[],siri:[],s2:[],si:[],conv:[],
+  contraloria:[],sena_api:[],policia:[],personal:[],regalias:[],ugpp:[],
+  nombre:'',domicilio:'',genero:'',cargo:'',entidad:'',ciudad:'',
+  totalContratos:0,numContratos:0,
+  hits:0,certeza:0,matchType:'exact'
+};
 
 var SRCS=[
-  {id:'pep',   n:'PEP — Funcion Publica', ico:'🏅'},
-  {id:'siri',  n:'SIRI — Procuraduria',   ico:'⚠'},
-  {id:'s2',    n:'SECOP II API',           ico:'📑'},
-  {id:'si',    n:'SECOP Integrado',        ico:'📋'},
-  {id:'conv',  n:'SECOP Convenios',        ico:'🤝'},
-  {id:'regist',n:'Registraduria',          ico:'🏛'},
-  {id:'rama',  n:'Rama Judicial',          ico:'⚖'},
-  {id:'simit', n:'SIMIT multas',           ico:'🚦'},
-  {id:'sena',  n:'SENA certificados',      ico:'🎓'},
-  {id:'snies', n:'SNIES titulos',          ico:'🏫'},
-  {id:'rethus',n:'RETHUS salud',           ico:'🩺'},
-  {id:'rues',  n:'RUES empresas',          ico:'🏢'},
-  {id:'vur',   n:'VUR inmuebles',          ico:'🏠'},
-  {id:'runt',  n:'RUNT vehiculos',         ico:'🚗'},
-  {id:'dian',  n:'DIAN tributario',        ico:'💼'},
-  {id:'super', n:'Superfinanciera',        ico:'🏦'},
-  {id:'linkedin',n:'LinkedIn',             ico:'💼'},
-  {id:'noticias',n:'Google News',          ico:'📰'},
+  {id:'pep',        n:'PEP Func.Publica',    ico:'🏅', auto:true},
+  {id:'siri',       n:'SIRI Procuraduria',   ico:'⚠',  auto:true},
+  {id:'s2',         n:'SECOP II',            ico:'📑', auto:true},
+  {id:'si',         n:'SECOP Integrado',     ico:'📋', auto:true},
+  {id:'conv',       n:'Convenios',           ico:'🤝', auto:true},
+  {id:'contraloria',n:'Contraloria',         ico:'🔎', auto:true},
+  {id:'sena_api',   n:'SENA Aprendices',     ico:'🎓', auto:true},
+  {id:'policia',    n:'Policia Nal.',         ico:'🚔', auto:true},
+  {id:'personal',   n:'Personal Publico',    ico:'👤', auto:true},
+  {id:'regalias',   n:'SGR Regalias',        ico:'💎', auto:true},
+  {id:'ugpp',       n:'UGPP Parafiscales',   ico:'💰', auto:true},
+  {id:'regist', n:'Registraduria', ico:'🏛'},
+  {id:'rama',   n:'Rama Judicial', ico:'⚖'},
+  {id:'simit',  n:'SIMIT',         ico:'🚦'},
+  {id:'snies',  n:'SNIES',         ico:'🏫'},
+  {id:'rethus', n:'RETHUS',        ico:'🩺'},
+  {id:'rues',   n:'RUES',          ico:'🏢'},
+  {id:'runt',   n:'RUNT',          ico:'🚗'},
+  {id:'dian',   n:'DIAN',          ico:'💼'},
 ];
 
 function setP(pct,txt){
@@ -621,148 +716,122 @@ function setFuente(id,estado){
 }
 
 function activar(){
-  var q=document.getElementById('q').value.trim();
-  if(!q){toast('Ingresa nombre o cedula');return;}
-  var digits=q.replace(/\D/g,'');
-  var esCedula=/^\d{6,12}$/.test(digits)&&digits.length>=6;
-  G={q:q,cc:esCedula?digits:'',nm:esCedula?'':q,esCedula:esCedula,
+  var raw=document.getElementById('q').value.trim();
+  if(!raw){toast('Ingresa cedula o nombre completo');return;}
+  function norm(s){return s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/,' ').trim();}
+  var clean=norm(raw);
+  var isCC=/^\d{6,12}$/.test(clean.replace(/\D/g,''));
+  var cc=isCC?clean.replace(/\D/g,''):'';
+  var nm=isCC?'':clean;
+  var words=nm.split(' ').filter(function(w){return w.length>1;});
+  if(!isCC&&words.length<2){toast('Para mayor precision ingresa nombre y apellido','warn');}
+  G={q:raw,nm:nm,cc:cc,esCedula:isCC,
      pep:[],siri:[],s2:[],si:[],conv:[],
-     nombre:'',domicilio:'',genero:'',
-     hits:0,certeza:0};
-
+     contraloria:[],sena_api:[],policia:[],personal:[],regalias:[],ugpp:[],
+     nombre:'',domicilio:'',genero:'',cargo:'',entidad:'',ciudad:'',
+     totalContratos:0,numContratos:0,
+     hits:0,certeza:0,matchType:isCC?'exact':'partial'};
+  saveH(raw);
   document.getElementById('informe').style.display='none';
-  document.getElementById('certeza-wrap').classList.remove('show');
-  var estado=document.getElementById('estado');
-  estado.style.display='block';
-  setP(2,'Iniciando ARGOS...');
-
-  var grid='';
-  SRCS.forEach(function(s){
-    grid+='<div class="fuente" id="f-'+s.id+'">'
-      +'<span>'+s.ico+'</span>'
-      +'<span style="flex:1;font-size:.63rem;color:var(--g2);font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+s.n+'</span>'
-      +'<span class="fst fst-w" id="fs-'+s.id+'">...</span>'
-      +'</div>';
-  });
-  document.getElementById('fuentes-grid').innerHTML=grid;
-  saveH(q);
-  renderH();
-  estado.scrollIntoView({behavior:'smooth',block:'start'});
-  correrConsultas();
+  document.getElementById('prog-wrap').style.display='block';
+  setP(5,'Iniciando ARGOS v9...');
+  setTimeout(correrConsultas,80);
 }
 
 function correrConsultas(){
-  var cc=G.cc, nm=G.nm, q=G.q;
+  var cc=G.cc,nm=G.nm,q=G.q;
   var BASE='https://www.datos.gov.co/resource/';
-  var done=0, total=4;
-
-  function checkDone(){
-    done++;
-    setP(20+done*18,'Procesando fuentes ('+done+'/'+total+')...');
-    if(done>=total)finalizarYMostrar();
+  var APIS_N=11,done=0;
+  var cacheKey='argos9_'+q;
+  try{var cached=JSON.parse(sessionStorage.getItem(cacheKey)||'null');if(cached&&(Date.now()-cached.ts)<600000){Object.assign(G,cached.data);setP(100,'Cache \u26a1');finalizarYMostrar();return;}}catch(e){}
+  function normQ(s){return s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase().trim();}
+  function ql(s){return encodeURIComponent('%'+normQ(s)+'%');}
+  function done_one(){
+    done++;setP(Math.round(10+done/APIS_N*82),'API '+done+'/'+APIS_N+'...');
+    if(done>=APIS_N){
+      postProcesar();
+      try{sessionStorage.setItem(cacheKey,JSON.stringify({ts:Date.now(),data:{pep:G.pep,siri:G.siri,s2:G.s2,si:G.si,conv:G.conv,contraloria:G.contraloria,sena_api:G.sena_api,policia:G.policia,personal:G.personal,regalias:G.regalias,ugpp:G.ugpp,nombre:G.nombre,domicilio:G.domicilio,genero:G.genero,cargo:G.cargo,entidad:G.entidad,totalContratos:G.totalContratos,numContratos:G.numContratos,hits:G.hits}}));}catch(e){}
+      finalizarYMostrar();
+    }
   }
-
   function callAPI(id,url,cb){
     setFuente(id,'running');
-    fetch(url)
-      .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();})
-      .then(function(data){
-        var arr=Array.isArray(data)?data:[];
-        cb(arr);
-        setFuente(id,arr.length>0?'hit':'miss');
-        if(arr.length>0)G.hits++;
-        checkDone();
-      })
-      .catch(function(err){
-        console.warn(id,err.message);
-        cb([]);
-        setFuente(id,'miss');
-        checkDone();
-      });
+    var ctrl=new AbortController();var tid=setTimeout(function(){ctrl.abort();},12000);
+    fetch(url,{signal:ctrl.signal})
+      .then(function(r){clearTimeout(tid);if(!r.ok)throw new Error(r.status);return r.json();})
+      .then(function(d){var arr=Array.isArray(d)?d:[];var seen={};arr=arr.filter(function(x){var k=JSON.stringify(x).slice(0,60);if(seen[k])return false;seen[k]=true;return true;});cb(arr);setFuente(id,arr.length?'hit':'miss');if(arr.length)G.hits++;done_one();})
+      .catch(function(){cb([]);setFuente(id,'miss');done_one();});
   }
-
+  G.contraloria=[];G.sena_api=[];G.policia=[];G.personal=[];G.regalias=[];G.ugpp=[];
   if(cc){
-    callAPI('pep',  BASE+'3qxn-uc22.json?$where=numero_documento=%27'+cc+'%27&$limit=10',function(d){G.pep=d;});
-    callAPI('siri', BASE+'iaeu-rcn6.json?$where=trim(numero_identificacion)=%27'+cc+'%27&$limit=10',function(d){G.siri=d;});
-    callAPI('s2',   BASE+'jbjy-vk9h.json?$where=documento_proveedor=%27'+cc+'%27&$limit=20&$order=fecha_de_firma%20DESC',function(d){
-      G.s2=d;
-      if(d.length>0){
-        G.nombre=d[0].proveedor_adjudicado||d[0].nombre_representante_legal||'';
-        G.domicilio=d[0].domicilio_representante_legal||'';
-        G.genero=d[0].g_nero_representante_legal||'';
-      }
-    });
-    callAPI('si',   BASE+'rpmr-utcd.json?$where=documento_proveedor=%27'+cc+'%27&$limit=15',function(d){G.si=d;});
-
-    // Convenios - paralelo sin contar en done
-    setFuente('conv','running');
-    fetch(BASE+'s484-c9k3.json?$where=identificacion_contratista=%27'+cc+'%27&$limit=10')
-      .then(function(r){return r.ok?r.json():[];})
-      .then(function(d){G.conv=Array.isArray(d)?d:[];setFuente('conv',G.conv.length>0?'hit':'miss');})
-      .catch(function(){G.conv=[];setFuente('conv','miss');});
-
-  } else {
-    var enc2=enc(nm);
-    var parts=nm.trim().split(' ');
-    var ape=enc(parts[parts.length-1]);
-    callAPI('pep',  BASE+'3qxn-uc22.json?$where=upper(nombre_pep)%20like%20upper(%27%25'+enc2+'%25%27)&$limit=10',function(d){G.pep=d;});
-    callAPI('siri', BASE+'iaeu-rcn6.json?$where=upper(primer_apellido)%20like%20upper(%27%25'+ape+'%25%27)&$limit=10',function(d){G.siri=d;});
-    callAPI('s2',   BASE+'jbjy-vk9h.json?$where=upper(proveedor_adjudicado)%20like%20upper(%27%25'+enc2+'%25%27)&$limit=15&$order=fecha_de_firma%20DESC',function(d){
-      G.s2=d;
-      if(d.length>0){G.nombre=d[0].proveedor_adjudicado||'';G.domicilio=d[0].domicilio_representante_legal||'';G.genero=d[0].g_nero_representante_legal||'';}
-    });
-    callAPI('si',   BASE+'rpmr-utcd.json?$where=upper(nom_raz_social_contratista)%20like%20upper(%27%25'+enc2+'%25%27)&$limit=15',function(d){G.si=d;});
-
-    setFuente('conv','running');
-    fetch(BASE+'s484-c9k3.json?$where=upper(nombre_contratista)%20like%20upper(%27%25'+enc2+'%25%27)&$limit=10')
-      .then(function(r){return r.ok?r.json():[];})
-      .then(function(d){G.conv=Array.isArray(d)?d:[];setFuente('conv',G.conv.length>0?'hit':'miss');})
-      .catch(function(){G.conv=[];setFuente('conv','miss');});
+    callAPI('pep',BASE+'3qxn-uc22.json?$where=numero_documento=%27'+cc+'%27&$limit=10',function(d){G.pep=d;if(d.length){G.cargo=G.cargo||d[0].cargo||d[0].u_cargo||'';G.entidad=G.entidad||d[0].entidad||d[0].u_entidad||'';}});
+    callAPI('siri',BASE+'iaeu-rcn6.json?$where=trim(numero_identificacion)=%27'+cc+'%27&$limit=10',function(d){G.siri=d;});
+    callAPI('s2',BASE+'jbjy-vk9h.json?$where=documento_proveedor=%27'+cc+'%27&$limit=25&$order=fecha_de_firma%20DESC',function(d){G.s2=d;if(d.length){G.nombre=G.nombre||d[0].proveedor_adjudicado||d[0].nombre_representante_legal||'';G.domicilio=G.domicilio||d[0].domicilio_representante_legal||'';G.genero=G.genero||d[0].g_nero_representante_legal||'';d.forEach(function(c){var v=parseFloat(c.valor_del_contrato||0);if(!isNaN(v)&&v>0){G.totalContratos+=v;G.numContratos++;}});}});
+    callAPI('si',BASE+'rpmr-utcd.json?$where=documento_proveedor=%27'+cc+'%27&$limit=20',function(d){G.si=d;if(d.length&&!G.nombre){G.nombre=d[0].nom_raz_social_contratista||'';}d.forEach(function(c){var v=parseFloat(c.valor_contrato||0);if(!isNaN(v)&&v>0){G.totalContratos+=v;G.numContratos++;}});});
+    callAPI('conv',BASE+'s484-c9k3.json?$where=identificacion_contratista=%27'+cc+'%27&$limit=10',function(d){G.conv=d;if(d.length&&!G.nombre){G.nombre=d[0].nombre_contratista||'';}});
+    callAPI('contraloria',BASE+'8aqu-idqj.json?$where=numero_identificacion=%27'+cc+'%27&$limit=10',function(d){G.contraloria=d;});
+    callAPI('sena_api',BASE+'m8ah-mniv.json?$where=numero_identificacion=%27'+cc+'%27&$limit=10',function(d){G.sena_api=d;if(d.length&&!G.nombre){G.nombre=d[0].nombre_aprendiz||'';}});
+    callAPI('policia',BASE+'n5ky-2tue.json?$where=identificacion=%27'+cc+'%27&$limit=10',function(d){G.policia=d;});
+    callAPI('personal',BASE+'gdxc-w37w.json?$where=numero_identificacion=%27'+cc+'%27&$limit=10',function(d){G.personal=d;if(d.length){G.cargo=G.cargo||d[0].cargo||d[0].denominacion_cargo||'';G.entidad=G.entidad||d[0].nombre_entidad||d[0].entidad||'';if(!G.nombre)G.nombre=d[0].nombre||d[0].nombres||'';}});
+    callAPI('regalias',BASE+'xgmd-ut58.json?$where=identificacion=%27'+cc+'%27&$limit=10',function(d){G.regalias=d;});
+    callAPI('ugpp',BASE+'m2fs-xk8z.json?$where=numero_identificacion=%27'+cc+'%27&$limit=10',function(d){G.ugpp=d;});
+  }else{
+    var ws=nm.trim().split(/\s+/).slice().sort(function(a,b){return b.length-a.length;});var w1=ws[0]||nm;
+    callAPI('pep',BASE+'3qxn-uc22.json?$where=upper(nombre_pep)%20like%20upper(%27%25'+ql(nm)+'%25%27)&$limit=15',function(d){G.pep=d;if(d.length){G.cargo=G.cargo||d[0].cargo||'';G.entidad=G.entidad||d[0].entidad||'';}});
+    callAPI('siri',BASE+'iaeu-rcn6.json?$where=upper(primer_apellido)%20like%20upper(%27%25'+ql(w1)+'%25%27)&$limit=10',function(d){G.siri=d;});
+    callAPI('s2',BASE+'jbjy-vk9h.json?$where=upper(proveedor_adjudicado)%20like%20upper(%27%25'+ql(nm)+'%25%27)&$limit=20&$order=fecha_de_firma%20DESC',function(d){G.s2=d;if(d.length){G.nombre=G.nombre||d[0].proveedor_adjudicado||'';}d.forEach(function(c){var v=parseFloat(c.valor_del_contrato||0);if(!isNaN(v)&&v>0){G.totalContratos+=v;G.numContratos++;}});});
+    callAPI('si',BASE+'rpmr-utcd.json?$where=upper(nom_raz_social_contratista)%20like%20upper(%27%25'+ql(nm)+'%25%27)&$limit=20',function(d){G.si=d;if(d.length&&!G.nombre){G.nombre=d[0].nom_raz_social_contratista||'';}d.forEach(function(c){var v=parseFloat(c.valor_contrato||0);if(!isNaN(v)&&v>0){G.totalContratos+=v;G.numContratos++;}});});
+    callAPI('conv',BASE+'s484-c9k3.json?$where=upper(nombre_contratista)%20like%20upper(%27%25'+ql(nm)+'%25%27)&$limit=10',function(d){G.conv=d;});
+    callAPI('contraloria',BASE+'8aqu-idqj.json?$where=upper(nombre)%20like%20upper(%27%25'+ql(nm)+'%25%27)&$limit=10',function(d){G.contraloria=d;});
+    callAPI('sena_api',BASE+'m8ah-mniv.json?$where=upper(nombre_aprendiz)%20like%20upper(%27%25'+ql(nm)+'%25%27)&$limit=10',function(d){G.sena_api=d;});
+    callAPI('policia',BASE+'n5ky-2tue.json?$where=upper(nombre)%20like%20upper(%27%25'+ql(nm)+'%25%27)&$limit=10',function(d){G.policia=d;});
+    callAPI('personal',BASE+'gdxc-w37w.json?$where=upper(nombre)%20like%20upper(%27%25'+ql(nm)+'%25%27)&$limit=10',function(d){G.personal=d;if(d.length){G.cargo=G.cargo||d[0].cargo||'';G.entidad=G.entidad||d[0].nombre_entidad||'';}});
+    callAPI('regalias',BASE+'xgmd-ut58.json?$where=upper(nombre_beneficiario)%20like%20upper(%27%25'+ql(nm)+'%25%27)&$limit=10',function(d){G.regalias=d;});
+    callAPI('ugpp',BASE+'m2fs-xk8z.json?$where=upper(nombre)%20like%20upper(%27%25'+ql(nm)+'%25%27)&$limit=10',function(d){G.ugpp=d;});
   }
-
-  // Fuentes manuales - marcar como disponibles
-  ['regist','rama','simit','sena','snies','rethus','rues','vur','runt','dian','super','linkedin','noticias'].forEach(function(id){
-    setFuente(id,'hit');
-  });
+  ['regist','rama','simit','snies','rethus','rues','runt','dian'].forEach(function(id){setFuente(id,'hit');});
 }
 
+
+function postProcesar(){
+  if(G.nombre){G.nombre=G.nombre.split(' ').map(function(w){return w.length<=2?w.toLowerCase():w.charAt(0).toUpperCase()+w.slice(1).toLowerCase();}).join(' ');}
+  (G.conv||[]).forEach(function(c){var v=parseFloat(c.valor_convenio||c.valor||0);if(!isNaN(v)&&v>0){G.totalContratos+=v;G.numContratos++;}});
+  var s=0;
+  if(G.esCedula)s+=25; else s+=8;
+  if((G.pep||[]).length)s+=15;if((G.siri||[]).length)s+=10;if((G.s2||[]).length)s+=12;
+  if((G.si||[]).length)s+=8;if((G.contraloria||[]).length)s+=8;if((G.personal||[]).length)s+=12;
+  if((G.policia||[]).length)s+=8;if((G.sena_api||[]).length)s+=5;if((G.regalias||[]).length)s+=5;
+  if((G.ugpp||[]).length)s+=8;if(G.nombre)s+=5;
+  G.certeza=Math.min(s,98);
+}
 function finalizarYMostrar(){
-  setP(100,'ARGOS completado');
-  var apiHits=G.pep.length+G.siri.length+G.s2.length+G.si.length+G.conv.length;
-  var cert=15+Math.min(apiHits*8,65)+(G.hits>=2?10:0)+(G.nombre?5:0);
-  cert=Math.min(cert,98);
-  G.certeza=cert;
-
-  var cw=document.getElementById('certeza-wrap');
-  cw.classList.add('show');
-  cw.scrollIntoView({behavior:'smooth',block:'center'});
-  setTimeout(function(){
-    document.getElementById('c-fg').style.strokeDashoffset=301-(cert/100*301);
-  },60);
-  var n=0;
-  var iv=setInterval(function(){
-    n=Math.min(n+2,cert);
-    document.getElementById('cert-num').textContent=n+'%';
-    if(n>=cert)clearInterval(iv);
-  },14);
-
-  document.getElementById('cert-desc').textContent=
-    cert>=80?'Alta certeza — multiples APIs con hallazgos reales confirmados.':
-    cert>=55?'Certeza media — hallazgos en APIs. Verificar fuentes manuales.':
-    cert>=30?'Certeza basica — sin hallazgos directos. Prueba con cedula.':
-    'Certeza baja — sin datos en APIs publicas.';
-
-  var pills='';
-  if(G.nombre)      pills+='<span class="cpill cpr">'+esc(G.nombre)+'</span>';
-  if(G.s2.length)   pills+='<span class="cpill cpy">'+G.s2.length+' contratos SECOP II</span>';
-  if(G.si.length)   pills+='<span class="cpill cpy">'+G.si.length+' SECOP Integrado</span>';
-  if(G.conv.length) pills+='<span class="cpill cpy">'+G.conv.length+' convenios</span>';
-  if(G.pep.length)  pills+='<span class="cpill cpr">PEP: servidor publico</span>';
-  if(G.siri.length) pills+='<span class="cpill cpr">'+G.siri.length+' sanciones</span>';
-  if(!pills)        pills='<span class="cpill cpg">Sin hallazgos en APIs</span>';
-  document.getElementById('cert-pills').innerHTML=pills;
-
-  setTimeout(buildReport,1100);
+  setP(100,'ARGOS v9 \u2713');
+  var pnm=G.nombre||G.nm||G.q;
+  var pts=pnm.trim().split(' ').filter(function(w){return w.length>0;});
+  var av=document.getElementById('p-av');
+  if(av)av.textContent=((pts[0]||'?')[0]+(pts.length>1?(pts[pts.length-1]||'')[0]:'?')).toUpperCase();
+  var pn=document.getElementById('p-name');if(pn)pn.textContent=G.nombre||G.nm||G.q;
+  var ps=document.getElementById('p-sub');
+  var sub=G.cargo&&G.entidad?G.cargo+' \u00b7 '+G.entidad:G.cargo||G.entidad||(G.esCedula?'CC '+G.cc:'Persona natural \u00b7 Colombia');
+  if(ps)ps.textContent=sub;
+  var tags=[];
+  if((G.pep||[]).length)tags.push({l:'Servidor P\u00fablico',c:'tag-red'});
+  if((G.siri||[]).length)tags.push({l:'Sanci\u00f3n disciplinaria',c:'tag-warn'});
+  if((G.contraloria||[]).length)tags.push({l:'Resp. Fiscal',c:'tag-warn'});
+  if((G.policia||[]).length)tags.push({l:'Antec. policial',c:'tag-warn'});
+  if((G.s2||[]).length||(G.si||[]).length)tags.push({l:'Contratista Estado',c:'tag-blue'});
+  if((G.sena_api||[]).length)tags.push({l:'Aprendiz SENA',c:'tag-green'});
+  if((G.regalias||[]).length)tags.push({l:'SGR Regal\u00edas',c:'tag-blue'});
+  if(!tags.length)tags.push({l:'Sin registros API',c:'tag-muted'});
+  var pt=document.getElementById('p-tags');if(pt)pt.innerHTML=tags.map(function(t){return '<span class="tag '+t.c+'">'+t.l+'</span>';}).join('');
+  var pf=document.getElementById('p-fecha');if(pf)pf.textContent='ARGOS '+new Date().toLocaleDateString('es-CO',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
+  buildReport();
+  document.getElementById('informe').style.display='block';
+  setTimeout(function(){document.getElementById('informe').scrollIntoView({behavior:'smooth',block:'start'});},300);
+  renderH();
+  var tot=G.hits;
+  var fin=G.totalContratos>0?' | $'+fmt(G.totalContratos)+' en contratos':'';
+  toast('ARGOS: '+tot+' fuentes con datos'+fin+' | '+G.certeza+'% certeza','ok');
 }
 
 function buildReport(){
@@ -844,6 +913,75 @@ function buildReport(){
   var simitUrl='https://www.fcm.org.co/simit/estadoPersona.html'+(cc?'?nuip='+cc:'');
   var judUrl='https://consultaprocesos.ramajudicial.gov.co/Procesos/NumeroIdentificacion?tipoIdentificacion=CC&numeroIdentificacion='+enc(cc||q);
   var ruesUrl='https://www.rues.org.co/RM?nit='+enc(cc||q);
+
+  // Contraloria
+  if((G.contraloria||[]).length){
+    var blkC=document.getElementById('blk-siri');
+    if(blkC){blkC.classList.add('warn');}
+    var bodyC=document.getElementById('body-siri');
+    var oldC=bodyC?bodyC.innerHTML:'';
+    var hC=G.contraloria.map(function(r){
+      return '<div class="dato"><div class="dato-title">'+esc(r.nombre||r.nombres_sancionado||'-')+'<span class="dbadge dbr">Responsabilidad Fiscal</span></div>'
+        +'<div class="dato-rows">'
+        +ri('Cedula',esc(r.numero_identificacion||'-'))
+        +ri('Tipo proceso',esc(r.tipo_proceso||'-'))
+        +ri('Entidad afectada',esc(r.entidad_afectada||'-'))
+        +ri('Cuantia',r.cuantia_fallo?'<strong class="dfg">$'+fmt(r.cuantia_fallo)+'</strong>':'-')
+        +ri('Fecha fallo',esc((r.fecha_fallo||'').split('T')[0]||'-'))
+        +ri('Estado',esc(r.estado_proceso||'-'))
+        +'</div></div>';
+    }).join('');
+    if(bodyC)bodyC.innerHTML=(oldC||'')+hC;
+  }
+
+  // SENA API
+  if((G.sena_api||[]).length){
+    var bodyEdu=document.getElementById('body-edu');
+    var hS=G.sena_api.map(function(s){
+      return '<div class="dato"><div class="dato-title">'+esc(s.nombre_aprendiz||s.nombre||'-')+'<span class="dbadge dbg">SENA API</span></div>'
+        +'<div class="dato-rows">'
+        +ri('Identificacion',esc(s.numero_identificacion||'-'))
+        +ri('Programa',esc(s.nombre_programa||s.programa||'-'))
+        +ri('Centro',esc(s.centro_formacion||s.nombre_centro||'-'))
+        +ri('Regional',esc(s.regional||'-'))
+        +ri('Estado',esc(s.estado_aprendiz||s.estado||'-'))
+        +ri('Inicio',esc((s.fecha_inicio_lectiva||s.fecha_inicio||'').split('T')[0]||'-'))
+        +'</div></div>';
+    }).join('');
+    if(bodyEdu)bodyEdu.innerHTML=(bodyEdu.innerHTML||'')+hS;
+  }
+
+  // Personal publico
+  if((G.personal||[]).length){
+    var bodyLab=document.getElementById('body-lab');
+    var hPP=G.personal.map(function(p){
+      return '<div class="dato"><div class="dato-title">'+esc(p.nombre||p.nombres||'-')+'<span class="dbadge dbx">Personal Pub.</span></div>'
+        +'<div class="dato-rows">'
+        +ri('Identificacion',esc(p.numero_identificacion||'-'))
+        +ri('Cargo',esc(p.cargo||p.denominacion_cargo||'-'))
+        +ri('Entidad',esc(p.nombre_entidad||p.entidad||'-'))
+        +ri('Nivel',esc(p.nivel||'-'))
+        +ri('Salario',p.asignacion_basica?'<strong class="dfg">$'+fmt(p.asignacion_basica)+'</strong>':'-')
+        +'</div></div>';
+    }).join('');
+    if(bodyLab)bodyLab.innerHTML=(bodyLab.innerHTML||'')+hPP;
+  }
+
+  // Regalias SGR
+  if((G.regalias||[]).length){
+    var bodyFin=document.getElementById('body-fin');
+    var hReg=G.regalias.map(function(r){
+      return '<div class="dato"><div class="dato-title">'+esc(r.nombre_beneficiario||r.nombre||'-')+'<span class="dbadge dby">SGR Regalias</span></div>'
+        +'<div class="dato-rows">'
+        +ri('Proyecto',esc(r.nombre_proyecto||'-'))
+        +ri('Valor',r.valor_proyecto?'<strong class="dfg">$'+fmt(r.valor_proyecto)+'</strong>':'-')
+        +ri('Municipio',esc(r.municipio||'-'))
+        +ri('Dpto',esc(r.departamento||'-'))
+        +ri('Estado',esc(r.estado_proyecto||'-'))
+        +'</div></div>';
+    }).join('');
+    if(bodyFin)bodyFin.innerHTML=(bodyFin.innerHTML||'')+hReg;
+  }
 
   // Identidad
   document.getElementById('body-id').innerHTML=
@@ -1239,6 +1377,7 @@ function copiar(){
 }
 
 function nuevaBusqueda(){
+  try{sessionStorage.clear();}catch(e){}
   document.getElementById('informe').style.display='none';
   document.getElementById('estado').style.display='none';
   document.getElementById('certeza-wrap').classList.remove('show');
@@ -1345,6 +1484,110 @@ function cpD(i,btn){
 
 document.getElementById('btnActivar').addEventListener('click',activar);
 
+
+
+function buscarEmail(){
+  var e=(document.getElementById('inp-email')||{value:''}).value.trim();
+  if(!e){toast('Ingresa un email');return;}
+  var ee=encodeURIComponent(e), dom=e.split('@')[1]||'';
+  var M=[
+    {ico:'🔍',n:'Google exacto',d:'Email en web',url:'https://www.google.com/search?q=%22'+ee+'%22'},
+    {ico:'🕵',n:'HaveIBeenPwned',d:'Filtraciones',url:'https://haveibeenpwned.com/account/'+ee},
+    {ico:'🔎',n:'Hunter.io',d:'Verificador',url:'https://hunter.io/email-verifier/'+ee},
+    {ico:'📋',n:'Intelligence X',d:'OSINT avanzado',url:'https://intelx.io/?s='+ee},
+    {ico:'🔐',n:'Dehashed',d:'Credenciales filtradas',url:'https://www.dehashed.com/search?query='+ee},
+    {ico:'🌐',n:'Whois dominio',d:'Propietario',url:'https://who.is/whois/'+dom},
+    {ico:'💼',n:'LinkedIn',d:'Perfil asociado',url:'https://www.linkedin.com/search/results/people/?keywords='+ee},
+    {ico:'📘',n:'Facebook',d:'Cuenta asociada',url:'https://www.facebook.com/search/people/?q='+ee},
+    {ico:'📰',n:'PDFs gov.co',d:'Email en gobierno',url:'https://www.google.com/search?q=%22'+ee+'%22+site:gov.co'},
+    {ico:'📄',n:'PDFs publicos',d:'Documentos',url:'https://www.google.com/search?q=%22'+ee+'%22+filetype:pdf'},
+    {ico:'🗄',n:'Epieos',d:'Google account',url:'https://epieos.com/?q='+ee+'&t=email'},
+    {ico:'📊',n:'Ghunt',d:'Google footprint',url:'https://www.google.com/search?q='+ee+'+google+account'},
+  ];
+  var gh=document.getElementById('grid-email');
+  if(gh)gh.innerHTML=M.map(function(x){return '<a class="lk" href="'+x.url+'" target="_blank" rel="noopener"><span class="lk-ico">'+x.ico+'</span><div class="lk-n">'+x.n+'</div><div class="lk-d">'+x.d+'</div></a>';}).join('');
+  var re=document.getElementById('res-email');
+  if(re)re.style.display='block';
+  toast(M.length+' fuentes de email listas','ok');
+}
+
+function buscarEmpresa(){
+  var n=(document.getElementById('inp-emp-n')||{value:''}).value.trim();
+  var nit=(document.getElementById('inp-emp-nit')||{value:''}).value.trim().replace(/[^0-9]/g,'');
+  if(!n&&!nit){toast('Ingresa nombre o NIT');return;}
+  var qe=encodeURIComponent(n||nit);
+  var M=[
+    {ico:'🏢',n:'RUES',d:'Camara comercio',url:'https://www.rues.org.co/RM?Nit='+(nit||qe)},
+    {ico:'💼',n:'DIAN RUT',d:'Estado tributario',url:'https://muisca.dian.gov.co/WebArquitectura/index.jsp'},
+    {ico:'🏛',n:'Supersociedades',d:'Info financiera',url:'https://www.supersociedades.gov.co/nuestra_entidad/servicios-en-linea/Paginas/consultar-informacion-empresa.aspx'},
+    {ico:'📑',n:'SECOP contratos',d:'Contratos estado',url:'https://www.contratos.gov.co/consultas/inicioConsulta.do'},
+    {ico:'🔍',n:'Google empresa',d:'Busqueda web',url:'https://www.google.com/search?q=%22'+qe+'%22+Colombia'},
+    {ico:'💼',n:'LinkedIn empresa',d:'Perfil corporativo',url:'https://www.linkedin.com/search/results/companies/?keywords='+qe},
+    {ico:'📰',n:'Google News',d:'Noticias',url:'https://news.google.com/search?q='+qe},
+    {ico:'⚖',n:'Rama Judicial',d:'Procesos legales',url:'https://consultaprocesos.ramajudicial.gov.co/Procesos/NombreRazonSocial'},
+    {ico:'🔎',n:'Contraloria',d:'Hallazgos fiscales',url:'https://www.contraloria.gov.co/'},
+    {ico:'🗺',n:'Google Maps',d:'Ubicacion',url:'https://www.google.com/maps/search/'+qe+'+Colombia'},
+    {ico:'📊',n:'Datlas',d:'Empresa CO',url:'https://datlas.co/?q='+qe},
+    {ico:'🌐',n:'Datos.gov.co',d:'Datasets publicos',url:'https://www.datos.gov.co/browse?q='+qe},
+  ];
+  if(nit){
+    var blkEl=document.getElementById('blk-emp-api');
+    var bodyEl=document.getElementById('body-emp-api');
+    var cntEl=document.getElementById('cnt-emp-api');
+    if(blkEl)blkEl.style.display='block';
+    if(bodyEl)bodyEl.innerHTML='<div class="msg-no"><span class="spin"></span> Consultando SECOP II...</div>';
+    var ctrl=new AbortController();
+    setTimeout(function(){ctrl.abort();},8000);
+    fetch('https://www.datos.gov.co/resource/jbjy-vk9h.json?$where=documento_proveedor=%27'+nit+'%27&$limit=15&$order=fecha_de_firma%20DESC',{signal:ctrl.signal})
+      .then(function(r){return r.ok?r.json():[];})
+      .then(function(data){
+        var arr=Array.isArray(data)?data:[];
+        if(arr.length){
+          if(cntEl){cntEl.textContent=arr.length+' contratos';cntEl.className='blk-cnt cnt-hit';}
+          if(bodyEl)bodyEl.innerHTML=arr.map(function(c){
+            return '<div class="dato"><div class="dato-title">'+esc(c.descripcion_del_proceso||c.objeto_del_contrato||'-')+'</div>'
+              +'<div class="dato-rows">'+ri('Entidad',esc(c.nombre_entidad||'-'))
+              +ri('Valor',c.valor_del_contrato?'<strong class="dfg">$'+fmt(c.valor_del_contrato)+'</strong>':'-')
+              +ri('Estado',esc(c.estado_contrato||'-'))
+              +ri('Fecha',esc((c.fecha_de_firma||'').split('T')[0]||'-'))+'</div></div>';
+          }).join('');
+        }else{
+          if(cntEl){cntEl.textContent='Sin datos';cntEl.className='blk-cnt cnt-none';}
+          if(bodyEl)bodyEl.innerHTML='<div class="msg-ok">Sin contratos en SECOP II.</div>';
+        }
+      }).catch(function(){if(bodyEl)bodyEl.innerHTML='<div class="msg-no">Timeout o error API</div>';});
+  }
+  var gh=document.getElementById('grid-empresa');
+  if(gh)gh.innerHTML=M.map(function(x){return '<a class="lk" href="'+x.url+'" target="_blank" rel="noopener"><span class="lk-ico">'+x.ico+'</span><div class="lk-n">'+x.n+'</div><div class="lk-d">'+x.d+'</div></a>';}).join('');
+  var re=document.getElementById('res-empresa');
+  if(re)re.style.display='block';
+  toast('Fuentes de empresa listas','ok');
+}
+
+function buscarPlaca(){
+  var p=((document.getElementById('inp-placa')||{value:''}).value).trim().toUpperCase().replace(/\s/g,'');
+  if(!p){toast('Ingresa una placa');return;}
+  var pe=encodeURIComponent(p);
+  var M=[
+    {ico:'🚗',n:'RUNT',d:'Propietario y SOAT',url:'https://www.runt.com.co/consultaCiudadana/#/menu/vehiculo'},
+    {ico:'🚦',n:'SIMIT',d:'Multas y comparendos',url:'https://www.fcm.org.co/simit/#/home-public'},
+    {ico:'🔍',n:'Google placa',d:'Noticias y antecedentes',url:'https://www.google.com/search?q=placa+'+pe+'+Colombia'},
+    {ico:'🔧',n:'Tecnomecanica',d:'Revision tecnica',url:'https://www.tecnomecanica.com.co/'},
+    {ico:'🏛',n:'Movilidad Bogota',d:'Infracciones Bogota',url:'https://www.transitobogota.gov.co/web/grupos/grupo_servicios_internet/Consulta_Propietario_placa.php?placa='+p},
+    {ico:'🚨',n:'Policia — hurtados',d:'Vehiculo robado',url:'https://www.policia.gov.co/consultas/vehiculos-reportados-como-hurtados'},
+    {ico:'📋',n:'RNEC prendas',d:'Embargos y prendas',url:'https://www.rnec.org.co/'},
+    {ico:'🏙',n:'Movilidad Medellin',d:'Infracciones Mda',url:'https://www.medellin.gov.co/movilidad/servicios-en-linea'},
+    {ico:'📊',n:'Portal SIMIT 2',d:'Consulta sanciones',url:'https://www.simit.org.co/App/#/home-public'},
+    {ico:'📰',n:'Noticias placa',d:'Prensa',url:'https://www.google.com/search?q=%22'+pe+'%22+Colombia+vehiculo'},
+  ];
+  var gh=document.getElementById('grid-placa');
+  if(gh)gh.innerHTML='<div style="grid-column:1/-1;background:var(--card2);border:1px solid var(--border2);border-radius:var(--r2);padding:10px 14px;font-size:.78rem;font-weight:700;color:var(--white)">Placa: <span style="color:var(--redll);font-family:JetBrains Mono,monospace;letter-spacing:2px">'+esc(p)+'</span></div>'
+    +M.map(function(x){return '<a class="lk" href="'+x.url+'" target="_blank" rel="noopener"><span class="lk-ico">'+x.ico+'</span><div class="lk-n">'+x.n+'</div><div class="lk-d">'+x.d+'</div></a>';}).join('');
+  var re=document.getElementById('res-placa');
+  if(re)re.style.display='block';
+  if(document.getElementById('inp-placa'))document.getElementById('inp-placa').value=p;
+  toast('10 fuentes para placa '+p,'ok');
+}
 
 document.addEventListener('DOMContentLoaded',function(){renderH();});
 </script>
