@@ -815,12 +815,12 @@ function correrConsultas(){
   var TOTAL_APIS=16, done=0;
 
   // ── Cache ─────────────────────────────────────────────────────
-  var cacheKey='argos11_'+q;
+  var cacheKey='argos12_'+q;
   try{
     var cached=JSON.parse(sessionStorage.getItem(cacheKey)||'null');
     if(cached&&(Date.now()-cached.ts)<600000){
       Object.assign(G,cached.data);
-      setP(100,'Cache \u26a1');
+      setP(100,'Cache ⚡ v12');
       finalizarYMostrar();
       return;
     }
@@ -1127,7 +1127,7 @@ function postProcesar(){
 }
 
 function finalizarYMostrar(){
-  setP(100,'ARGOS v9 \u2713');
+  setP(100,'ARGOS v12 \u2713');
   var pnm=G.nombre||G.nm||G.q;
   var pts=pnm.trim().split(' ').filter(function(w){return w.length>0;});
   var av=document.getElementById('p-av');
