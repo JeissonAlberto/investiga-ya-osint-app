@@ -1228,6 +1228,115 @@ function finalizarYMostrar(){
       +ri('Telefono',esc(p.telefono||'-'))
       +'</div></div>';
   },'Sin registro en directorio Procuraduria.');
+
+  // === RENDERS 12 NUEVAS APIs v10.1 ===
+  (function renderNuevasAPIs(){
+    function rb(arr,bodyId,cntId,blkId,renderer,emptyMsg){
+      var bd=document.getElementById(bodyId);
+      var cnt=document.getElementById(cntId);
+      var blk=document.getElementById(blkId);
+      if(!bd||!cnt||!blk)return;
+      if(arr&&arr.length){
+        blk.className='blk hit';cnt.textContent=arr.length+' registros';cnt.className='blk-cnt cnt-hit';
+        bd.innerHTML=arr.map(renderer).join('');
+      }else{
+        blk.className='blk clean';cnt.textContent='Limpio';cnt.className='blk-cnt cnt-ok';
+        bd.innerHTML='<div class="msg-ok">'+emptyMsg+'</div>';
+      }
+    }
+    rb(G.contraloria,'body-contraloria','cnt-contraloria','blk-contraloria',function(r){
+      return '<div class="dato"><div class="dato-title">'+esc(r.nombre||r.raz_n_social_de_la_entidad||'-')+'<span class="dbadge" style="background:var(--red);color:#fff">Contraloria</span></div>'
+        +'<div class="dato-rows">'+ri('CC/NIT',esc(r.numero_identificacion||r.n_mero_de_identificaci_n||'-'))
+        +ri('Sancion',esc(r.tipo_sancion||r.tipo_de_sanci_n_multa||'-'))
+        +ri('Monto',esc(r.monto_de_la_multa_o_sanci||r.monto||'-'))
+        +ri('Fecha',esc((r.fecha_de_resoluci_n_de_la||'').split('T')[0]||'-'))
+        +ri('Detalle',esc((r.descripci_n_o_detalle_resumen||'').slice(0,100)||'-'))
+        +'</div></div>';
+    },'Sin sanciones en Contraloria.');
+    rb(G.sena_api,'body-sena','cnt-sena','blk-sena',function(r){
+      return '<div class="dato"><div class="dato-title">'+esc(r.nombre_aprendiz||r.nombre||'-')+'<span class="dbadge" style="background:var(--blue);color:#fff">SENA</span></div>'
+        +'<div class="dato-rows">'+ri('CC',esc(r.numero_identificacion||'-'))
+        +ri('Programa',esc(r.nombre_programa||r.programa||'-'))
+        +ri('Centro',esc(r.nombre_centro||r.centro||'-'))
+        +ri('Estado',esc(r.estado_aprendiz||r.estado||'-'))
+        +ri('Regional',esc(r.nombre_regional||r.regional||'-'))
+        +'</div></div>';
+    },'Sin registro en SENA.');
+    rb(G.policia,'body-policia','cnt-policia','blk-policia',function(r){
+      return '<div class="dato"><div class="dato-title">'+esc(r.nombre||'-')+'<span class="dbadge" style="background:var(--red);color:#fff">Policia</span></div>'
+        +'<div class="dato-rows">'+ri('CC',esc(r.identificacion||'-'))
+        +ri('Cargo',esc(r.cargo||'-'))+ri('Grado',esc(r.grado||'-'))
+        +ri('Unidad',esc(r.unidad||'-'))+'</div></div>';
+    },'Sin registro en base Policia.');
+    rb(G.personal,'body-personal','cnt-personal','blk-personal',function(r){
+      return '<div class="dato"><div class="dato-title">'+esc(r.nombre||r.nombres||'-')+'<span class="dbadge" style="background:var(--green);color:#111">Personal Pub.</span></div>'
+        +'<div class="dato-rows">'+ri('CC',esc(r.numero_identificacion||'-'))
+        +ri('Cargo',esc(r.cargo||r.denominacion_cargo||'-'))
+        +ri('Entidad',esc(r.nombre_entidad||r.entidad||'-'))
+        +ri('Nivel',esc(r.nivel||'-'))
+        +ri('Salario',r.asignacion_basica?'$'+fmt(r.asignacion_basica):'-')
+        +'</div></div>';
+    },'Sin registro como servidor publico.');
+    rb(G.regalias,'body-regalias','cnt-regalias','blk-regalias',function(r){
+      return '<div class="dato"><div class="dato-title">'+esc(r.nombre_beneficiario||r.nombre||'-')+'<span class="dbadge" style="background:#f59e0b;color:#111">SGR</span></div>'
+        +'<div class="dato-rows">'+ri('CC/NIT',esc(r.identificacion||'-'))
+        +ri('Proyecto',esc(r.nombre_proyecto||'-'))
+        +ri('Valor','$'+fmt(r.valor_proyecto||0))
+        +ri('Municipio',esc(r.municipio||'-'))
+        +ri('Estado',esc(r.estado_proyecto||'-'))
+        +'</div></div>';
+    },'Sin registro en SGR Regalias.');
+    rb(G.ugpp,'body-ugpp','cnt-ugpp','blk-ugpp',function(r){
+      return '<div class="dato"><div class="dato-title">'+esc(r.nombre||r.razon_social||'-')+'<span class="dbadge" style="background:var(--blue);color:#fff">UGPP</span></div>'
+        +'<div class="dato-rows">'+ri('CC',esc(r.numero_identificacion||'-'))
+        +ri('Periodo',esc(r.periodo||'-'))+ri('Novedad',esc(r.tipo_novedad||'-'))
+        +'</div></div>';
+    },'Sin reporte en UGPP.');
+    rb(G.proveedor,'body-proveedor','cnt-proveedor','blk-proveedor',function(r){
+      return '<div class="dato"><div class="dato-title">'+esc(r.nombre||'-')+'<span class="dbadge" style="background:var(--green);color:#111">Proveedor</span></div>'
+        +'<div class="dato-rows">'+ri('CC/NIT',esc(r.n_mero_doc_representante_legal||r.nit||'-'))
+        +ri('Correo',esc(r.correo||'-'))+ri('Telefono',esc(r.telefono||'-'))
+        +ri('Direccion',esc(r.direccion||'-'))+ri('Ciudad',esc(r.municipio||r.ciudad||'-'))
+        +'</div></div>';
+    },'Sin registro como proveedor SECOP.');
+    rb(G.patrimonial,'body-patrimonial','cnt-patrimonial','blk-patrimonial',function(r){
+      return '<div class="dato"><div class="dato-title">'+esc(r.nombres_declarante||r.primer_nombre_declarante||'-')+'<span class="dbadge" style="background:#f59e0b;color:#111">Patrimonial</span></div>'
+        +'<div class="dato-rows">'+ri('CC',esc(r.numero_documento||'-'))
+        +ri('Cargo',esc(r.cargo_declarante||'-'))
+        +ri('Entidad',esc(r.nombre_entidad||'-'))
+        +ri('Periodo',esc(r.periodo||r.ano||'-'))
+        +'</div></div>';
+    },'Sin declaracion patrimonial registrada.');
+    rb(G.conflictos,'body-conflictos','cnt-conflictos','blk-conflictos',function(r){
+      return '<div class="dato"><div class="dato-title">'+esc(r.nombre_declarante||'-')+'<span class="dbadge" style="background:var(--red);color:#fff">Conflicto Int.</span></div>'
+        +'<div class="dato-rows">'+ri('CC',esc(r.numero_documento||'-'))
+        +ri('Cargo',esc(r.cargo_declarante||'-'))
+        +ri('Entidad',esc(r.nombre_entidad||'-'))
+        +'</div></div>';
+    },'Sin conflicto de interes declarado.');
+    rb(G.candidato,'body-candidato','cnt-candidato','blk-candidato',function(r){
+      return '<div class="dato"><div class="dato-title">'+esc(r.cnd_nombre||r.nombre_candidato||'-')+'<span class="dbadge" style="background:var(--red);color:#fff">Candidato</span></div>'
+        +'<div class="dato-rows">'+ri('CC',esc(r.can_identificacion||'-'))
+        +ri('Aspiro a',esc(r.cla_nombre||'-'))
+        +ri('Partido',esc(r.org_nombre||r.partido_coalicion||'-'))
+        +ri('Municipio',esc(r.mun_nombre||'-'))
+        +ri('Dpto',esc(r.dep_nombre||'-'))
+        +'</div></div>';
+    },'Sin registro como candidato electoral.');
+    rb(G.colmayor,'body-colmayor','cnt-colmayor','blk-colmayor',function(r){
+      var n=[r.primernombre,r.primerapellido,r.segundoapellido].filter(Boolean).join(' ');
+      return '<div class="dato"><div class="dato-title">'+esc(n||'-')+'<span class="dbadge" style="background:var(--green);color:#111">Col. Mayor</span></div>'
+        +'<div class="dato-rows">'+ri('CC',esc(r.cedula||'-'))+'</div></div>';
+    },'Sin registro en Colombia Mayor.');
+    rb(G.procuraduria,'body-procuraduria','cnt-procuraduria','blk-procuraduria',function(r){
+      return '<div class="dato"><div class="dato-title">'+esc(r.nombres||'')+' '+esc(r.primer_apellido||'')+' '+esc(r.segundo_apellido||'')+'<span class="dbadge" style="background:#f59e0b;color:#111">Procuraduria</span></div>'
+        +'<div class="dato-rows">'+ri('Cargo',esc(r.cargo||'-'))
+        +ri('Denominacion',esc(r.denominacion||'-'))
+        +ri('Correo',esc(r.correo_electronico||'-'))
+        +ri('Telefono',esc(r.telefono||'-'))
+        +'</div></div>';
+    },'Sin registro en Procuraduria.');
+  })();
   document.getElementById('informe').style.display='block';
   setTimeout(function(){document.getElementById('informe').scrollIntoView({behavior:'smooth',block:'start'});},300);
   renderH();
