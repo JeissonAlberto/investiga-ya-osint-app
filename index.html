@@ -449,6 +449,55 @@ ol.steps li::before{content:counter(s);position:absolute;left:7px;top:50%;transf
 
   <div class="blk" id="blk-conv">
     <div class="blk-head"><span class="blk-ico">🤝</span><span class="blk-title">SECOP Convenios Interadministrativos (API real)</span><span class="blk-cnt cnt-none" id="cnt-conv">-</span></div>
+  <div class="blk" id="blk-contraloria">
+    <div class="blk-head"><span class="blk-ico">🔴</span><span class="blk-title">Contraloría — Responsabilidad Fiscal</span><span class="blk-cnt cnt-none" id="cnt-contraloria">-</span></div>
+    <div id="body-contraloria"><div class="msg-no">Consultando...</div></div>
+  </div>
+  <div class="blk" id="blk-sena">
+    <div class="blk-head"><span class="blk-ico">🎓</span><span class="blk-title">SENA — Aprendices y contratistas</span><span class="blk-cnt cnt-none" id="cnt-sena">-</span></div>
+    <div id="body-sena"><div class="msg-no">Consultando...</div></div>
+  </div>
+  <div class="blk" id="blk-policia">
+    <div class="blk-head"><span class="blk-ico">👮</span><span class="blk-title">Policía Nacional — Personal registrado</span><span class="blk-cnt cnt-none" id="cnt-policia">-</span></div>
+    <div id="body-policia"><div class="msg-no">Consultando...</div></div>
+  </div>
+  <div class="blk" id="blk-personal">
+    <div class="blk-head"><span class="blk-ico">🏛</span><span class="blk-title">Personal Público — Servidores del Estado</span><span class="blk-cnt cnt-none" id="cnt-personal">-</span></div>
+    <div id="body-personal"><div class="msg-no">Consultando...</div></div>
+  </div>
+  <div class="blk" id="blk-regalias">
+    <div class="blk-head"><span class="blk-ico">💎</span><span class="blk-title">SGR — Regalías (beneficiarios)</span><span class="blk-cnt cnt-none" id="cnt-regalias">-</span></div>
+    <div id="body-regalias"><div class="msg-no">Consultando...</div></div>
+  </div>
+  <div class="blk" id="blk-ugpp">
+    <div class="blk-head"><span class="blk-ico">💰</span><span class="blk-title">UGPP — Aportes Parafiscales</span><span class="blk-cnt cnt-none" id="cnt-ugpp">-</span></div>
+    <div id="body-ugpp"><div class="msg-no">Consultando...</div></div>
+  </div>
+  <div class="blk" id="blk-proveedor">
+    <div class="blk-head"><span class="blk-ico">🏢</span><span class="blk-title">Proveedor SECOP — Contacto y empresa</span><span class="blk-cnt cnt-none" id="cnt-proveedor">-</span></div>
+    <div id="body-proveedor"><div class="msg-no">Consultando...</div></div>
+  </div>
+  <div class="blk" id="blk-patrimonial">
+    <div class="blk-head"><span class="blk-ico">📋</span><span class="blk-title">Declaración Patrimonial — Bienes declarados</span><span class="blk-cnt cnt-none" id="cnt-patrimonial">-</span></div>
+    <div id="body-patrimonial"><div class="msg-no">Consultando...</div></div>
+  </div>
+  <div class="blk" id="blk-conflictos">
+    <div class="blk-head"><span class="blk-ico">⚡</span><span class="blk-title">Conflicto de Interés — Declaraciones</span><span class="blk-cnt cnt-none" id="cnt-conflictos">-</span></div>
+    <div id="body-conflictos"><div class="msg-no">Consultando...</div></div>
+  </div>
+  <div class="blk" id="blk-candidato">
+    <div class="blk-head"><span class="blk-ico">🗳</span><span class="blk-title">Candidato Electoral — Cuentas Claras CNE</span><span class="blk-cnt cnt-none" id="cnt-candidato">-</span></div>
+    <div id="body-candidato"><div class="msg-no">Consultando...</div></div>
+  </div>
+  <div class="blk" id="blk-colmayor">
+    <div class="blk-head"><span class="blk-ico">👴</span><span class="blk-title">Colombia Mayor — Adultos mayores subsidiados</span><span class="blk-cnt cnt-none" id="cnt-colmayor">-</span></div>
+    <div id="body-colmayor"><div class="msg-no">Consultando...</div></div>
+  </div>
+  <div class="blk" id="blk-procuraduria">
+    <div class="blk-head"><span class="blk-ico">⚖</span><span class="blk-title">Procuraduría — Directorio de funcionarios</span><span class="blk-cnt cnt-none" id="cnt-procuraduria">-</span></div>
+    <div id="body-procuraduria"><div class="msg-no">Consultando...</div></div>
+  </div>
+
     <div id="body-conv"><div class="msg-no">Consultando API...</div></div>
   </div>
 
@@ -748,13 +797,15 @@ function activar(){
   G={q:raw,nm:nm,cc:cc,esCedula:isCC,
      pep:[],siri:[],s2:[],si:[],conv:[],
      contraloria:[],sena_api:[],policia:[],personal:[],regalias:[],ugpp:[],
+     proveedor:[],patrimonial:[],conflictos:[],candidato:[],colmayor:[],procuraduria:[],
      nombre:'',domicilio:'',genero:'',cargo:'',entidad:'',ciudad:'',
+     correo:'',telefono:'',direccion:'',matchQuality:0,
      totalContratos:0,numContratos:0,
      hits:0,certeza:0,matchType:isCC?'exact':'partial'};
   saveH(raw);
   document.getElementById('informe').style.display='none';
   document.getElementById('estado').style.display='block';
-  setP(5,'Iniciando ARGOS v9...');
+  setP(5,'Iniciando ARGOS v10...');
   setTimeout(correrConsultas,80);
 }
 
