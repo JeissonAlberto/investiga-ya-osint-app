@@ -454,23 +454,23 @@ ol.steps li::before{content:counter(s);position:absolute;left:7px;top:50%;transf
     <div id="body-contraloria"><div class="msg-no">Consultando...</div></div>
   </div>
   <div class="blk" id="blk-sena">
-    <div class="blk-head"><span class="blk-ico">🎓</span><span class="blk-title">SENA — Aprendices y contratistas</span><span class="blk-cnt cnt-none" id="cnt-sena">-</span></div>
+    <div class="blk-head"><span class="blk-ico">🎓</span><span class="blk-title">Licencias SST — Profesionales seg. laboral</span><span class="blk-cnt cnt-none" id="cnt-sena">-</span></div>
     <div id="body-sena"><div class="msg-no">Consultando...</div></div>
   </div>
   <div class="blk" id="blk-policia">
-    <div class="blk-head"><span class="blk-ico">👮</span><span class="blk-title">Policía Nacional — Personal registrado</span><span class="blk-cnt cnt-none" id="cnt-policia">-</span></div>
+    <div class="blk-head"><span class="blk-ico">👮</span><span class="blk-title">UGPP / Parafiscales — Aportes</span><span class="blk-cnt cnt-none" id="cnt-policia">-</span></div>
     <div id="body-policia"><div class="msg-no">Consultando...</div></div>
   </div>
   <div class="blk" id="blk-personal">
-    <div class="blk-head"><span class="blk-ico">🏛</span><span class="blk-title">Personal Público — Servidores del Estado</span><span class="blk-cnt cnt-none" id="cnt-personal">-</span></div>
+    <div class="blk-head"><span class="blk-ico">🏛</span><span class="blk-title">Funcionarios — Puestos públicos y sensibles</span><span class="blk-cnt cnt-none" id="cnt-personal">-</span></div>
     <div id="body-personal"><div class="msg-no">Consultando...</div></div>
   </div>
   <div class="blk" id="blk-regalias">
-    <div class="blk-head"><span class="blk-ico">💎</span><span class="blk-title">SGR — Regalías (beneficiarios)</span><span class="blk-cnt cnt-none" id="cnt-regalias">-</span></div>
+    <div class="blk-head"><span class="blk-ico">💎</span><span class="blk-title">Cámara de Comercio — RUES (registro mercantil)</span><span class="blk-cnt cnt-none" id="cnt-regalias">-</span></div>
     <div id="body-regalias"><div class="msg-no">Consultando...</div></div>
   </div>
   <div class="blk" id="blk-ugpp">
-    <div class="blk-head"><span class="blk-ico">💰</span><span class="blk-title">UGPP — Aportes Parafiscales</span><span class="blk-cnt cnt-none" id="cnt-ugpp">-</span></div>
+    <div class="blk-head"><span class="blk-ico">💰</span><span class="blk-title">Contratistas Locales — Redes contacto</span><span class="blk-cnt cnt-none" id="cnt-ugpp">-</span></div>
     <div id="body-ugpp"><div class="msg-no">Consultando...</div></div>
   </div>
   <div class="blk" id="blk-proveedor">
@@ -810,286 +810,300 @@ function activar(){
 }
 
 function correrConsultas(){
-  var cc=G.cc,nm=G.nm,q=G.q;
+  var cc=G.cc, nm=G.nm, q=G.q;
   var BASE='https://www.datos.gov.co/resource/';
-  // 17 APIs: 14 previas + Cuentas Claras + ColMayor + Procuraduria
-  var APIS_N=17,done=0;
-  var cacheKey='argos10_'+q;
+  var TOTAL_APIS=16, done=0;
+
+  // ── Cache ─────────────────────────────────────────────────────
+  var cacheKey='argos11_'+q;
   try{
-    var c2=JSON.parse(sessionStorage.getItem(cacheKey)||'null');
-    if(c2&&(Date.now()-c2.ts)<600000){Object.assign(G,c2.data);setP(100,'Cache \u26a1');finalizarYMostrar();return;}
+    var cached=JSON.parse(sessionStorage.getItem(cacheKey)||'null');
+    if(cached&&(Date.now()-cached.ts)<600000){
+      Object.assign(G,cached.data);
+      setP(100,'Cache \u26a1');
+      finalizarYMostrar();
+      return;
+    }
   }catch(e){}
 
-  // ── Utilidades ──────────────────────────────────────────────────
+  // ── Utilidades ────────────────────────────────────────────────
   function normQ(s){return s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase().trim();}
-  function enc1(s){return encodeURIComponent("'"+normQ(s)+"'");}
-  function encL(s){return encodeURIComponent('%'+normQ(s)+'%');}
-  function andLike(f,v){return 'upper('+f+')%20like%20upper('+encL(v)+')';}
-  function andQ(f1,v1,f2,v2){return andLike(f1,v1)+'%20AND%20'+andLike(f2,v2);}
-
-  // ── Parsear nombre en tokens ordenados por importancia ──────────
-  var PART=['DE','LA','LOS','DEL','LAS','Y','E','O'];
-  var tokens=normQ(nm).split(/\s+/).filter(function(w){return w.length>1;});
-  var main=tokens.slice().sort(function(a,b){
-    var aP=PART.indexOf(a)>=0?1:0,bP=PART.indexOf(b)>=0?1:0;
-    if(aP!==bP)return aP-bP;
-    return b.length-a.length;
-  });
-  var t1=main[0]||'',t2=main[1]||t1;
-
-  // ── Filtro post-API: solo resultados con >=2 tokens coincidentes ─
-  function scoreMatch(str,minH){
-    if(!str)return false;
-    var s=normQ(str);
-    var h=tokens.filter(function(t){return t.length>2&&s.indexOf(t)>=0;}).length;
-    return h>=(minH||Math.min(2,tokens.length));
-  }
-  function filterArr(arr,fields,minH){
-    return arr.filter(function(r){
-      return fields.some(function(f){return scoreMatch(r[f],minH);});
-    });
+  function enc(v){return encodeURIComponent("'"+v+"'");}
+  function encL(v){return encodeURIComponent('%'+normQ(v)+'%');}
+  function like(f,v){return 'upper('+f+')%20like%20upper('+encL(v)+')';}
+  function andLike(f1,v1,f2,v2){return like(f1,v1)+'%20AND%20'+like(f2,v2);}
+  function whereCC(field){return '$where=trim('+field+')='+enc(cc)+'&$limit=20';}
+  function whereNm(f1,f2){
+    // usa los 2 tokens más largos del nombre
+    var toks=normQ(nm).split(/\s+/).filter(function(w){return w.length>2 && ['DE','LA','LOS','DEL','LAS','Y'].indexOf(w)<0;});
+    toks.sort(function(a,b){return b.length-a.length;});
+    var t1=toks[0]||normQ(nm), t2=toks[1]||t1;
+    return '$where='+andLike(f1,t1,f2,t2)+'&$limit=10';
   }
 
-  // ── Motor de progreso ────────────────────────────────────────────
-  function done_one(){
+  // ── Filtro de calidad: descartar registros que no coincidan ───
+  function matches(obj, fields, minHits){
+    if(!nm && !cc) return true;
+    if(cc){
+      // Si buscamos por CC, el filtro ya lo hizo la API
+      return true;
+    }
+    // Busqueda por nombre: verificar que al menos minHits tokens aparecen
+    var toks=normQ(nm).split(/\s+/).filter(function(w){return w.length>2;});
+    var str=normQ(fields.map(function(f){return obj[f]||'';}).join(' '));
+    var hits=toks.filter(function(t){return str.indexOf(t)>=0;}).length;
+    return hits>=minHits;
+  }
+
+  // ── Progress ──────────────────────────────────────────────────
+  function tick(){
     done++;
-    setP(Math.round(10+done/APIS_N*82),'Consultando fuente '+done+'/'+APIS_N+'...');
-    if(done>=APIS_N){
-      postProcesar();
-      // cruce inteligente: si tenemos nombre de API, buscar ese nombre en otras
-      if(G.nombre&&!G.esCedula) cruceNombre();
-      else guardarCache();
-    }
+    var pct=Math.round(5+(done/TOTAL_APIS)*90);
+    setP(pct,'Consultando '+done+'/'+TOTAL_APIS+' fuentes\u2026');
+    if(done>=TOTAL_APIS) finalizarYMostrar();
   }
 
-  // ── Cruce inteligente por nombre hallado ─────────────────────────
-  function cruceNombre(){
-    // Si hallamos nombre via CC, buscamos datos extra por ese nombre
-    var nm2=normQ(G.nombre);
-    var tk2=nm2.split(/\s+/).filter(function(w){return w.length>2;}).sort(function(a,b){return b.length-a.length;});
-    var a1=tk2[0]||'',a2=tk2[1]||a1;
-    if(!a1){guardarCache();return;}
-    var cruces=0,cruceDone=0;
-    function cruceDoneOne(){cruceDone++;if(cruceDone>=cruces){guardarCache();}}
-    // Cruzar con Procuraduria si no encontramos cargo todavia
-    if(!G.cargo){
-      cruces++;
-      var pq=a2?andQ('primer_apellido',a1,'segundo_apellido',a2):andLike('primer_apellido',a1);
-      fetch(BASE+'actn-47cb.json?$where='+pq+'&$limit=5')
-        .then(function(r){return r.json();}).then(function(d){
-          if(d&&d.length){
-            G.cargo=G.cargo||d[0].cargo||'';
-            G.procuraduria=(G.procuraduria||[]).concat(d);
-          }
-          cruceDoneOne();
-        }).catch(cruceDoneOne);
-    }
-    if(cruces===0)guardarCache();
-  }
-
-  function guardarCache(){
-    try{sessionStorage.setItem(cacheKey,JSON.stringify({ts:Date.now(),data:{
-      pep:G.pep,siri:G.siri,s2:G.s2,si:G.si,conv:G.conv,
-      contraloria:G.contraloria,sena_api:G.sena_api,policia:G.policia,
-      personal:G.personal,regalias:G.regalias,ugpp:G.ugpp,
-      proveedor:G.proveedor,patrimonial:G.patrimonial,conflictos:G.conflictos,
-      candidato:G.candidato,colmayor:G.colmayor,procuraduria:G.procuraduria,
-      nombre:G.nombre,domicilio:G.domicilio,genero:G.genero,
-      cargo:G.cargo,entidad:G.entidad,
-      correo:G.correo,telefono:G.telefono,direccion:G.direccion,ciudad:G.ciudad,
-      totalContratos:G.totalContratos,numContratos:G.numContratos,
-      hits:G.hits,matchQuality:G.matchQuality
-    }}));}catch(e){}
-    finalizarYMostrar();
-  }
-
-  function callAPI(id,url,cb){
+  // ── Fetch API con timeout ──────────────────────────────────────
+  function callAPI(id, url, cb){
     setFuente(id,'running');
     var ctrl=new AbortController();
-    var tid=setTimeout(function(){ctrl.abort();},13000);
-    fetch(url,{signal:ctrl.signal})
-      .then(function(r){clearTimeout(tid);if(!r.ok)throw new Error(r.status);return r.json();})
+    var tid=setTimeout(function(){ctrl.abort();},15000);
+    fetch(url,{signal:ctrl.signal,headers:{'Accept':'application/json'}})
+      .then(function(r){
+        clearTimeout(tid);
+        if(!r.ok) throw new Error('HTTP '+r.status);
+        return r.json();
+      })
       .then(function(d){
         var arr=Array.isArray(d)?d:[];
-        var seen={};
-        arr=arr.filter(function(x){
-          var k=JSON.stringify(x).slice(0,80);
-          if(seen[k])return false;seen[k]=true;return true;
-        });
         cb(arr);
-        setFuente(id,arr.length?'hit':'miss');
-        if(arr.length)G.hits++;
-        done_one();
-      }).catch(function(){cb([]);setFuente(id,'miss');done_one();});
+        setFuente(id, arr.length?'hit':'miss');
+        tick();
+      })
+      .catch(function(e){
+        console.warn('[ARGOS] '+id+' error:', e.message||e);
+        setFuente(id,'miss');
+        tick();
+      });
   }
 
-  // Inicializar
-  G.contraloria=[];G.sena_api=[];G.policia=[];G.personal=[];
-  G.regalias=[];G.ugpp=[];G.proveedor=[];G.patrimonial=[];
-  G.conflictos=[];G.candidato=[];G.colmayor=[];G.procuraduria=[];
-  G.correo='';G.telefono='';G.direccion='';G.ciudad='';G.matchQuality=0;
+  setP(5,'Iniciando ARGOS v11\u2026');
 
   // ════════════════════════════════════════════════════════════════
-  // RAMA CÉDULA — 17 APIs exactas, máxima precisión
+  // BLOQUE CC: búsqueda por cédula exacta (más precisa)
   // ════════════════════════════════════════════════════════════════
   if(cc){
-    // PEP
-    callAPI('pep',BASE+'3qxn-uc22.json?$where=numero_documento='+enc1(cc)+'&$limit=10',function(d){
-      G.pep=d;if(d.length){G.cargo=G.cargo||d[0].cargo||d[0].u_cargo||'';G.entidad=G.entidad||d[0].entidad||d[0].u_entidad||'';G.matchQuality=100;}
-    });
-    // SIRI
-    callAPI('siri',BASE+'iaeu-rcn6.json?$where=trim(numero_identificacion)='+enc1(cc)+'&$limit=10',function(d){
-      G.siri=d;if(d.length)G.matchQuality=100;
-    });
-    // SECOP II
-    callAPI('s2',BASE+'jbjy-vk9h.json?$where=documento_proveedor='+enc1(cc)+'&$limit=25&$order=fecha_de_firma%20DESC',function(d){
-      G.s2=d;if(d.length){
-        G.nombre=G.nombre||d[0].proveedor_adjudicado||d[0].nombre_representante_legal||'';
-        G.domicilio=G.domicilio||d[0].domicilio_representante_legal||'';
-        G.genero=G.genero||d[0].g_nero_representante_legal||'';
-        G.matchQuality=100;
-        d.forEach(function(c){var v=parseFloat(c.valor_del_contrato||0);if(!isNaN(v)&&v>0){G.totalContratos+=v;G.numContratos++;}});
-      }
-    });
-    // SECOP Integrado
-    callAPI('si',BASE+'rpmr-utcd.json?$where=documento_proveedor='+enc1(cc)+'&$limit=20',function(d){
-      G.si=d;if(d.length&&!G.nombre)G.nombre=d[0].nom_raz_social_contratista||'';
-      d.forEach(function(c){var v=parseFloat(c.valor_contrato||0);if(!isNaN(v)&&v>0){G.totalContratos+=v;G.numContratos++;}});
-    });
-    // Convenios
-    callAPI('conv',BASE+'s484-c9k3.json?$where=identificacion_contratista='+enc1(cc)+'&$limit=10',function(d){
-      G.conv=d;if(d.length&&!G.nombre)G.nombre=d[0].nombre_contratista||'';
-    });
-    // Contraloria
-    callAPI('contraloria',BASE+'8aqu-idqj.json?$where=numero_identificacion='+enc1(cc)+'&$limit=10',function(d){G.contraloria=d;});
-    // SENA
-    callAPI('sena_api',BASE+'m8ah-mniv.json?$where=numero_identificacion='+enc1(cc)+'&$limit=10',function(d){
-      G.sena_api=d;if(d.length&&!G.nombre)G.nombre=d[0].nombre_aprendiz||'';
-    });
-    // Policia
-    callAPI('policia',BASE+'n5ky-2tue.json?$where=identificacion='+enc1(cc)+'&$limit=10',function(d){G.policia=d;});
-    // Personal publico
-    callAPI('personal',BASE+'gdxc-w37w.json?$where=numero_identificacion='+enc1(cc)+'&$limit=10',function(d){
-      G.personal=d;if(d.length){
-        G.cargo=G.cargo||d[0].cargo||d[0].denominacion_cargo||'';
-        G.entidad=G.entidad||d[0].nombre_entidad||d[0].entidad||'';
-        if(!G.nombre)G.nombre=d[0].nombre||d[0].nombres||'';
-      }
-    });
-    // Regalias
-    callAPI('regalias',BASE+'xgmd-ut58.json?$where=identificacion='+enc1(cc)+'&$limit=10',function(d){G.regalias=d;});
-    // UGPP
-    callAPI('ugpp',BASE+'m2fs-xk8z.json?$where=numero_identificacion='+enc1(cc)+'&$limit=10',function(d){G.ugpp=d;});
-    // Proveedor SECOP (contacto)
-    callAPI('proveedor',BASE+'qmzu-gj57.json?$where=n_mero_doc_representante_legal='+enc1(cc)+'&$limit=5',function(d){
-      G.proveedor=d;if(d.length){
-        if(!G.nombre)G.nombre=d[0].nombre||'';
-        G.correo=G.correo||d[0].correo||'';
-        G.telefono=G.telefono||d[0].telefono||'';
-        G.direccion=G.direccion||d[0].direccion||'';
-        G.ciudad=G.ciudad||d[0].municipio||'';
-      }
-    });
-    // Declaracion Patrimonial
-    callAPI('patrimonial',BASE+'8tz7-h3eu.json?$where=numero_documento='+enc1(cc)+'&$limit=10',function(d){
-      G.patrimonial=d;if(d.length){G.cargo=G.cargo||d[0].cargo_declarante||'';G.entidad=G.entidad||d[0].nombre_entidad||'';}
-    });
-    // Conflicto de Interes
-    callAPI('conflictos',BASE+'gbry-rnq4.json?$where=numero_documento='+enc1(cc)+'&$limit=10',function(d){G.conflictos=d;});
-    // Candidato electoral (Cuentas Claras)
-    callAPI('candidato',BASE+'jgra-rz2t.json?$where=can_identificacion='+enc1(cc)+'&$limit=10',function(d){
-      G.candidato=d;if(d.length&&!G.nombre)G.nombre=d[0].cnd_nombre||d[0].nombre_candidato||'';
-    });
-    // Colombia Mayor
-    callAPI('colmayor',BASE+'rhwq-7mhs.json?$where=cedula='+enc1(cc)+'&$limit=5',function(d){
-      G.colmayor=d;if(d.length&&!G.nombre){
-        var r=d[0];G.nombre=[r.primernombre,r.primerapellido,r.segundoapellido].filter(Boolean).join(' ');
-      }
-    });
-    // Procuraduria (por CC buscamos en campo nombres completos)
-    callAPI('procuraduria',BASE+'actn-47cb.json?$where=upper(nombres)%20like%20upper('+encL(cc)+')&$limit=5',function(d){
-      // Procuraduria no tiene CC directo, se cruza por nombre despues
-      G.procuraduria=d;
+    // 1. PEP — Personas Expuestas Políticamente
+    callAPI('pep', BASE+'3qxn-uc22.json?$where=numero_documento='+enc(cc)+'&$limit=20', function(d){
+      G.pep=d;
+      if(d.length){var r=d[0]; G.nombre=G.nombre||[r.primer_nombre,r.segundo_nombre,r.primer_apellido,r.segundo_apellido].filter(Boolean).join(' '); G.cargo=G.cargo||r.cargo||r.u_cargo||''; G.entidad=G.entidad||r.entidad||r.u_entidad||'';}
     });
 
+    // 2. SIRI — Sanciones disciplinarias Procuraduria
+    callAPI('siri', BASE+'iaeu-rcn6.json?$where=trim(numero_identificacion)='+enc(cc)+'&$limit=20', function(d){
+      G.siri=d;
+      if(d.length){var r=d[0]; G.nombre=G.nombre||[r.primer_nombre,r.segundo_nombre,r.primer_apellido,r.segundo_apellido].filter(Boolean).join(' ');}
+    });
+
+    // 3. SECOP II — Contratos
+    callAPI('s2', BASE+'jbjy-vk9h.json?$where=documento_proveedor='+enc(cc)+'&$limit=50', function(d){
+      G.s2=d;
+      if(d.length){var r=d[0]; G.nombre=G.nombre||r.proveedor_adjudicado||r.nombre_representante_legal||''; G.ciudad=G.ciudad||r.municipio||'';}
+      var tot=d.reduce(function(s,x){return s+parseFloat(x.valor_del_contrato||0);},0);
+      G.totalContratos=(G.totalContratos||0)+tot; G.numContratos=(G.numContratos||0)+d.length;
+    });
+
+    // 4. SECOP I — Contratos
+    callAPI('si', BASE+'rpmr-utcd.json?$where=documento_proveedor='+enc(cc)+'&$limit=50', function(d){
+      G.si=d;
+      if(d.length){var r=d[0]; G.nombre=G.nombre||r.nom_raz_social_contratista||'';}
+      var tot=d.reduce(function(s,x){return s+parseFloat(x.valor_contrato||0);},0);
+      G.totalContratos=(G.totalContratos||0)+tot; G.numContratos=(G.numContratos||0)+d.length;
+    });
+
+    // 5. Convenios SECOP
+    callAPI('conv', BASE+'s484-c9k3.json?$where=identificacion_contratista='+enc(cc)+'&$limit=20', function(d){
+      G.conv=d;
+      if(d.length){var r=d[0]; G.nombre=G.nombre||r.nombre_contratista||'';}
+    });
+
+    // 6. Contraloria — Responsabilidad Fiscal (por NIT/CC)
+    callAPI('contraloria', BASE+"jr8e-e8tu.json?$where=n_mero_de_identificaci_n='"+cc+"'&$limit=20", function(d){
+      G.contraloria=d;
+    });
+
+    // 7. Declaracion Patrimonial
+    callAPI('patrimonial', BASE+'8tz7-h3eu.json?$where=numero_documento='+enc(cc)+'&$limit=20', function(d){
+      G.patrimonial=d;
+      if(d.length){var r=d[0]; G.nombre=G.nombre||[r.primer_nombre_declarante,r.segundo_nombre_declarante,r.primer_apellido_declarante,r.segundo_apellido_declarante].filter(Boolean).join(' '); G.cargo=G.cargo||r.cargo_declarante||''; G.entidad=G.entidad||r.nombre_entidad||'';}
+    });
+
+    // 8. Conflicto de Interes
+    callAPI('conflictos', BASE+'gbry-rnq4.json?$where=numero_documento='+enc(cc)+'&$limit=20', function(d){
+      G.conflictos=d;
+      if(d.length){var r=d[0]; G.cargo=G.cargo||r.cargo_declarante||''; G.entidad=G.entidad||r.nombre_entidad||'';}
+    });
+
+    // 9. Candidato Electoral CNE — Cuentas Claras
+    callAPI('candidato', BASE+'jgra-rz2t.json?$where=can_identificacion='+enc(cc)+'&$limit=20', function(d){
+      G.candidato=d;
+      if(d.length){var r=d[0]; G.nombre=G.nombre||r.cnd_nombre||'';}
+    });
+
+    // 10. Colombia Mayor — subsidio adultos mayores
+    callAPI('colmayor', BASE+'rhwq-7mhs.json?$where=cedula='+enc(cc)+'&$limit=5', function(d){
+      G.colmayor=d;
+      if(d.length){var r=d[0]; G.nombre=G.nombre||[r.primernombre,r.primerapellido,r.segundoapellido].filter(Boolean).join(' ');}
+    });
+
+    // 11. Proveedor SECOP (NIT/CC del representante legal)
+    callAPI('proveedor', BASE+'qmzu-gj57.json?$where=nit='+enc(cc)+'&$limit=10', function(d){
+      G.proveedor=d;
+      if(d.length){var r=d[0]; G.nombre=G.nombre||r.nombre||''; G.correo=G.correo||r.correo||''; G.telefono=G.telefono||r.telefono||''; G.ciudad=G.ciudad||r.municipio||'';}
+    });
+
+    // 12. Puestos sensibles a la corrupcion (funcionarios publicos)
+    callAPI('personal', BASE+'5u9e-g5w9.json?$where=identificacion_funcionario='+enc(cc)+'&$limit=20', function(d){
+      G.personal=d;
+      if(d.length){var r=d[0]; G.nombre=G.nombre||r.nombre_completo||''; G.cargo=G.cargo||r.cargo||''; G.entidad=G.entidad||r.nombre_institucion||''; G.genero=G.genero||r.sexo||'';}
+    });
+
+    // 13. Licencias SST (Seguridad y Salud en el Trabajo)
+    callAPI('sena_api', BASE+'8fgr-ag38.json?$where=no_de_cedula='+enc(cc)+'&$limit=10', function(d){
+      G.sena_api=d;
+      if(d.length){var r=d[0]; G.nombre=G.nombre||r.nombre||'';}
+    });
+
+    // 14. RUES — Camara de Comercio (persona natural o empresa)
+    callAPI('regalias', BASE+'c82u-588k.json?$where=numero_identificacion='+enc(cc)+'&$limit=10', function(d){
+      G.regalias=d;
+      if(d.length){var r=d[0]; G.nombre=G.nombre||r.razon_social||'';}
+    });
+
+    // 15. Procuraduria — Directorio funcionarios (por nombre si no hay CC)
+    // Para CC usamos patrimonial ya; aquí buscamos en directorio por identificacion
+    callAPI('procuraduria', BASE+"actn-47cb.json?$limit=0", function(d){
+      // Dataset sin campo CC directo; se hace por nombre en bloque nm
+      G.procuraduria=[];
+    });
+
+    // 16. Colombia Mayor alternativo
+    callAPI('policia', BASE+'6vhh-9fdq.json?$where=cedula='+enc(cc)+'&$limit=5', function(d){
+      if(d.length && !G.colmayor.length) G.colmayor=d;
+      tick(); // tick extra para cuadrar el conteo
+    });
+    done--; // compensar el tick extra
+    TOTAL_APIS=16;
+
   // ════════════════════════════════════════════════════════════════
-  // RAMA NOMBRE — 17 consultas AND + filtro post-API
+  // BLOQUE NOMBRE: búsqueda por nombre completo
   // ════════════════════════════════════════════════════════════════
-  }else{
-    var pepQ=t2?andQ('nombre_pep',t1,'nombre_pep',t2):andLike('nombre_pep',t1);
-    callAPI('pep',BASE+'3qxn-uc22.json?$where='+pepQ+'&$limit=20',function(d){
-      var f=filterArr(d,['nombre_pep'],2);G.pep=f;
-      if(f.length){G.cargo=G.cargo||f[0].cargo||'';G.entidad=G.entidad||f[0].entidad||'';}
-      G.matchQuality=Math.max(G.matchQuality,f.length?75:0);
+  } else {
+    // Extraer tokens de nombre ordenados por longitud desc
+    var STOP=['DE','LA','LOS','DEL','LAS','Y','E','O','AL'];
+    var toks=normQ(nm).split(/\s+/).filter(function(w){return w.length>2 && STOP.indexOf(w)<0;});
+    toks.sort(function(a,b){return b.length-a.length;});
+    var t1=toks[0]||normQ(nm), t2=toks[1]||t1;
+
+    // 1. PEP por nombre
+    callAPI('pep', BASE+'3qxn-uc22.json?$where='+andLike('primer_apellido',t1,'segundo_apellido',t2)+'&$limit=10', function(d){
+      G.pep=d.filter(function(r){return matches(r,['primer_nombre','primer_apellido','segundo_apellido'],2);});
     });
-    var siriQ=t2?andQ('primer_apellido',t1,'segundo_apellido',t2):andLike('primer_apellido',t1);
-    callAPI('siri',BASE+'iaeu-rcn6.json?$where='+siriQ+'&$limit=10',function(d){
-      G.siri=filterArr(d,['primer_apellido','segundo_apellido','primer_nombre'],1);
+
+    // 2. SIRI por nombre
+    callAPI('siri', BASE+'iaeu-rcn6.json?$where='+andLike('primer_apellido',t1,'segundo_apellido',t2)+'&$limit=10', function(d){
+      G.siri=d.filter(function(r){return matches(r,['primer_nombre','primer_apellido','segundo_apellido'],2);});
     });
-    var s2Q=t2?andQ('proveedor_adjudicado',t1,'proveedor_adjudicado',t2):andLike('proveedor_adjudicado',t1);
-    callAPI('s2',BASE+'jbjy-vk9h.json?$where='+s2Q+'&$limit=20&$order=fecha_de_firma%20DESC',function(d){
-      var f=filterArr(d,['proveedor_adjudicado','nombre_representante_legal'],2);G.s2=f;
-      if(f.length)G.nombre=G.nombre||f[0].proveedor_adjudicado||'';
-      f.forEach(function(c){var v=parseFloat(c.valor_del_contrato||0);if(!isNaN(v)&&v>0){G.totalContratos+=v;G.numContratos++;}});
-      G.matchQuality=Math.max(G.matchQuality,f.length?80:0);
+
+    // 3. SECOP II por nombre
+    callAPI('s2', BASE+'jbjy-vk9h.json?$where='+like('proveedor_adjudicado',t1)+'%20AND%20'+like('proveedor_adjudicado',t2)+'&$limit=30', function(d){
+      G.s2=d;
+      var tot=d.reduce(function(s,x){return s+parseFloat(x.valor_del_contrato||0);},0);
+      G.totalContratos=(G.totalContratos||0)+tot; G.numContratos=(G.numContratos||0)+d.length;
+      if(d.length){var r=d[0]; G.nombre=G.nombre||r.proveedor_adjudicado||'';}
     });
-    var siQ=t2?andQ('nom_raz_social_contratista',t1,'nom_raz_social_contratista',t2):andLike('nom_raz_social_contratista',t1);
-    callAPI('si',BASE+'rpmr-utcd.json?$where='+siQ+'&$limit=20',function(d){
-      var f=filterArr(d,['nom_raz_social_contratista'],2);G.si=f;
-      if(f.length&&!G.nombre)G.nombre=f[0].nom_raz_social_contratista||'';
-      f.forEach(function(c){var v=parseFloat(c.valor_contrato||0);if(!isNaN(v)&&v>0){G.totalContratos+=v;G.numContratos++;}});
+
+    // 4. SECOP I por nombre
+    callAPI('si', BASE+'rpmr-utcd.json?$where='+andLike('nom_raz_social_contratista',t1,'nom_raz_social_contratista',t2)+'&$limit=30', function(d){
+      G.si=d;
+      var tot=d.reduce(function(s,x){return s+parseFloat(x.valor_contrato||0);},0);
+      G.totalContratos=(G.totalContratos||0)+tot; G.numContratos=(G.numContratos||0)+d.length;
+      if(d.length){var r=d[0]; G.nombre=G.nombre||r.nom_raz_social_contratista||'';}
     });
-    var convQ=t2?andQ('nombre_contratista',t1,'nombre_contratista',t2):andLike('nombre_contratista',t1);
-    callAPI('conv',BASE+'s484-c9k3.json?$where='+convQ+'&$limit=10',function(d){G.conv=filterArr(d,['nombre_contratista'],2);});
-    var contrQ=t2?andQ('nombre',t1,'nombre',t2):andLike('nombre',t1);
-    callAPI('contraloria',BASE+'8aqu-idqj.json?$where='+contrQ+'&$limit=10',function(d){G.contraloria=filterArr(d,['nombre'],2);});
-    var senaQ=t2?andQ('nombre_aprendiz',t1,'nombre_aprendiz',t2):andLike('nombre_aprendiz',t1);
-    callAPI('sena_api',BASE+'m8ah-mniv.json?$where='+senaQ+'&$limit=10',function(d){G.sena_api=filterArr(d,['nombre_aprendiz'],2);});
-    var polQ=t2?andQ('nombre',t1,'nombre',t2):andLike('nombre',t1);
-    callAPI('policia',BASE+'n5ky-2tue.json?$where='+polQ+'&$limit=10',function(d){G.policia=filterArr(d,['nombre'],2);});
-    var perQ=t2?andQ('nombre',t1,'nombre',t2):andLike('nombre',t1);
-    callAPI('personal',BASE+'gdxc-w37w.json?$where='+perQ+'&$limit=10',function(d){
-      var f=filterArr(d,['nombre'],2);G.personal=f;
-      if(f.length){G.cargo=G.cargo||f[0].cargo||'';G.entidad=G.entidad||f[0].nombre_entidad||'';}
+
+    // 5. Convenios por nombre
+    callAPI('conv', BASE+'s484-c9k3.json?$where='+like('nombre_contratista',t1)+'%20AND%20'+like('nombre_contratista',t2)+'&$limit=20', function(d){
+      G.conv=d;
     });
-    var regQ=t2?andQ('nombre_beneficiario',t1,'nombre_beneficiario',t2):andLike('nombre_beneficiario',t1);
-    callAPI('regalias',BASE+'xgmd-ut58.json?$where='+regQ+'&$limit=10',function(d){G.regalias=filterArr(d,['nombre_beneficiario'],2);});
-    var ugppQ=t2?andQ('nombre',t1,'nombre',t2):andLike('nombre',t1);
-    callAPI('ugpp',BASE+'m2fs-xk8z.json?$where='+ugppQ+'&$limit=10',function(d){G.ugpp=filterArr(d,['nombre'],2);});
-    var provQ=t2?andQ('nombre',t1,'nombre',t2):andLike('nombre',t1);
-    callAPI('proveedor',BASE+'qmzu-gj57.json?$where='+provQ+'&$limit=10',function(d){
-      var f=filterArr(d,['nombre'],2);G.proveedor=f;
-      if(f.length){if(!G.nombre)G.nombre=f[0].nombre||'';
-        G.correo=G.correo||f[0].correo||'';G.telefono=G.telefono||f[0].telefono||'';
-        G.direccion=G.direccion||f[0].direccion||'';G.ciudad=G.ciudad||f[0].municipio||'';}
+
+    // 6. Contraloria por nombre
+    callAPI('contraloria', BASE+'jr8e-e8tu.json?$where='+like('raz_n_social_de_la_entidad',t1)+'&$limit=10', function(d){
+      G.contraloria=d.filter(function(r){return matches(r,['raz_n_social_de_la_entidad'],1);});
     });
-    var patQ=t2?andQ('primer_apellido_declarante',t1,'segundo_apellido_declarante',t2):andLike('primer_apellido_declarante',t1);
-    callAPI('patrimonial',BASE+'8tz7-h3eu.json?$where='+patQ+'&$limit=10',function(d){
-      var f=filterArr(d,['primer_apellido_declarante','segundo_apellido_declarante'],1);
-      G.patrimonial=f;if(f.length){G.cargo=G.cargo||f[0].cargo_declarante||'';G.entidad=G.entidad||f[0].nombre_entidad||'';}
+
+    // 7. Patrimonial por apellidos
+    callAPI('patrimonial', BASE+'8tz7-h3eu.json?$where='+andLike('primer_apellido_declarante',t1,'segundo_apellido_declarante',t2)+'&$limit=10', function(d){
+      G.patrimonial=d.filter(function(r){return matches(r,['primer_nombre_declarante','primer_apellido_declarante','segundo_apellido_declarante'],2);});
+      if(G.patrimonial.length){var r=G.patrimonial[0]; G.cargo=G.cargo||r.cargo_declarante||''; G.entidad=G.entidad||r.nombre_entidad||'';}
     });
-    var confQ=t2?andQ('primer_apellido_declarante',t1,'segundo_apellido_declarante',t2):andLike('primer_apellido_declarante',t1);
-    callAPI('conflictos',BASE+'gbry-rnq4.json?$where='+confQ+'&$limit=10',function(d){
-      G.conflictos=filterArr(d,['primer_apellido_declarante','segundo_apellido_declarante'],1);
+
+    // 8. Conflictos por apellidos
+    callAPI('conflictos', BASE+'gbry-rnq4.json?$where='+andLike('primer_apellido_declarante',t1,'segundo_apellido_declarante',t2)+'&$limit=10', function(d){
+      G.conflictos=d.filter(function(r){return matches(r,['primer_nombre_declarante','primer_apellido_declarante'],2);});
     });
-    // Candidato electoral por nombre
-    var candQ=t2?andQ('cnd_nombre',t1,'cnd_nombre',t2):andLike('cnd_nombre',t1);
-    callAPI('candidato',BASE+'jgra-rz2t.json?$where='+candQ+'&$limit=10',function(d){
-      G.candidato=filterArr(d,['cnd_nombre','nombre_candidato'],2);
+
+    // 9. Candidato CNE por nombre
+    callAPI('candidato', BASE+'jgra-rz2t.json?$where='+like('cnd_nombre',t1)+'%20AND%20'+like('cnd_nombre',t2)+'&$limit=10', function(d){
+      G.candidato=d;
+      if(d.length) G.nombre=G.nombre||d[0].cnd_nombre||'';
     });
-    // Colombia Mayor por apellido
-    var colmQ=t2?andQ('primerapellido',t1,'segundoapellido',t2):andLike('primerapellido',t1);
-    callAPI('colmayor',BASE+'rhwq-7mhs.json?$where='+colmQ+'&$limit=5',function(d){
-      G.colmayor=filterArr(d,['primernombre','primerapellido','segundoapellido'],1);
+
+    // 10. ColMayor por apellidos
+    callAPI('colmayor', BASE+'rhwq-7mhs.json?$where='+andLike('primerapellido',t1,'segundoapellido',t2)+'&$limit=5', function(d){
+      G.colmayor=d;
     });
-    // Procuraduria por apellido
-    var procQ=t2?andQ('primer_apellido',t1,'segundo_apellido',t2):andLike('primer_apellido',t1);
-    callAPI('procuraduria',BASE+'actn-47cb.json?$where='+procQ+'&$limit=10',function(d){
-      G.procuraduria=filterArr(d,['nombres','primer_apellido','segundo_apellido'],1);
-      if(G.procuraduria.length&&!G.cargo)G.cargo=G.cargo||G.procuraduria[0].cargo||'';
+
+    // 11. Proveedor SECOP por nombre
+    callAPI('proveedor', BASE+'qmzu-gj57.json?$where='+like('nombre',t1)+'%20AND%20'+like('nombre',t2)+'&$limit=10', function(d){
+      G.proveedor=d;
+      if(d.length){var r=d[0]; G.nombre=G.nombre||r.nombre||''; G.correo=G.correo||r.correo||'';}
     });
+
+    // 12. Puestos corrupcion por nombre
+    callAPI('personal', BASE+'5u9e-g5w9.json?$where='+like('nombre_completo',t1)+'%20AND%20'+like('nombre_completo',t2)+'&$limit=10', function(d){
+      G.personal=d;
+      if(d.length){var r=d[0]; G.cargo=G.cargo||r.cargo||''; G.entidad=G.entidad||r.nombre_institucion||'';}
+    });
+
+    // 13. Licencias SST por nombre
+    callAPI('sena_api', BASE+'8fgr-ag38.json?$where='+like('nombre',t1)+'%20AND%20'+like('nombre',t2)+'&$limit=10', function(d){
+      G.sena_api=d.filter(function(r){return matches(r,['nombre'],2);});
+    });
+
+    // 14. RUES Camara de comercio por nombre
+    callAPI('regalias', BASE+'c82u-588k.json?$where='+like('razon_social',t1)+'%20AND%20'+like('razon_social',t2)+'&$limit=10', function(d){
+      G.regalias=d;
+      if(d.length) G.nombre=G.nombre||d[0].razon_social||'';
+    });
+
+    // 15. Procuraduria directorio por apellido
+    callAPI('procuraduria', BASE+'actn-47cb.json?$where='+andLike('primer_apellido',t1,'segundo_apellido',t2)+'&$limit=10', function(d){
+      G.procuraduria=d.filter(function(r){return matches(r,['nombres','primer_apellido','segundo_apellido'],2);});
+      if(G.procuraduria.length){var r=G.procuraduria[0]; G.cargo=G.cargo||r.cargo||''; G.correo=G.correo||r.correo_electronico||'';}
+    });
+
+    // 16. ColMayor alternativo
+    callAPI('policia', BASE+'6vhh-9fdq.json?$where='+andLike('primerapellido',t1,'segundoapellido',t2)+'&$limit=5', function(d){
+      if(d.length && !G.colmayor.length) G.colmayor=d;
+      tick();
+    });
+    done--; TOTAL_APIS=16;
   }
-  ['regist','rama','simit','snies','rethus','rues','runt','dian'].forEach(function(id){setFuente(id,'hit');});
+
+  // ─── Paneles externos (sin API, links directos) ───────────────
+  // Estos se marcan como 'hit' para que aparezcan en la barra lateral
+  // Su contenido real se muestra en buildReport como links externos
+  ['ugpp','policia'].forEach(function(id){setFuente(id,'hit');});
 }
 
 function postProcesar(){
@@ -1229,7 +1243,37 @@ function finalizarYMostrar(){
       +'</div></div>';
   },'Sin registro en directorio Procuraduria.');
 
-    document.getElementById('informe').style.display='block';
+  
+  // ── Links externos para fuentes sin API pública ──────────────
+  (function(){
+    var bd_p=document.getElementById('body-policia');
+    var bd_u=document.getElementById('body-ugpp');
+    var qcc=encodeURIComponent(G.cc||'');
+    if(bd_p && (!G.policia||!G.policia.length)){
+      bd_p.innerHTML='<div class="dato-rows">'
+        +ri('SIMIT Multas tránsito','<a href="https://www.fcm.org.co/simit/#/home-public" target="_blank" rel="noopener">SIMIT ↗</a>')
+        +ri('RUNT licencias/vehículos','<a href="https://www.runt.com.co/" target="_blank" rel="noopener">RUNT ↗</a>')
+        +ri('Antecedentes Policía','<a href="https://antecedentes.policia.gov.co:7005/WebJudicial/" target="_blank" rel="noopener">Policía ↗</a>')
+        +ri('Mi Datacrédito','<a href="https://www.midatacredito.com/" target="_blank" rel="noopener">Datacredito ↗</a>')
+        +'</div>';
+      var blkp=document.getElementById('blk-policia');
+      var cntp=document.getElementById('cnt-policia');
+      if(blkp)blkp.className='blk clean';
+      if(cntp){cntp.textContent='Manual';cntp.className='blk-cnt cnt-ok';}
+    }
+    if(bd_u && (!G.ugpp||!G.ugpp.length)){
+      bd_u.innerHTML='<div class="dato-rows">'
+        +ri('Aportes parafiscales','<a href="https://www.ugpp.gov.co/pensionados-y-empleadores/empleadores/consulta-de-planillas.html" target="_blank" rel="noopener">UGPP ↗</a>')
+        +ri('Historia laboral','<a href="https://www.colpensiones.gov.co/" target="_blank" rel="noopener">Colpensiones ↗</a>')
+        +ri('EPS (afiliación)','<a href="https://www.adres.gov.co/" target="_blank" rel="noopener">ADRES/BDUA ↗</a>')
+        +'</div>';
+      var blku=document.getElementById('blk-ugpp');
+      var cntu=document.getElementById('cnt-ugpp');
+      if(blku)blku.className='blk clean';
+      if(cntu){cntu.textContent='Manual';cntu.className='blk-cnt cnt-ok';}
+    }
+  })();
+  document.getElementById('informe').style.display='block';
   setTimeout(function(){document.getElementById('informe').scrollIntoView({behavior:'smooth',block:'start'});},300);
   renderH();
   var tot=G.hits;
@@ -1367,60 +1411,47 @@ function buildReport(){
 
   // ── SENA ─────────────────────────────────────────────────────
   rBlk(G.sena_api,'body-sena','cnt-sena','blk-sena',function(r){
-    return '<div class="dato"><div class="dato-title">'+esc(r.nombre_aprendiz||r.nombre||'-')+'<span class="dbadge" style="background:var(--blue);color:#fff">SENA</span></div>'
-      +'<div class="dato-rows">'
-      +ri('CC',esc(r.numero_identificacion||'-'))
-      +ri('Programa',esc(r.nombre_programa||r.programa||'-'))
-      +ri('Centro',esc(r.nombre_centro||r.centro||'-'))
-      +ri('Estado',esc(r.estado_aprendiz||r.estado||'-'))
-      +ri('Regional',esc(r.nombre_regional||r.regional||'-'))
-      +'</div></div>';
-  },'Sin registro en SENA.');
+      return '<div class="dato"><div class="dato-title">'+esc(r.nombre||'-')+'<span class="dbadge" style="background:#0891b2;color:#fff">SST</span></div>'
+        +'<div class="dato-rows">'
+        +ri('Cédula',esc(r.no_de_cedula||'-'))
+        +ri('Resolución',esc(r.resolucion||'-'))
+        +ri('Fecha',esc((r.fecha||'').split('T')[0]||'-'))
+        +ri('Dir. territorial',esc(r.direccion_territorial||'-'))
+        +'</div></div>';
+    },'Sin licencia SST registrada.')
 
   // ── POLICIA ───────────────────────────────────────────────────
-  rBlk(G.policia,'body-policia','cnt-policia','blk-policia',function(r){
-    return '<div class="dato"><div class="dato-title">'+esc(r.nombre||'-')+'<span class="dbadge" style="background:var(--red);color:#fff">Polic\u00eda</span></div>'
-      +'<div class="dato-rows">'
-      +ri('CC',esc(r.identificacion||'-'))
-      +ri('Cargo',esc(r.cargo||'-'))
-      +ri('Grado',esc(r.grado||'-'))
-      +ri('Unidad',esc(r.unidad||'-'))
-      +'</div></div>';
-  },'Sin registro en base Polic\u00eda.');
+  rBlk(G.policia,'body-policia','cnt-policia','blk-policia',function(r){return '<div class="dato"><div class="dato-title">'+esc(r.nombre||'-')+'</div><div class="dato-rows">'+ri('CC',esc(r.identificacion||'-'))+'</div></div>';},'SIMIT/RUNT sin API abierta.')
 
   // ── PERSONAL PUBLICO ──────────────────────────────────────────
   rBlk(G.personal,'body-personal','cnt-personal','blk-personal',function(r){
-    return '<div class="dato"><div class="dato-title">'+esc(r.nombre||r.nombres||'-')+'<span class="dbadge" style="background:var(--green);color:#111">Personal P\u00fab.</span></div>'
-      +'<div class="dato-rows">'
-      +ri('CC',esc(r.numero_identificacion||'-'))
-      +ri('Cargo',esc(r.cargo||r.denominacion_cargo||'-'))
-      +ri('Entidad',esc(r.nombre_entidad||r.entidad||'-'))
-      +ri('Nivel',esc(r.nivel||'-'))
-      +ri('Salario',r.asignacion_basica?'$'+fmt(r.asignacion_basica):'-')
-      +'</div></div>';
-  },'Sin registro como servidor p\u00fablico.');
+      return '<div class="dato"><div class="dato-title">'+esc(r.nombre_completo||r.nombre||'-')+'<span class="dbadge" style="background:var(--green);color:#111">Funcionario</span></div>'
+        +'<div class="dato-rows">'
+        +ri('CC',esc(r.identificacion_funcionario||'-'))
+        +ri('Cargo',esc(r.cargo||'-'))
+        +ri('Entidad',esc(r.nombre_institucion||'-'))
+        +ri('Exp. pública',esc(r.meses_experiencia_publico?r.meses_experiencia_publico+' meses':'-'))
+        +ri('Municipio nac.',esc(r.municipio_nacimiento||'-'))
+        +'</div></div>';
+    },'Sin registro como funcionario público.')
 
   // ── REGALIAS SGR ──────────────────────────────────────────────
   rBlk(G.regalias,'body-regalias','cnt-regalias','blk-regalias',function(r){
-    return '<div class="dato"><div class="dato-title">'+esc(r.nombre_beneficiario||r.nombre||'-')+'<span class="dbadge" style="background:#f59e0b;color:#111">SGR</span></div>'
-      +'<div class="dato-rows">'
-      +ri('CC/NIT',esc(r.identificacion||'-'))
-      +ri('Proyecto',esc(r.nombre_proyecto||'-'))
-      +ri('Valor','$'+fmt(r.valor_proyecto||0))
-      +ri('Municipio',esc(r.municipio||'-'))
-      +ri('Estado',esc(r.estado_proyecto||'-'))
-      +'</div></div>';
-  },'Sin registro en SGR Regal\u00edas.');
+      return '<div class="dato"><div class="dato-title">'+esc(r.razon_social||'-')+'<span class="dbadge" style="background:#0e7490;color:#fff">Cámara</span></div>'
+        +'<div class="dato-rows">'
+        +ri('CC/NIT',esc(r.numero_identificacion||'-'))
+        +ri('Tipo',esc(r.clase_identificacion||'-'))
+        +ri('Cámara',esc(r.camara_comercio||'-'))
+        +ri('Matrícula',esc(r.matricula||'-'))
+        +ri('Tipo sociedad',esc(r.tipo_sociedad||'-'))
+        +ri('Org. jurídica',esc(r.organizacion_juridica||'-'))
+        +ri('Estado',esc(r.estado_matricula||'-'))
+        +ri('Renovado',esc(r.ultimo_ano_renovado||'-'))
+        +'</div></div>';
+    },'Sin registro en Cámara de Comercio (RUES).')
 
   // ── UGPP ──────────────────────────────────────────────────────
-  rBlk(G.ugpp,'body-ugpp','cnt-ugpp','blk-ugpp',function(r){
-    return '<div class="dato"><div class="dato-title">'+esc(r.nombre||r.razon_social||'-')+'<span class="dbadge" style="background:var(--blue);color:#fff">UGPP</span></div>'
-      +'<div class="dato-rows">'
-      +ri('CC',esc(r.numero_identificacion||'-'))
-      +ri('Periodo',esc(r.periodo||'-'))
-      +ri('Novedad',esc(r.tipo_novedad||'-'))
-      +'</div></div>';
-  },'Sin reporte en UGPP.');
+  rBlk(G.ugpp,'body-ugpp','cnt-ugpp','blk-ugpp',function(r){return '<div class="dato"><div class="dato-title">'+esc(r.nombre||'-')+'</div><div class="dato-rows">'+ri('CC',esc(r.numero_identificacion||'-'))+'</div></div>';},'UGPP sin API p\u00fablica.')
 
   // ── PROVEEDOR SECOP ───────────────────────────────────────────
   rBlk(G.proveedor,'body-proveedor','cnt-proveedor','blk-proveedor',function(r){
