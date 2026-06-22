@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>ARGOS v8 — Motor OSINT Colombia</title>
+<title>ARGOS v12 — Motor OSINT Colombia</title>
 <meta name="theme-color" content="#060608"/>
 <link rel="icon" type="image/svg+xml" href="logo-icon.svg"/>
 <style>
@@ -344,7 +344,7 @@ ol.steps li::before{content:counter(s);position:absolute;left:7px;top:50%;transf
     <div class="hstat">Fuentes <span>95+</span></div>
     <div class="hstat">Colombia <span>✓</span></div>
   </div>
-  <span class="hbadge">v10.0 · 2026</span>
+  <span class="hbadge">v12.0 · 2026</span>
 </header>
 
 <div class="tabs">
@@ -805,7 +805,7 @@ function activar(){
   saveH(raw);
   document.getElementById('informe').style.display='none';
   document.getElementById('estado').style.display='block';
-  setP(5,'Iniciando ARGOS v10...');
+  setP(5,'Iniciando ARGOS v12...');
   setTimeout(correrConsultas,80);
 }
 
@@ -860,8 +860,9 @@ function correrConsultas(){
     done++;
     var pct=Math.round(5+(done/TOTAL_APIS)*90);
     setP(pct,'Consultando '+done+'/'+TOTAL_APIS+' fuentes\u2026');
-    if(done>=TOTAL_APIS) finalizarYMostrar();
+    if(done>=TOTAL_APIS){clearTimeout(_st);finalizarYMostrar();}
   }
+  var _st=setTimeout(function(){if(done<TOTAL_APIS){done=TOTAL_APIS;finalizarYMostrar();}},20000);
 
   // ── Fetch API con timeout ──────────────────────────────────────
   function callAPI(id, url, cb){
