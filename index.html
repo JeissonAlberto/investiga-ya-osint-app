@@ -897,7 +897,7 @@ function correrConsultas(){
     // 1. PEP — Personas Expuestas Políticamente
     callAPI('pep', BASE+'3qxn-uc22.json?$where=numero_documento='+enc(cc)+'&$limit=20', function(d){
       G.pep=d;
-      if(d.length){var r=d[0]; G.nombre=G.nombre||[r.primer_nombre,r.segundo_nombre,r.primer_apellido,r.segundo_apellido].filter(Boolean).join(' '); G.cargo=G.cargo||r.cargo||r.u_cargo||''; G.entidad=G.entidad||r.entidad||r.u_entidad||'';}
+      if(d.length){var r=d[0]; G.nombre=G.nombre||[r.primer_nombre,r.segundo_nombre,r.primer_apellido,r.segundo_apellido].filter(Boolean).join(' '); G.cargo=G.cargo||r.denominacion_cargo||''; G.entidad=G.entidad||r.nombre_entidad||'';}
     });
 
     // 2. SIRI — Sanciones disciplinarias Procuraduria
@@ -1340,8 +1340,8 @@ function buildReport(){
     return '<div class="dato"><div class="dato-title">'+esc(p.nombre_pep||p.nombres||'-')+'<span class="dbadge" style="background:var(--red);color:#fff">PEP</span></div>'
       +'<div class="dato-rows">'
       +ri('CC',esc(p.numero_documento||'-'))
-      +ri('Cargo',esc(p.cargo||p.u_cargo||'-'))
-      +ri('Entidad',esc(p.entidad||p.u_entidad||'-'))
+      +ri('Cargo',esc(p.denominacion_cargo||'-'))
+      +ri('Entidad',esc(p.nombre_entidad||'-'))
       +ri('Tipo PEP',esc(p.tipo_pep||'-'))
       +ri('Pa\u00eds',esc(p.pais||'Colombia'))
       +'</div></div>';
@@ -1468,7 +1468,7 @@ function buildReport(){
 
   // ── DECLARACION PATRIMONIAL ───────────────────────────────────
   rBlk(G.patrimonial,'body-patrimonial','cnt-patrimonial','blk-patrimonial',function(r){
-    return '<div class="dato"><div class="dato-title">'+esc(r.nombres_declarante||r.primer_nombre_declarante||r.nombre_declarante||'-')+'<span class="dbadge" style="background:#f59e0b;color:#111">Patrimonial</span></div>'
+    return '<div class="dato"><div class="dato-title">'+esc([r.primer_nombre_declarante,r.segundo_nombre_declarante,r.primer_apellido_declarante,r.segundo_apellido_declarante].filter(Boolean).join(' ')||'-')+'<span class="dbadge" style="background:#f59e0b;color:#111">Patrimonial</span></div>'
       +'<div class="dato-rows">'
       +ri('CC',esc(r.numero_documento||'-'))
       +ri('Cargo',esc(r.cargo_declarante||'-'))
@@ -1479,7 +1479,7 @@ function buildReport(){
 
   // ── CONFLICTO DE INTERES ──────────────────────────────────────
   rBlk(G.conflictos,'body-conflictos','cnt-conflictos','blk-conflictos',function(r){
-    return '<div class="dato"><div class="dato-title">'+esc(r.nombre_declarante||'-')+'<span class="dbadge" style="background:var(--red);color:#fff">Conflicto Int.</span></div>'
+    return '<div class="dato"><div class="dato-title">'+esc([r.primer_nombre_declarante,r.primer_apellido_declarante,r.segundo_apellido_declarante].filter(Boolean).join(' ')||'-')+'<span class="dbadge" style="background:var(--red);color:#fff">Conflicto Int.</span></div>'
       +'<div class="dato-rows">'
       +ri('CC',esc(r.numero_documento||'-'))
       +ri('Cargo',esc(r.cargo_declarante||'-'))
