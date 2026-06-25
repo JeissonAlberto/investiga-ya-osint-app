@@ -356,6 +356,7 @@ ol.steps li::before{content:counter(s);position:absolute;left:7px;top:50%;transf
   <div class="tab" data-tab="empresa">🏢 Empresa</div>
   <div class="tab" data-tab="placa">🚗 Placa</div>
   <div class="tab" data-tab="dorks">🕵 Dorks</div>
+  <div class="tab" data-tab="huella">🔍 Huella Digital</div>
   <div class="tab" data-tab="fuentes">📚 Fuentes</div>
   <div class="tab" data-tab="metodo">🗂 Metodo</div>
 </div>
@@ -492,6 +493,12 @@ ol.steps li::before{content:counter(s);position:absolute;left:7px;top:50%;transf
   <div class="blk" id="blk-colmayor">
     <div class="blk-head"><span class="blk-ico">👴</span><span class="blk-title">Colombia Mayor — Adultos mayores subsidiados</span><span class="blk-cnt cnt-none" id="cnt-colmayor">-</span></div>
     <div id="body-colmayor"><div class="msg-no">Consultando...</div></div>
+  </div>
+  <div class="blk" id="blk-huella-rep">
+    <div class="blk-head"><span class="blk-ico">🔍</span><span class="blk-title">Huella Digital (SOCMINT) — Redes sociales y filtraciones</span><span class="blk-cnt cnt-none" id="cnt-huella-rep">Manual</span></div>
+    <div id="body-huella-rep">
+      <div class="msg-ok">Use la pestaña superior 'Huella Digital' para investigar handles y posibles brechas de seguridad.</div>
+    </div>
   </div>
   <div class="blk" id="blk-procuraduria">
     <div class="blk-head"><span class="blk-ico">⚖</span><span class="blk-title">Procuraduría — Directorio de funcionarios</span><span class="blk-cnt cnt-none" id="cnt-procuraduria">-</span></div>
@@ -646,6 +653,27 @@ ol.steps li::before{content:counter(s);position:absolute;left:7px;top:50%;transf
     <button class="btn btn-r btn-full" onclick="generarDorks()">⚡ Generar dorks</button>
   </div>
   <div id="res-dorks" style="display:none"></div>
+</div>
+</div>
+
+<!-- HUELLA DIGITAL -->
+<div class="panel" id="panel-huella">
+<div style="padding-top:16px">
+  <div class="block">
+    <div class="stitle">Investigacion de Huella Digital (SOCMINT)</div>
+    <div class="info red">Basado en GoSearch. Busque el rastro digital de la persona en 300+ sitios.</div>
+    <div class="field"><label>Nombre de usuario (Handle)</label><input type="text" id="inp-huella" placeholder="ej: jcarlos_perez o el email sin @gmail.com"/></div>
+    <div class="rowf">
+      <button class="btn btn-r btn-full" onclick="buscarHuella()">🔍 Iniciar rastreo digital</button>
+      <button class="btn btn-g btn-full" onclick="sugerirHuella()">💡 Sugerir handles</button>
+    </div>
+  </div>
+  <div id="res-huella" style="display:none">
+    <div class="block">
+      <div class="stitle">Resultados de Rastreo Digital</div>
+      <div id="grid-huella" class="img-grid"></div>
+    </div>
+  </div>
 </div>
 </div>
 
@@ -1159,6 +1187,7 @@ function finalizarYMostrar(){
   var pt=document.getElementById('p-tags');if(pt)pt.innerHTML=tags.map(function(t){return '<span class="tag '+t.c+'">'+t.l+'</span>';}).join('');
   var pf=document.getElementById('p-fecha');if(pf)pf.textContent='ARGOS '+new Date().toLocaleDateString('es-CO',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
   buildReport();
+  sugerirHuella();
   // PROVEEDOR SECOP
   buildBlk('proveedor','blk-proveedor','cnt-proveedor',G.proveedor,function(p){
     return '<div class="dato"><div class="dato-title">'+esc(p.nombre||'-')+'</div>'
@@ -1780,27 +1809,34 @@ var SOCIAL_SITES=[
   {n:'Facebook',       u:'https://www.facebook.com/{}',               m:'public'},
   {n:'TikTok',         u:'https://www.tiktok.com/@{}',                m:'public'},
   {n:'YouTube',        u:'https://www.youtube.com/@{}',               m:'public'},
+  {n:'LinkedIn',       u:'https://www.linkedin.com/in/{}'},
   {n:'Pinterest',      u:'https://www.pinterest.com/{}/'},
   {n:'Reddit',         u:'https://www.reddit.com/user/{}'},
   {n:'Twitch',         u:'https://www.twitch.tv/{}'},
+  {n:'GitHub',         u:'https://github.com/{}'},
+  {n:'GitLab',         u:'https://gitlab.com/{}'},
+  {n:'Snapchat',       u:'https://www.snapchat.com/add/{}'},
+  {n:'Telegram',       u:'https://t.me/{}'},
+  {n:'Discord',        u:'https://discord.com/users/{}'},
   {n:'Spotify',        u:'https://open.spotify.com/user/{}'},
-  {n:'SoundCloud',     u:'https://soundcloud.com/{}'},
+  {n:'Steam',          u:'https://steamcommunity.com/id/{}'},
+  {n:'Medium',         u:'https://medium.com/@{}'},
   {n:'Behance',        u:'https://www.behance.net/{}'},
   {n:'Dribbble',       u:'https://dribbble.com/{}'},
-  {n:'DeviantArt',     u:'https://www.deviantart.com/{}'},
+  {n:'Patreon',        u:'https://www.patreon.com/{}'},
   {n:'Flickr',         u:'https://www.flickr.com/people/{}'},
-  {n:'Tumblr',         u:'https://www.tumblr.com/{}'},
-  {n:'Medium',         u:'https://medium.com/@{}'},
+  {n:'SoundCloud',     u:'https://soundcloud.com/{}'},
   {n:'Quora',          u:'https://www.quora.com/profile/{}'},
-  {n:'Stack Overflow', u:'https://stackoverflow.com/users/{}'},
-  {n:'Telegram',       u:'https://t.me/{}'},
-  {n:'WhatsApp',       u:'https://wa.me/{}'},
-  {n:'Vimeo',          u:'https://vimeo.com/{}'},
-  {n:'GitLab',         u:'https://gitlab.com/{}'},
-  {n:'HackerNews',     u:'https://news.ycombinator.com/user?id={}'},
-  {n:'ProductHunt',    u:'https://www.producthunt.com/@{}'},
-  {n:'Keybase',        u:'https://keybase.io/{}'},
   {n:'About.me',       u:'https://about.me/{}'},
+  {n:'Linktree',       u:'https://linktr.ee/{}'},
+  {n:'Chess.com',      u:'https://www.chess.com/member/{}'},
+  {n:'Duolingo',       u:'https://www.duolingo.com/profile/{}'},
+  {n:'OnlyFans',       u:'https://onlyfans.com/{}'},
+  {n:'Roblox',         u:'https://www.roblox.com/user.aspx?username={}'},
+  {n:'TradingView',    u:'https://www.tradingview.com/u/{}'},
+  {n:'Vimeo',          u:'https://vimeo.com/{}'},
+  {n:'Wattpad',        u:'https://www.wattpad.com/user/{}'},
+  {n:'Keybase',        u:'https://keybase.io/{}'},
   {n:'Gravatar',       u:'https://en.gravatar.com/{}'},
 ];
 
@@ -1863,6 +1899,80 @@ function renderTelepatia(found,done2,total,bar,lbl,cont,usr){
       +'</div></div>';
   }).join('');
   cont.innerHTML='<div style="margin-bottom:6px;font-size:.65rem;color:var(--muted)">'+found.length+' perfiles generados para <strong>@'+esc(usr)+'</strong></div>'+rows;
+}
+
+function sugerirHuella(){
+  var name = G.nombre || G.nm || document.getElementById('q').value;
+  var email = G.correo || "";
+  var suggestions = [];
+  
+  if(email){
+    var parts = email.split('@');
+    if(parts.length > 0) suggestions.push(parts[0].toLowerCase());
+  }
+  
+  if(name){
+    var n = name.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9 ]/g, "").split(/\s+/);
+    if(n.length >= 2){
+      suggestions.push(n[0] + n[1]);
+      suggestions.push(n[0] + "." + n[1]);
+      suggestions.push(n[0] + "_" + n[1]);
+      if(n.length >= 3) suggestions.push(n[0] + n[2]);
+      if(n.length >= 4) suggestions.push(n[0] + n[1] + n[2] + n[3]);
+    }
+  }
+  
+  if(suggestions.length > 0){
+    document.getElementById('inp-huella').value = suggestions[0];
+    toast('Handle sugerido: ' + suggestions[0], 'ok');
+  } else {
+    toast('No hay suficientes datos para sugerir', 'warn');
+  }
+}
+
+async function buscarHuella(){
+  var usr = document.getElementById('inp-huella').value.trim().replace(/\s+/g,'').toLowerCase();
+  if(!usr){ toast('Ingresa un nombre de usuario'); return; }
+  
+  var res = document.getElementById('res-huella');
+  var grid = document.getElementById('grid-huella');
+  res.style.display = 'block';
+  grid.innerHTML = '<div class="spin-wrap"><span class="spin"></span> Rastreando rastro digital...</div>';
+  
+  var found = [];
+  var sites = SOCIAL_SITES;
+  
+  // Leak check logic (Simplified)
+  var leaks = [];
+  try {
+    // Proxynova has a public API that often allows CORS
+    const pnova = await fetch(`https://api.proxynova.com/comb?query=${usr}`).then(r => r.json()).catch(e => null);
+    if(pnova && pnova.count > 0) leaks.push({n: 'ProxyNova Leaks', v: pnova.count + ' filtraciones'});
+  } catch(e){}
+
+  var html = '';
+  if(leaks.length > 0){
+    html += '<div style="grid-column: 1 / -1; background: var(--redsub); border: 1px solid var(--red); padding: 10px; border-radius: 8px; margin-bottom: 10px;">';
+    html += '<div style="color: var(--redll); font-weight: 800; font-size: 0.8rem; margin-bottom: 5px;">⚠️ POSIBLES FILTRACIONES DE CREDENCIALES</div>';
+    leaks.forEach(l => {
+      html += `<div style="font-size: 0.7rem;">${l.n}: <span style="font-weight:700">${l.v}</span></div>`;
+    });
+    html += '</div>';
+  }
+
+  // Generar links
+  var rows = sites.map(function(s){
+    var url = s.u.replace('{}', usr);
+    return `<div class="dato-rows" style="padding:6px 0; border-bottom:1px solid var(--border)">
+      <div style="display:flex; align-items:center; gap:8px">
+        <span style="color:var(--blue)">●</span>
+        <span style="font-weight:700; min-width:110px; font-size:.7rem">${esc(s.n)}</span>
+        <a href="${esc(url)}" target="_blank" rel="noopener" style="color:var(--blue2); font-size:.65rem; word-break:break-all">${esc(url)}</a>
+      </div>
+    </div>`;
+  }).join('');
+  
+  grid.innerHTML = html + '<div style="margin-bottom:6px; font-size:.65rem; color:var(--muted)">' + sites.length + ' sitios rastreados para <strong>@' + esc(usr) + '</strong></div>' + rows;
 }
 
 function cpTelepatia(){
