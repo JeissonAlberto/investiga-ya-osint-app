@@ -663,6 +663,7 @@ ol.steps li::before{content:counter(s);position:absolute;left:7px;top:50%;transf
     <div class="stitle">Investigacion de Huella Digital (SOCMINT)</div>
     <div class="info red">Basado en GoSearch. Busque el rastro digital de la persona en 300+ sitios.</div>
     <div class="field"><label>Nombre de usuario (Handle)</label><input type="text" id="inp-huella" placeholder="ej: jcarlos_perez o el email sin @gmail.com"/></div>
+    <div class="field"><label>Nombre Completo (Opcional)</label><input type="text" id="inp-huella-nombre" placeholder="ej: Juan Carlos Perez"/></div>
     <div class="rowf">
       <button class="btn btn-r btn-full" onclick="buscarHuella()">🔍 Iniciar rastreo digital</button>
       <button class="btn btn-g btn-full" onclick="sugerirHuella()">💡 Sugerir handles</button>
@@ -1924,6 +1925,7 @@ function sugerirHuella(){
   
   if(suggestions.length > 0){
     document.getElementById('inp-huella').value = suggestions[0];
+    document.getElementById('inp-huella-nombre').value = G.nombre || G.nm || "";
     toast('Handle sugerido: ' + suggestions[0], 'ok');
   } else {
     toast('No hay suficientes datos para sugerir', 'warn');
@@ -1932,47 +1934,96 @@ function sugerirHuella(){
 
 async function buscarHuella(){
   var usr = document.getElementById('inp-huella').value.trim().replace(/\s+/g,'').toLowerCase();
-  if(!usr){ toast('Ingresa un nombre de usuario'); return; }
+  var fullNm = document.getElementById('inp-huella-nombre').value.trim();
+  if(!usr && !fullNm){ toast('Ingresa un usuario o nombre'); return; }
   
   var res = document.getElementById('res-huella');
   var grid = document.getElementById('grid-huella');
   res.style.display = 'block';
-  grid.innerHTML = '<div class="spin-wrap"><span class="spin"></span> Rastreando rastro digital...</div>';
+  grid.innerHTML = '<div class="spin-wrap"><span class="spin"></span> Analizando huella digital con motor Social-Analyzer...</div>';
   
-  var found = [];
-  var sites = SOCIAL_SITES;
-  
-  // Leak check logic (Simplified)
+  var sites = [
+    {n:'Instagram', u:'https://www.instagram.com/{}/', d:'social'},
+    {n:'Twitter / X', u:'https://twitter.com/{}', d:'social'},
+    {n:'Facebook', u:'https://www.facebook.com/{}', d:'social'},
+    {n:'TikTok', u:'https://www.tiktok.com/@{}', d:'social'},
+    {n:'LinkedIn', u:'https://www.linkedin.com/in/{}', d:'profesional'},
+    {n:'GitHub', u:'https://github.com/{}', d:'dev'},
+    {n:'OnlyFans', u:'https://onlyfans.com/{}', d:'adulto'},
+    {n:'Pinterest', u:'https://www.pinterest.com/{}/', d:'social'},
+    {n:'Reddit', u:'https://www.reddit.com/user/{}', d:'social'},
+    {n:'Snapchat', u:'https://www.snapchat.com/add/{}', d:'social'},
+    {n:'Telegram', u:'https://t.me/{}', d:'chat'},
+    {n:'Spotify', u:'https://open.spotify.com/user/{}', d:'musica'},
+    {n:'Steam', u:'https://steamcommunity.com/id/{}', d:'gaming'},
+    {n:'Twitch', u:'https://www.twitch.tv/{}', d:'gaming'},
+    {n:'Chess.com', u:'https://www.chess.com/member/{}', d:'gaming'},
+    {n:'Medium', u:'https://medium.com/@{}', d:'blog'},
+    {n:'Linktree', u:'https://linktr.ee/{}', d:'bio'},
+    {n:'Behance', u:'https://www.behance.net/{}', d:'art'},
+    {n:'Dribbble', u:'https://dribbble.com/{}', d:'art'},
+    {n:'Patreon', u:'https://www.patreon.com/{}', d:'finanzas'},
+    {n:'Flickr', u:'https://www.flickr.com/people/{}', d:'art'},
+    {n:'SoundCloud', u:'https://soundcloud.com/{}', d:'musica'},
+    {n:'Quora', u:'https://www.quora.com/profile/{}', d:'info'},
+    {n:'Duolingo', u:'https://www.duolingo.com/profile/{}', d:'edu'},
+    {n:'Wattpad', u:'https://www.wattpad.com/user/{}', d:'blog'},
+    {n:'Keybase', u:'https://keybase.io/{}', d:'seguridad'}
+  ];
+
+  // Busqueda por nombre real (Google Dorks)
+  var dorks = [];
+  if(fullNm){
+    var n = fullNm.replace(/\s+/g, '+');
+    dorks = [
+      {n: 'LinkedIn (Nombre)', u: `https://www.google.com/search?q=site:linkedin.com/in/+"${n}"`},
+      {n: 'Facebook (Nombre)', u: `https://www.google.com/search?q=site:facebook.com+"${n}"`},
+      {n: 'Instagram (Nombre)', u: `https://www.google.com/search?q=site:instagram.com+"${n}"`},
+      {n: 'TikTok (Nombre)', u: `https://www.google.com/search?q=site:tiktok.com+"${n}"`}
+    ];
+  }
+
   var leaks = [];
   try {
-    // Proxynova has a public API that often allows CORS
-    const pnova = await fetch(`https://api.proxynova.com/comb?query=${usr}`).then(r => r.json()).catch(e => null);
-    if(pnova && pnova.count > 0) leaks.push({n: 'ProxyNova Leaks', v: pnova.count + ' filtraciones'});
+    if(usr){
+      const pnova = await fetch(`https://api.proxynova.com/comb?query=${usr}`).then(r => r.json()).catch(e => null);
+      if(pnova && pnova.count > 0) leaks.push({n: 'ProxyNova Leaks', v: pnova.count + ' filtraciones'});
+    }
   } catch(e){}
 
   var html = '';
   if(leaks.length > 0){
-    html += '<div style="grid-column: 1 / -1; background: var(--redsub); border: 1px solid var(--red); padding: 10px; border-radius: 8px; margin-bottom: 10px;">';
-    html += '<div style="color: var(--redll); font-weight: 800; font-size: 0.8rem; margin-bottom: 5px;">⚠️ POSIBLES FILTRACIONES DE CREDENCIALES</div>';
+    html += '<div style="grid-column: 1 / -1; background: var(--redsub); border: 1px solid var(--red); padding: 10px; border-radius: 8px; margin-bottom: 15px;">';
+    html += '<div style="color: var(--redll); font-weight: 800; font-size: 0.8rem; margin-bottom: 5px;">⚠️ ALERTA DE BRECHA DE SEGURIDAD (Social-Analyzer)</div>';
     leaks.forEach(l => {
       html += `<div style="font-size: 0.7rem;">${l.n}: <span style="font-weight:700">${l.v}</span></div>`;
     });
     html += '</div>';
   }
 
-  // Generar links
-  var rows = sites.map(function(s){
-    var url = s.u.replace('{}', usr);
-    return `<div class="dato-rows" style="padding:6px 0; border-bottom:1px solid var(--border)">
-      <div style="display:flex; align-items:center; gap:8px">
-        <span style="color:var(--blue)">●</span>
-        <span style="font-weight:700; min-width:110px; font-size:.7rem">${esc(s.n)}</span>
-        <a href="${esc(url)}" target="_blank" rel="noopener" style="color:var(--blue2); font-size:.65rem; word-break:break-all">${esc(url)}</a>
-      </div>
-    </div>`;
-  }).join('');
+  if(dorks.length > 0){
+    html += '<div style="grid-column: 1 / -1; margin-bottom: 15px;">';
+    html += '<div style="font-size: 0.65rem; color: var(--g3); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; font-weight: 700;">Búsqueda por Nombre Real</div>';
+    html += dorks.map(d => `<a href="${d.u}" target="_blank" class="btn btn-g" style="font-size:0.6rem; padding:6px 10px; margin:0 5px 5px 0; display:inline-block">${d.n}</a>`).join('');
+    html += '</div>';
+  }
+
+  var rows = '';
+  if(usr){
+    rows = sites.map(function(s){
+      var url = s.u.replace('{}', usr);
+      var color = s.d === 'adulto' ? 'var(--red)' : s.d === 'profesional' ? 'var(--green)' : 'var(--blue)';
+      return `<div class="dato-rows" style="padding:8px 0; border-bottom:1px solid var(--border)">
+        <div style="display:flex; align-items:center; gap:8px">
+          <span style="color:${color}">●</span>
+          <span style="font-weight:700; min-width:110px; font-size:.7rem">${esc(s.n)}</span>
+          <a href="${esc(url)}" target="_blank" rel="noopener" style="color:var(--blue2); font-size:.65rem; word-break:break-all">${esc(url)}</a>
+        </div>
+      </div>`;
+    }).join('');
+  }
   
-  grid.innerHTML = html + '<div style="margin-bottom:6px; font-size:.65rem; color:var(--muted)">' + sites.length + ' sitios rastreados para <strong>@' + esc(usr) + '</strong></div>' + rows;
+  grid.innerHTML = html + (usr ? `<div style="margin-bottom:10px; font-size:.65rem; color:var(--muted)">Rastreo de usuario <strong>@${esc(usr)}</strong> en ${sites.length} plataformas:</div>` + rows : '');
 }
 
 function cpTelepatia(){
