@@ -357,6 +357,7 @@ ol.steps li::before{content:counter(s);position:absolute;left:7px;top:50%;transf
   <div class="tab" data-tab="placa">🚗 Placa</div>
   <div class="tab" data-tab="dorks">🕵 Dorks</div>
   <div class="tab" data-tab="huella">🔍 Huella Digital</div>
+  <div class="tab" data-tab="auditoria">🛡️ Auditoría</div>
   <div class="tab" data-tab="fuentes">📚 Fuentes</div>
   <div class="tab" data-tab="metodo">🗂 Metodo</div>
 </div>
@@ -713,6 +714,33 @@ ol.steps li::before{content:counter(s);position:absolute;left:7px;top:50%;transf
 </div>
 
 <!-- METODO -->
+<div class="panel" id="panel-auditoria">
+  <div class="tip">🛡️ <b>Módulo de Auditoría de Red & OpSec (v15.0)</b><br>Herramientas de diagnóstico de infraestructura y seguridad operativa basadas en estándares Linux.</div>
+  
+  <div class="card" style="margin-bottom:15px">
+    <div style="font-size:0.75rem; font-weight:700; margin-bottom:10px; color:var(--g2)">1. SEGURIDAD DEL INVESTIGADOR (OPSEC)</div>
+    <div id="opsec-checks" style="background:var(--bg); padding:10px; border-radius:8px">
+      <div style="font-size:0.65rem; color:var(--muted); margin-bottom:10px">Verificando entorno de investigación...</div>
+      <div class="dato-rows" id="opsec-vpn" style="font-size:0.65rem; display:flex; justify-content:space-between"><span>Estado VPN/Proxy:</span> <span style="color:var(--yellow)">Detectando...</span></div>
+      <div class="dato-rows" id="opsec-dns" style="font-size:0.65rem; display:flex; justify-content:space-between; margin-top:5px"><span>Fuga de DNS:</span> <span style="color:var(--yellow)">Analizando...</span></div>
+    </div>
+    <div style="font-size:0.6rem; color:var(--muted); margin-top:10px; font-style:italic">Recomendación: Usa siempre Tor o VPN antes de rastrear huella digital.</div>
+  </div>
+
+  <div class="card">
+    <div style="font-size:0.75rem; font-weight:700; margin-bottom:10px; color:var(--g2)">2. AUDITORÍA DE INFRAESTRUCTURA (Linux Tools)</div>
+    <div class="field">
+      <label>Dominio o IP de la Empresa (ej: policia.gov.co)</label>
+      <input type="text" id="inp-audit" placeholder="Introduce el dominio a auditar"/>
+    </div>
+    <button class="btn btn-r btn-full" onclick="generarAudit()">🔍 Generar Comandos de Auditoría</button>
+    
+    <div id="res-audit" style="display:none; margin-top:15px">
+      <div id="grid-audit"></div>
+    </div>
+  </div>
+</div>
+
 <div class="panel" id="panel-metodo">
 <div style="padding-top:16px">
   <div class="block">
@@ -2213,6 +2241,34 @@ function buscarPlaca(){
   if(re)re.style.display='block';
   if(document.getElementById('inp-placa'))document.getElementById('inp-placa').value=p;
   toast('10 fuentes para placa '+p,'ok');
+}
+
+function generarAudit(){
+  var dom = document.getElementById('inp-audit').value.trim();
+  if(!dom){ toast('Ingresa un dominio'); return; }
+  var res = document.getElementById('res-audit');
+  var grid = document.getElementById('grid-audit');
+  res.style.display = 'block';
+  
+  var cmds = [
+    {n: 'WHOIS (Propiedad)', c: `whois ${dom}`, d: 'Muestra dueños del dominio y fechas.'},
+    {n: 'DIG (DNS Lookup)', c: `dig ${dom} ANY`, d: 'Lista todos los registros DNS del dominio.'},
+    {n: 'Host (IP)', c: `host ${dom}`, d: 'Encuentra la dirección IP del servidor.'},
+    {n: 'Nmap (Scanner)', c: `nmap -F ${dom}`, d: 'Escaneo rápido de puertos abiertos.'},
+    {n: 'TheHarvester', c: `theHarvester -d ${dom} -b google`, d: 'Busca correos y subdominios filtrados.'},
+    {n: 'Traceroute', c: `traceroute ${dom}`, d: 'Muestra la ruta física hacia el servidor.'}
+  ];
+
+  grid.innerHTML = cmds.map(function(cmd){
+    return `<div class="card" style="margin-bottom:10px; border-left:3px solid var(--blue)">
+      <div style="font-size:0.7rem; font-weight:700; color:var(--white); margin-bottom:4px">${cmd.n}</div>
+      <div style="font-size:0.6rem; color:var(--muted); margin-bottom:8px">${cmd.d}</div>
+      <div style="background:var(--bg); padding:8px; border-radius:4px; font-family:monospace; font-size:0.65rem; color:var(--green); display:flex; justify-content:space-between; align-items:center">
+        <code>${cmd.c}</code>
+        <button class="btn btn-g" style="padding:2px 6px; font-size:0.5rem" onclick="navigator.clipboard.writeText('${cmd.c}'); toast('Comando copiado','ok')">Copiar</button>
+      </div>
+    </div>`;
+  }).join('');
 }
 
 document.addEventListener('DOMContentLoaded',function(){
