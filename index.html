@@ -3,98 +3,95 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <title>ARGOS v24.0 — DATA REAL & API CONNECT</title>
+    <title>ARGOS v25.0 — CONEXIÓN REAL SECOP II</title>
     <style>
-        :root { --p: #00ff41; --bg: #050505; --c: #111; }
+        :root { --p: #00ff41; --bg: #0a0a0a; --c: #1a1a1a; }
         body { background: var(--bg); color: #fff; font-family: 'JetBrains Mono', monospace; margin: 0; padding: 20px; }
-        .box { border: 1px solid #333; padding: 20px; margin-bottom: 20px; background: var(--c); }
+        .container { max-width: 900px; margin: 0 auto; }
+        .box { border: 1px solid #333; padding: 20px; background: var(--c); margin-bottom: 20px; }
         .p { color: var(--p); font-weight: bold; }
-        .input-group { display: flex; gap: 10px; margin-bottom: 20px; }
-        input { background: #000; border: 1px solid var(--p); color: var(--p); padding: 15px; flex: 1; font-size: 1.1rem; outline: none; }
+        .input-row { display: flex; gap: 10px; }
+        input { flex: 1; background: #000; border: 1px solid var(--p); color: var(--p); padding: 15px; font-size: 1.1rem; }
         button { background: var(--p); color: #000; border: none; padding: 15px 30px; font-weight: bold; cursor: pointer; }
-        .results-container { display: none; }
-        .card { background: #000; border-left: 4px solid var(--p); padding: 15px; margin-bottom: 15px; }
+        .results { display: none; margin-top: 20px; }
+        .data-card { background: #000; border-left: 4px solid var(--p); padding: 15px; margin-bottom: 10px; font-size: 0.9rem; }
         .status { font-size: 0.8rem; color: #888; margin-bottom: 10px; }
-        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-        td { padding: 8px; border-bottom: 1px solid #222; }
-        .label { color: #666; width: 150px; }
-        .val { color: #fff; }
-        .btn-link { display: inline-block; border: 1px solid var(--p); color: var(--p); padding: 8px 15px; text-decoration: none; margin-top: 10px; font-size: 0.8rem; }
-        .error { color: #ff4444; border-color: #ff4444; }
+        .error { color: #ff3e3e; border-color: #ff3e3e; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        td { padding: 5px 0; border-bottom: 1px solid #222; }
+        .label { color: #666; width: 140px; }
     </style>
 </head>
 <body>
-    <h1 class="p">ARGOS_v24.0 <span style="font-size:0.8rem; font-weight:normal; color:#666;">| REAL_TIME_FETCH</span></h1>
-    
-    <div class="box">
-        <div class="input-group">
-            <input type="text" id="target" placeholder="INGRESE NIT O CEDULA (SIN PUNTOS)">
-            <button onclick="investigar()">CONSULTAR_APIs</button>
-        </div>
-        <div id="status" class="status">SISTEMA_LISTO_PARA_EXTRACCION</div>
-    </div>
-
-    <div id="results" class="results-container">
+    <div class="container">
+        <h1 class="p">ARGOS_v25.0 // DATOS_ABIERTOS_API</h1>
+        
         <div class="box">
-            <h2 class="p">1. RESULTADOS SECOP II (API REAL)</h2>
-            <div id="secop-results">Consultando datos gubernamentales...</div>
+            <div class="status" id="st">ESPERANDO OBJETIVO (NIT O CEDULA)...</div>
+            <div class="input-row">
+                <input type="text" id="target" placeholder="NIT (ej: 860003020) o CEDULA">
+                <button onclick="query()">SCAN_REAL</button>
+            </div>
         </div>
 
-        <div class="box">
-            <h2 class="p">2. ACCESO DIRECTO A OTRAS FUENTES</h2>
-            <p style="font-size:0.8rem; color:#888;">Debido a restricciones de seguridad (CORS), estas fuentes deben consultarse manualmente con el ID ya cargado:</p>
-            <div id="links"></div>
+        <div id="res" class="results">
+            <div class="box">
+                <h3 class="p">CONTRATOS ELECTRÓNICOS (API jbjy-vk9h)</h3>
+                <div id="secop-data">Buscando...</div>
+            </div>
+            
+            <div class="box">
+                <h3 class="p">VERIFICACIÓN EXTERNA (SIMIT / ADRES)</h3>
+                <div id="links"></div>
+            </div>
         </div>
     </div>
 
     <script>
-        async function investigar() {
+        async function query() {
             const val = document.getElementById('target').value.trim();
             if(!val) return;
-
-            const status = document.getElementById('status');
-            const results = document.getElementById('results');
-            const secopDiv = document.getElementById('secop-results');
-
-            status.innerText = "ESTABLECIENDO CONEXIÓN CON DATOS.GOV.CO...";
-            results.style.display = "block";
-            secopDiv.innerHTML = "Buscando registros vinculados...";
+            
+            const resDiv = document.getElementById('res');
+            const dataDiv = document.getElementById('secop-data');
+            const st = document.getElementById('st');
+            
+            resDiv.style.display = "block";
+            st.innerText = "CONECTANDO CON SOCRATA API FOUNDRY...";
+            dataDiv.innerHTML = "Consultando base de datos nacional...";
 
             try {
-                // CONSULTA REAL A SECOP II vía Socrata API (Dataset Integrado)
-                const response = await fetch(`https://www.datos.gov.co/resource/jbjy-vv8h.json?documento_proveedor=${val}`);
-                const data = await response.json();
+                // Dataset: SECOP II - Contratos Electrónicos (jbjy-vk9h)
+                const url = `https://www.datos.gov.co/resource/jbjy-vk9h.json?documento_proveedor=${val}`;
+                const resp = await fetch(url);
+                const data = await resp.json();
 
-                if (data.length > 0) {
-                    let html = '<table>';
-                    data.slice(0, 5).forEach(item => {
-                        html += `
-                            <tr><td class="label">ENTIDAD:</td><td class="val">${item.nombre_entidad || 'N/A'}</td></tr>
-                            <tr><td class="label">VALOR:</td><td class="val">$${Number(item.valor_del_contrato || 0).toLocaleString()}</td></tr>
-                            <tr><td class="label">ESTADO:</td><td class="val">${item.estado_contrato || 'N/A'}</td></tr>
-                            <tr><td class="label">OBJETO:</td><td class="val">${item.descripcion_del_proceso || 'N/A'}</td></tr>
-                            <tr style="height:20px"></tr>
-                        `;
-                    });
-                    html += '</table>';
-                    secopDiv.innerHTML = html;
-                    status.innerText = `ÉXITO: ${data.length} REGISTROS ENCONTRADOS EN SECOP II`;
+                if(data.length > 0) {
+                    st.innerText = `OK: ${data.length} REGISTROS ENCONTRADOS`;
+                    dataDiv.innerHTML = data.slice(0, 5).map(i => `
+                        <div class="data-card">
+                            <table>
+                                <tr><td class="label">ENTIDAD:</td><td>${i.nombre_entidad || 'N/A'}</td></tr>
+                                <tr><td class="label">VALOR:</td><td>$${Number(i.valor_del_contrato || 0).toLocaleString()}</td></tr>
+                                <tr><td class="label">OBJETO:</td><td>${i.descripcion_del_proceso || 'N/A'}</td></tr>
+                                <tr><td class="label">ESTADO:</td><td>${i.estado_contrato || 'N/A'}</td></tr>
+                            </table>
+                        </div>
+                    `).join('');
                 } else {
-                    secopDiv.innerHTML = "<div class='error'>SIN REGISTROS EN SECOP II: El ID no figura como contratista estatal activo en este dataset.</div>";
-                    status.innerText = "CONSULTA FINALIZADA - SIN HALLAZGOS EN SECOP";
+                    st.innerText = "TERMINADO: SIN REGISTROS";
+                    dataDiv.innerHTML = "<div class='error'>No se encontraron contratos electrónicos para este ID en la API de Datos Abiertos.</div>";
                 }
-            } catch (err) {
-                secopDiv.innerHTML = "<div class='error'>ERROR DE CONEXIÓN: No se pudo acceder a la API de Datos Abiertos. Verifique su conexión o el estado de datos.gov.co</div>";
-                status.innerText = "ERROR_DE_SISTEMA";
+            } catch(e) {
+                st.innerText = "ERROR DE CONEXIÓN";
+                dataDiv.innerHTML = "<div class='error'>Error al conectar con la API gubernamental. Verifique el ID o intente más tarde.</div>";
             }
 
-            // ENLACES DIRECTOS (Garantizados)
             const lks = [
                 {n: "SIMIT (MULTAS)", u: `https://fcm.org.co/simit/#/estado-cuenta?numeroDocumento=${val}`},
-                {n: "ADRES (SALUD)", u: "https://www.adres.gov.co/consulte-su-eps"},
-                {n: "RUES (EMPRESAS)", u: "https://www.rues.org.co/"}
+                {n: "ADRES (SALUD)", u: "https://www.adres.gov.co/consulte-su-eps"}
             ];
-            document.getElementById('links').innerHTML = lks.map(l => `<a href="${l.u}" target="_blank" class="btn-link">${l.n} ↗</a>`).join(' ');
+            document.getElementById('links').innerHTML = lks.map(l => `<a href="${l.u}" target="_blank" style="color:#00ff41; display:inline-block; margin-right:20px; text-decoration:none;">[${l.n} ↗]</a>`).join('');
         }
     </script>
 </body>
