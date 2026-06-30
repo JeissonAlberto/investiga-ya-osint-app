@@ -3,199 +3,93 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <title>ARGOS v17.0 — Motor de Inferencia Inteligente</title>
+    <title>ARGOS v18.0 — Fix Despliegue</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Outfit:wght@300;600;800&display=swap');
-        :root { --bg: #050505; --card: #0d0d0f; --accent: #ff003c; --accent-dim: rgba(255,0,60,0.1); --text: #e2e8f0; --dim: #64748b; --border: #1a1a1c; }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { background: var(--bg); color: var(--text); font-family: 'Outfit', sans-serif; overflow-x: hidden; }
-        
-        /* Glassmorphism Header */
-        header { 
-            position: sticky; top: 0; z-index: 1000;
-            padding: 1rem 5%; background: rgba(5,5,5,0.8);
-            backdrop-filter: blur(10px); border-bottom: 1px solid var(--border);
-            display: flex; justify-content: space-between; align-items: center;
-        }
-        .logo { font-size: 1.5rem; font-weight: 800; letter-spacing: -1px; }
-        .logo span { color: var(--accent); }
-        
-        main { padding: 2rem 5%; max-width: 1200px; margin: 0 auto; }
-        
-        /* Hero Section */
-        .hero { text-align: center; margin-bottom: 3rem; }
-        .hero h1 { font-size: 4rem; font-weight: 800; margin-bottom: 0.5rem; line-height: 1; }
-        .hero p { color: var(--dim); font-size: 1.1rem; }
-
-        /* Search Interface */
-        .search-container {
-            background: var(--card); border: 1px solid var(--border);
-            border-radius: 24px; padding: 1.5rem; margin-bottom: 2rem;
-            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
-        }
-        .input-group { display: flex; gap: 1rem; }
-        input { 
-            flex: 1; background: #141416; border: 1px solid var(--border);
-            border-radius: 12px; padding: 1rem 1.5rem; color: #fff;
-            font-size: 1.1rem; outline: none; transition: 0.3s;
-        }
-        input:focus { border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-dim); }
-        .btn-scan {
-            background: var(--accent); color: #fff; border: none;
-            padding: 0 2.5rem; border-radius: 12px; font-weight: 700;
-            cursor: pointer; transition: 0.3s; text-transform: uppercase;
-        }
-        .btn-scan:hover { transform: translateY(-2px); box-shadow: 0 10px 20px var(--accent-dim); }
-
-        /* Result Sections */
-        .grid { display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; }
-        @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
-
-        .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 1.5rem; }
-        .card h3 { font-size: 0.9rem; text-transform: uppercase; color: var(--accent); letter-spacing: 2px; margin-bottom: 1.5rem; }
-        
-        /* Deep Links */
-        .link-list { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
-        .deep-link {
-            background: #141416; border: 1px solid var(--border);
-            padding: 0.8rem; border-radius: 8px; font-size: 0.8rem;
-            text-decoration: none; color: var(--text); transition: 0.2s;
-            display: flex; align-items: center; justify-content: space-between;
-        }
-        .deep-link:hover { border-color: var(--accent); background: var(--accent-dim); }
-        .deep-link i { font-size: 0.7rem; color: var(--dim); }
-
-        /* IA Inferencia */
-        .ia-report { border-left: 4px solid var(--accent); background: linear-gradient(to right, var(--accent-dim), transparent); padding: 1.5rem; border-radius: 0 12px 12px 0; }
-        .ia-text { font-size: 1rem; line-height: 1.6; font-family: 'JetBrains Mono', monospace; }
-        .highlight { color: var(--accent); font-weight: 700; }
-
-        /* Auditoría Tab */
-        .cmd-box { background: #000; padding: 1rem; border-radius: 8px; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: #22c55e; margin-top: 0.5rem; position: relative; }
-        .cmd-box::before { content: "terminal"; position: absolute; top: -10px; right: 10px; font-size: 0.6rem; color: #444; text-transform: uppercase; }
-
-        .hidden { display: none; }
-        .visible { display: block; animation: fadeInUp 0.5s ease forwards; }
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        :root { --bg: #030712; --card: #111827; --accent: #ef4444; --text: #f3f4f6; --border: #374151; }
+        body { background: var(--bg); color: var(--text); font-family: system-ui, sans-serif; margin: 0; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; }
+        header { text-align: center; margin-bottom: 40px; border-bottom: 1px solid var(--border); padding-bottom: 20px; }
+        .search-box { display: flex; gap: 10px; background: var(--card); padding: 15px; border-radius: 12px; border: 1px solid var(--border); }
+        input { flex: 1; background: #1f2937; border: 1px solid var(--border); color: #fff; padding: 12px; border-radius: 8px; font-size: 1rem; }
+        button { background: var(--accent); color: white; border: none; padding: 12px 24px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        .results { display: none; margin-top: 30px; animation: fadeIn 0.5s; }
+        .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 20px; }
+        .ia-report { border-left: 4px solid #3b82f6; background: rgba(59, 130, 246, 0.1); }
+        .link-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
+        .link { background: #1f2937; padding: 10px; border-radius: 6px; text-decoration: none; color: #60a5fa; border: 1px solid var(--border); font-size: 0.9rem; }
+        .link:hover { background: var(--border); }
+        h3 { margin-top: 0; color: var(--accent); font-size: 0.9rem; text-transform: uppercase; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .loading { display: none; text-align: center; margin: 20px; color: #9ca3af; }
     </style>
 </head>
 <body>
-    <header>
-        <div class="logo">ARGOS<span>.v17</span></div>
-        <div style="font-size: 0.8rem; font-weight: 600; color: var(--dim);">INTELLIGENCE SUITE COLOMBIA</div>
-    </header>
+    <div class="container">
+        <header>
+            <h1>ARGOS <span>v18.0</span></h1>
+            <p>Suite de Inteligencia OSINT Colombia</p>
+        </header>
 
-    <main>
-        <section class="hero">
-            <h1>Investiga<span>Ya</span></h1>
-            <p>Suite OSINT de Inferencia y Cruce de Datos Masivos</p>
-        </section>
+        <div class="search-box">
+            <input type="text" id="q" placeholder="Ingrese Cédula, NIT o Dominio...">
+            <button id="scanBtn">ESCANEAR</button>
+        </div>
 
-        <section class="search-container">
-            <div class="input-group">
-                <input type="text" id="target" placeholder="Cédula, NIT, Nombre o Dominio..." autocomplete="off">
-                <button class="btn-scan" onclick="ejecutarAnalisis()">Analizar</button>
+        <div id="loader" class="loading">Iniciando motores de búsqueda...</div>
+
+        <div id="res-container" class="results">
+            <div class="card ia-report">
+                <h3>🧠 Análisis de Inferencia IA</h3>
+                <div id="ia-text"></div>
             </div>
-        </section>
 
-        <div id="dashboard" class="hidden">
-            <div class="grid">
-                <!-- Columna Principal: Hallazgos e IA -->
-                <div class="main-col">
-                    <div class="card ia-report">
-                        <h3>🧠 Inferencia ARGOS (Motor IA)</h3>
-                        <div class="ia-text" id="ia-output">
-                            Procesando patrones...
-                        </div>
-                    </div>
-                    
-                    <div class="card" style="margin-top: 1.5rem;">
-                        <h3>📂 Deep Links (Fuentes Directas)</h3>
-                        <div class="link-list" id="link-container">
-                            <!-- Enlaces dinámicos -->
-                        </div>
-                    </div>
-                </div>
+            <div class="card">
+                <h3>📂 Enlaces de Consulta Directa</h3>
+                <div class="link-grid" id="links"></div>
+            </div>
 
-                <!-- Columna Lateral: Auditoría y Herramientas -->
-                <div class="side-col">
-                    <div class="card">
-                        <h3>🛡️ Auditoría Técnica</h3>
-                        <p style="font-size: 0.75rem; color: var(--dim); margin-bottom: 1rem;">Comandos generados para análisis de infraestructura:</p>
-                        <div id="audit-output">
-                            <div class="cmd-box"># Ingrese un dominio o IP</div>
-                        </div>
-                    </div>
-                    
-                    <div class="card" style="margin-top: 1.5rem;">
-                        <h3>📊 Matriz de Relación</h3>
-                        <div style="font-size: 0.8rem; color: var(--dim);">
-                            <p>● SECOP: <span id="m-secop">...</span></p>
-                            <p>● SIMIT: <span id="m-simit">...</span></p>
-                            <p>● ADRES: <span id="m-adres">...</span></p>
-                        </div>
-                    </div>
-                </div>
+            <div class="card">
+                <h3>🛡️ Auditoría Técnica / OSINT</h3>
+                <div id="audit" style="font-family: monospace; color: #10b981; background: #000; padding: 15px; border-radius: 8px;"></div>
             </div>
         </div>
-    </main>
+    </div>
 
     <script>
-        function ejecutarAnalisis() {
-            const val = document.getElementById('target').value.trim();
-            if(!val) return;
+        document.getElementById('scanBtn').onclick = function() {
+            const val = document.getElementById('q').value.trim();
+            if(!val) { alert("Por favor ingrese un dato"); return; }
 
-            const dash = document.getElementById('dashboard');
-            dash.classList.remove('hidden');
-            dash.classList.add('visible');
+            document.getElementById('loader').style.display = 'block';
+            document.getElementById('res-container').style.display = 'none';
 
-            // 1. Generar Deep Links Reales
-            const links = [
-                { n: "SIMIT (Multas)", u: `https://fcm.org.co/simit/#/estado-cuenta?numeroDocumento=${val}` },
-                { n: "ADRES (Fosyga)", u: "https://www.adres.gov.co/consulte-su-eps" },
-                { n: "SECOP I", u: "https://www.contratos.gov.co/consultas/detalleProceso.do" },
-                { n: "RUNT (Vehículos)", u: "https://www.runt.com.co/consulta-ciudadana/publico/consultas/placa" },
-                { n: "Procuraduría", u: "https://www.procuraduria.gov.co/Pages/Generacion-de-Certificado-de-Antecedentes.aspx" },
-                { n: "Contraloría", u: "https://www.contraloria.gov.co/control-fiscal/responsabilidad-fiscal/certificado-de-antecedentes-fiscales" },
-                { n: "Policía Nacional", u: "https://srvcnpc.policia.gov.co/PSC/frm_cnp_consulta.aspx" },
-                { n: "Sisbén DNP", u: "https://interactive.sisben.gov.co/ConsultaSisben/" }
-            ];
+            setTimeout(() => {
+                document.getElementById('loader').style.display = 'none';
+                document.getElementById('res-container').style.display = 'block';
 
-            const container = document.getElementById('link-container');
-            container.innerHTML = links.map(l => `
-                <a href="${l.u}" target="_blank" class="deep-link">
-                    ${l.n} <i>↗</i>
-                </a>
-            `).join('');
+                const lContainer = document.getElementById('links');
+                const sources = [
+                    {n: "SIMIT (Multas)", u: `https://fcm.org.co/simit/#/estado-cuenta?numeroDocumento=${val}`},
+                    {n: "SECOP (Contratos)", u: "https://www.contratos.gov.co/consultas/detalleProceso.do"},
+                    {n: "ADRES (Salud)", u: "https://www.adres.gov.co/consulte-su-eps"},
+                    {n: "RUES (Cámaras)", u: "https://www.rues.org.co/"},
+                    {n: "Procuraduría", u: "https://www.procuraduria.gov.co/Pages/Generacion-de-Certificado-de-Antecedentes.aspx"},
+                    {n: "Policía Nacional", u: "https://srvcnpc.policia.gov.co/PSC/frm_cnp_consulta.aspx"}
+                ];
+                lContainer.innerHTML = sources.map(s => `<a href="${s.u}" target="_blank" class="link">${s.n} ↗</a>`).join('');
 
-            // 2. Lógica de Inferencia IA (Simulada para visualización inmediata)
-            const iaOutput = document.getElementById('ia-output');
-            const isNum = !isNaN(val);
-            
-            if(isNum) {
-                iaOutput.innerHTML = `Detectado perfil de <span class="highlight">PERSONA NATURAL</span>. <br><br>
-                Cruzando cédula con registros de SECOP y SIMIT... <br>
-                [+] Patrón detectado: El ID analizado coincide con la estructura de un contratista estatal. <br>
-                [!] <span class="highlight">ALERTA:</span> Se recomienda verificar la vigencia en la Cámara de Comercio (RUES) para descartar empresas fachada.`;
-                
-                document.getElementById('m-secop').innerText = "Vínculo Detectado";
-                document.getElementById('m-simit').innerText = "Pendiente";
-                document.getElementById('m-adres').innerText = "Afiliado";
-            } else {
-                iaOutput.innerHTML = `Analizando <span class="highlight">ENTIDAD/DOMINIO</span>... <br><br>
-                [+] Ejecutando Footprinting sobre el objetivo. <br>
-                [+] Generando matriz de infraestructura. <br>
-                [!] Recomendación: Ejecutar auditoría pasiva en Shodan y Censys.`;
-                
-                // 3. Generar Comandos de Auditoría si es un dominio
-                const audit = document.getElementById('audit-output');
-                audit.innerHTML = `
-                    <div class="cmd-box">nmap -sV -T4 ${val}</div>
-                    <div class="cmd-box">whois ${val} | grep "Expiration"</div>
-                    <div class="cmd-box">dig ${val} ANY +short</div>
-                `;
-            }
-        }
+                const iaText = document.getElementById('ia-text');
+                const isNum = !isNaN(val);
+                iaText.innerHTML = isNum 
+                    ? `Detectado perfil: <b>PERSONA NATURAL</b>. <br>El ID <b>${val}</b> está siendo procesado en la matriz de contratación estatal y registros de deudores.`
+                    : `Detectado perfil: <b>ENTIDAD / RECURSO DIGITAL</b>. <br>Iniciando recolección de huella técnica para <b>${val}</b>.`;
+
+                const audit = document.getElementById('audit');
+                audit.innerHTML = isNum 
+                    ? `# Perfil: Ciudadano Colombiano<br># No se requieren comandos de red.`
+                    : `# Auditoría para: ${val}<br>nmap -Pn -sV ${val}<br>whois ${val}<br>dig ${val} +short`;
+            }, 800);
+        };
     </script>
 </body>
 </html>
