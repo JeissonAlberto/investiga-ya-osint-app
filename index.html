@@ -3,116 +3,98 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <title>ARGOS v23.0 — INFORME DE INTELIGENCIA TOTAL</title>
+    <title>ARGOS v24.0 — DATA REAL & API CONNECT</title>
     <style>
-        :root { --p: #00ff41; --bg: #000; }
-        body { background: var(--bg); color: #fff; font-family: 'JetBrains Mono', monospace; margin: 0; padding: 40px; line-height: 1.6; }
-        .container { max-width: 1000px; margin: 0 auto; border: 2px solid var(--p); padding: 40px; position: relative; }
-        .watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-45deg); font-size: 8rem; opacity: 0.05; pointer-events: none; white-space: nowrap; }
-        h1, h2 { color: var(--p); text-transform: uppercase; border-bottom: 1px solid var(--p); padding-bottom: 10px; }
-        .section { margin-bottom: 40px; }
-        .meta { color: #888; font-size: 0.8rem; margin-bottom: 20px; }
-        .data-box { background: #111; border-left: 4px solid var(--p); padding: 20px; margin: 10px 0; }
-        .input-group { background: #111; padding: 20px; border: 1px dashed var(--p); margin-bottom: 40px; text-align: center; }
-        input { background: #000; border: 1px solid var(--p); color: var(--p); padding: 15px; width: 60%; font-family: inherit; }
-        button { background: var(--p); color: #000; border: none; padding: 15px 30px; cursor: pointer; font-weight: bold; }
-        .hidden { display: none; }
-        .print-btn { background: #333; color: #fff; border: none; padding: 10px 20px; cursor: pointer; float: right; }
+        :root { --p: #00ff41; --bg: #050505; --c: #111; }
+        body { background: var(--bg); color: #fff; font-family: 'JetBrains Mono', monospace; margin: 0; padding: 20px; }
+        .box { border: 1px solid #333; padding: 20px; margin-bottom: 20px; background: var(--c); }
+        .p { color: var(--p); font-weight: bold; }
+        .input-group { display: flex; gap: 10px; margin-bottom: 20px; }
+        input { background: #000; border: 1px solid var(--p); color: var(--p); padding: 15px; flex: 1; font-size: 1.1rem; outline: none; }
+        button { background: var(--p); color: #000; border: none; padding: 15px 30px; font-weight: bold; cursor: pointer; }
+        .results-container { display: none; }
+        .card { background: #000; border-left: 4px solid var(--p); padding: 15px; margin-bottom: 15px; }
+        .status { font-size: 0.8rem; color: #888; margin-bottom: 10px; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+        td { padding: 8px; border-bottom: 1px solid #222; }
+        .label { color: #666; width: 150px; }
+        .val { color: #fff; }
+        .btn-link { display: inline-block; border: 1px solid var(--p); color: var(--p); padding: 8px 15px; text-decoration: none; margin-top: 10px; font-size: 0.8rem; }
+        .error { color: #ff4444; border-color: #ff4444; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="watermark">CONFIDENCIAL</div>
-        <button class="print-btn" onclick="window.print()">IMPRIMIR_PDF</button>
-        <h1>ALGORITMO ARGOS - INFORME MAESTRO v23.0</h1>
-        <div class="meta">FECHA_GENERACION: 2026-06-29 23:43 | ORIGEN: OSINT_COLOMBIA | AUTOR: ZAPIA_AI</div>
+    <h1 class="p">ARGOS_v24.0 <span style="font-size:0.8rem; font-weight:normal; color:#666;">| REAL_TIME_FETCH</span></h1>
+    
+    <div class="box">
+        <div class="input-group">
+            <input type="text" id="target" placeholder="INGRESE NIT O CEDULA (SIN PUNTOS)">
+            <button onclick="investigar()">CONSULTAR_APIs</button>
+        </div>
+        <div id="status" class="status">SISTEMA_LISTO_PARA_EXTRACCION</div>
+    </div>
 
-        <div class="input-group" id="search-zone">
-            <p>INGRESE EL OBJETIVO PARA GENERAR EL EXPEDIENTE COMPLETO:</p>
-            <input type="text" id="target" placeholder="CEDULA / NIT / DOMINIO">
-            <button onclick="generarInforme()">GENERAR EXPEDIENTE</button>
+    <div id="results" class="results-container">
+        <div class="box">
+            <h2 class="p">1. RESULTADOS SECOP II (API REAL)</h2>
+            <div id="secop-results">Consultando datos gubernamentales...</div>
         </div>
 
-        <div id="full-report" class="hidden">
-            <div class="section">
-                <h2>1. RESUMEN EJECUTIVO</h2>
-                <div class="data-box" id="ia-summary">
-                    [CARGANDO INFERENCIA...]
-                </div>
-            </div>
-
-            <div class="section">
-                <h2>2. INVESTIGACIÓN DE ANTECEDENTES Y CONTROL</h2>
-                <div id="legal-data"></div>
-            </div>
-
-            <div class="section">
-                <h2>3. TRAZABILIDAD CONTRACTUAL (SECOP I/II)</h2>
-                <div class="data-box" id="contract-data">
-                    [ANALIZANDO FLUJO DE DINERO...]
-                </div>
-            </div>
-
-            <div class="section">
-                <h2>4. AUDITORÍA TÉCNICA Y HUELLA DIGITAL</h2>
-                <pre id="tech-data" style="color:#00ff41;"></pre>
-            </div>
-
-            <div class="section">
-                <h2>5. ANEXOS Y ENLACES DE VERIFICACIÓN</h2>
-                <div id="link-data"></div>
-            </div>
+        <div class="box">
+            <h2 class="p">2. ACCESO DIRECTO A OTRAS FUENTES</h2>
+            <p style="font-size:0.8rem; color:#888;">Debido a restricciones de seguridad (CORS), estas fuentes deben consultarse manualmente con el ID ya cargado:</p>
+            <div id="links"></div>
         </div>
     </div>
 
     <script>
-        function generarInforme() {
+        async function investigar() {
             const val = document.getElementById('target').value.trim();
             if(!val) return;
-            document.getElementById('search-zone').classList.add('hidden');
-            document.getElementById('full-report').classList.remove('hidden');
 
-            // 1. Inferencia
-            document.getElementById('ia-summary').innerHTML = `
-                El objetivo <b>${val}</b> ha sido sometido al algoritmo de cruce ARGOS. <br><br>
-                <b>HALLAZGO CRÍTICO:</b> Se detectó actividad en nodos de contratación estatal. El perfil analizado muestra una recurrencia en procesos de licitación pública durante los últimos 24 meses. <br>
-                <b>ESTADO FINANCIERO:</b> Coherencia del 94% entre aportes a salud y contratos registrados. Sin alertas rojas en el Boletín de Deudores Morosos de la Contraloría.
-            `;
+            const status = document.getElementById('status');
+            const results = document.getElementById('results');
+            const secopDiv = document.getElementById('secop-results');
 
-            // 2. Datos Legales
-            document.getElementById('legal-data').innerHTML = `
-                <div class="data-box">
-                    • POLICIA NACIONAL: SIN REQUERIMIENTOS JUDICIALES <br>
-                    • PROCURADURIA: SIN INHABILIDADES VIGENTES <br>
-                    • CONTRALORIA: SIN RESPONSABILIDAD FISCAL <br>
-                    • ADRES (FOSYGA): AFILIADO ACTIVO - COTIZANTE
-                </div>
-            `;
+            status.innerText = "ESTABLECIENDO CONEXIÓN CON DATOS.GOV.CO...";
+            results.style.display = "block";
+            secopDiv.innerHTML = "Buscando registros vinculados...";
 
-            // 3. Contratos
-            document.getElementById('contract-data').innerHTML = `
-                - PROCESO: CO-SEC-2024-00456 / ALCALDIA BOGOTA / $125.000.000 <br>
-                - PROCESO: CO-SEC-2023-00982 / GOBERNACION ANTIOQUIA / $80.000.000 <br>
-                - TOTAL GESTIONADO: $205.000.000 COP aprox.
-            `;
+            try {
+                // CONSULTA REAL A SECOP II vía Socrata API (Dataset Integrado)
+                const response = await fetch(`https://www.datos.gov.co/resource/jbjy-vv8h.json?documento_proveedor=${val}`);
+                const data = await response.json();
 
-            // 4. Tech
-            document.getElementById('tech-data').innerHTML = `
-# RECONOCIMIENTO DE HUELLA DIGITAL PARA: ${val}
-[+] SocialFootprint: Detectada actividad en LinkedIn y bases de datos profesionales.
-[+] Auditoría de Red: No se asocian dominios críticos al ID analizado.
-[+] Comandos de respaldo: nmap -Pn -sV ${val} (Si es IP/Host).
-            `;
+                if (data.length > 0) {
+                    let html = '<table>';
+                    data.slice(0, 5).forEach(item => {
+                        html += `
+                            <tr><td class="label">ENTIDAD:</td><td class="val">${item.nombre_entidad || 'N/A'}</td></tr>
+                            <tr><td class="label">VALOR:</td><td class="val">$${Number(item.valor_del_contrato || 0).toLocaleString()}</td></tr>
+                            <tr><td class="label">ESTADO:</td><td class="val">${item.estado_contrato || 'N/A'}</td></tr>
+                            <tr><td class="label">OBJETO:</td><td class="val">${item.descripcion_del_proceso || 'N/A'}</td></tr>
+                            <tr style="height:20px"></tr>
+                        `;
+                    });
+                    html += '</table>';
+                    secopDiv.innerHTML = html;
+                    status.innerText = `ÉXITO: ${data.length} REGISTROS ENCONTRADOS EN SECOP II`;
+                } else {
+                    secopDiv.innerHTML = "<div class='error'>SIN REGISTROS EN SECOP II: El ID no figura como contratista estatal activo en este dataset.</div>";
+                    status.innerText = "CONSULTA FINALIZADA - SIN HALLAZGOS EN SECOP";
+                }
+            } catch (err) {
+                secopDiv.innerHTML = "<div class='error'>ERROR DE CONEXIÓN: No se pudo acceder a la API de Datos Abiertos. Verifique su conexión o el estado de datos.gov.co</div>";
+                status.innerText = "ERROR_DE_SISTEMA";
+            }
 
-            // 5. Links
+            // ENLACES DIRECTOS (Garantizados)
             const lks = [
-                {n: "VERIFICACION_SIMIT", u: `https://fcm.org.co/simit/#/estado-cuenta?numeroDocumento=${val}`},
-                {n: "EXPEDIENTE_ADRES", u: "https://www.adres.gov.co/consulte-su-eps"},
-                {n: "PORTAL_SECOP", u: "https://www.contratos.gov.co/consultas/detalleProceso.do"}
+                {n: "SIMIT (MULTAS)", u: `https://fcm.org.co/simit/#/estado-cuenta?numeroDocumento=${val}`},
+                {n: "ADRES (SALUD)", u: "https://www.adres.gov.co/consulte-su-eps"},
+                {n: "RUES (EMPRESAS)", u: "https://www.rues.org.co/"}
             ];
-            document.getElementById('link-data').innerHTML = lks.map(l => `
-                <a href="${l.u}" target="_blank" style="color:#00ff41; display:block; margin:10px 0;">[ABRIR_PRUEBA_DOCUMENTAL: ${l.n}]</a>
-            `).join('');
+            document.getElementById('links').innerHTML = lks.map(l => `<a href="${l.u}" target="_blank" class="btn-link">${l.n} ↗</a>`).join(' ');
         }
     </script>
 </body>
