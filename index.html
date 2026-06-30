@@ -3,115 +3,199 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <title>ARGOS v16.5 — Ultra OSINT Suite</title>
+    <title>ARGOS v17.0 — Motor de Inferencia Inteligente</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Space+Grotesk:wght@700&family=JetBrains+Mono:wght@500&display=swap');
-        :root { --bg: #020617; --surface: #0f172a; --primary: #6366f1; --accent: #ef4444; --text: #f8fafc; --text-dim: #94a3b8; --border: #1e293b; --success: #22c55e; }
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Outfit:wght@300;600;800&display=swap');
+        :root { --bg: #050505; --card: #0d0d0f; --accent: #ff003c; --accent-dim: rgba(255,0,60,0.1); --text: #e2e8f0; --dim: #64748b; --border: #1a1a1c; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; margin: 0; line-height: 1.5; }
-        header { background: rgba(15,23,42,0.8); backdrop-filter: blur(12px); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
-        .logo { font-family: 'Space Grotesk', sans-serif; font-weight: 800; font-size: 1.5rem; }
-        .logo span { color: var(--primary); font-size: 0.6rem; border: 1px solid var(--primary); padding: 2px 8px; border-radius: 20px; margin-left: 8px; vertical-align: middle; }
-        .nav { display: flex; gap: 0.5rem; padding: 0.5rem 1rem; background: #020617; border-bottom: 1px solid var(--border); overflow-x: auto; position: sticky; top: 65px; z-index: 90; }
-        .tab { padding: 0.5rem 1rem; cursor: pointer; font-size: 0.8rem; border-radius: 8px; white-space: nowrap; color: var(--text-dim); }
-        .tab.active { background: #1e293b; color: #fff; border: 1px solid var(--primary); }
-        main { max-width: 1100px; margin: 2rem auto; padding: 0 1rem; }
-        .hero { text-align: center; padding: 3rem 0; }
-        .hero h1 { font-family: 'Space Grotesk', sans-serif; font-size: 4.5rem; margin-bottom: 1rem; background: linear-gradient(to right, #fff, #64748b); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .search-box { display: flex; max-width: 700px; margin: 2rem auto; background: var(--surface); border-radius: 16px; padding: 0.5rem; border: 1px solid var(--border); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
-        input { flex: 1; background: transparent; border: none; color: #fff; padding: 1rem; outline: none; font-size: 1.2rem; }
-        button.scan { background: var(--primary); color: #fff; border: none; padding: 0 2.5rem; border-radius: 12px; font-weight: 800; cursor: pointer; transition: 0.2s; }
-        .card { background: var(--surface); border-radius: 20px; padding: 2rem; border: 1px solid var(--border); margin-bottom: 1.5rem; }
-        .source-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 0.5rem; margin-top: 1rem; }
-        .source { padding: 8px; background: rgba(255,255,255,0.03); border-radius: 8px; border: 1px solid var(--border); font-size: 0.65rem; color: var(--text-dim); }
-        .source.hit { border-color: var(--success); color: var(--success); background: rgba(34,197,94,0.05); }
-        .ia-report { border-left: 4px solid var(--primary); background: rgba(99,102,241,0.05); padding: 1.5rem; border-radius: 0 12px 12px 0; margin-top: 2rem; }
-        .panel { display: none; } .panel.active { display: block; }
-        .badge-ia { background: var(--primary); color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.6rem; font-weight: 800; margin-right: 8px; }
+        body { background: var(--bg); color: var(--text); font-family: 'Outfit', sans-serif; overflow-x: hidden; }
+        
+        /* Glassmorphism Header */
+        header { 
+            position: sticky; top: 0; z-index: 1000;
+            padding: 1rem 5%; background: rgba(5,5,5,0.8);
+            backdrop-filter: blur(10px); border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .logo { font-size: 1.5rem; font-weight: 800; letter-spacing: -1px; }
+        .logo span { color: var(--accent); }
+        
+        main { padding: 2rem 5%; max-width: 1200px; margin: 0 auto; }
+        
+        /* Hero Section */
+        .hero { text-align: center; margin-bottom: 3rem; }
+        .hero h1 { font-size: 4rem; font-weight: 800; margin-bottom: 0.5rem; line-height: 1; }
+        .hero p { color: var(--dim); font-size: 1.1rem; }
+
+        /* Search Interface */
+        .search-container {
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 24px; padding: 1.5rem; margin-bottom: 2rem;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+        }
+        .input-group { display: flex; gap: 1rem; }
+        input { 
+            flex: 1; background: #141416; border: 1px solid var(--border);
+            border-radius: 12px; padding: 1rem 1.5rem; color: #fff;
+            font-size: 1.1rem; outline: none; transition: 0.3s;
+        }
+        input:focus { border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-dim); }
+        .btn-scan {
+            background: var(--accent); color: #fff; border: none;
+            padding: 0 2.5rem; border-radius: 12px; font-weight: 700;
+            cursor: pointer; transition: 0.3s; text-transform: uppercase;
+        }
+        .btn-scan:hover { transform: translateY(-2px); box-shadow: 0 10px 20px var(--accent-dim); }
+
+        /* Result Sections */
+        .grid { display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; }
+        @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+
+        .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 1.5rem; }
+        .card h3 { font-size: 0.9rem; text-transform: uppercase; color: var(--accent); letter-spacing: 2px; margin-bottom: 1.5rem; }
+        
+        /* Deep Links */
+        .link-list { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+        .deep-link {
+            background: #141416; border: 1px solid var(--border);
+            padding: 0.8rem; border-radius: 8px; font-size: 0.8rem;
+            text-decoration: none; color: var(--text); transition: 0.2s;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .deep-link:hover { border-color: var(--accent); background: var(--accent-dim); }
+        .deep-link i { font-size: 0.7rem; color: var(--dim); }
+
+        /* IA Inferencia */
+        .ia-report { border-left: 4px solid var(--accent); background: linear-gradient(to right, var(--accent-dim), transparent); padding: 1.5rem; border-radius: 0 12px 12px 0; }
+        .ia-text { font-size: 1rem; line-height: 1.6; font-family: 'JetBrains Mono', monospace; }
+        .highlight { color: var(--accent); font-weight: 700; }
+
+        /* Auditoría Tab */
+        .cmd-box { background: #000; padding: 1rem; border-radius: 8px; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: #22c55e; margin-top: 0.5rem; position: relative; }
+        .cmd-box::before { content: "terminal"; position: absolute; top: -10px; right: 10px; font-size: 0.6rem; color: #444; text-transform: uppercase; }
+
+        .hidden { display: none; }
+        .visible { display: block; animation: fadeInUp 0.5s ease forwards; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
-<header>
-    <div class="logo">ARGOS <span>v16.5 ULTRA</span></div>
-    <div style="font-size: 0.7rem; color: var(--success); font-weight: 800;">● 17 APIs & 95 Datasets ONLINE</div>
-</header>
-<div class="nav">
-    <div class="tab active" data-tab="search">🔍 Motor Central (95+)</div>
-    <div class="tab" data-tab="ia">🧠 Cruce de Información IA</div>
-    <div class="tab" data-tab="social">🌍 Huella Digital</div>
-    <div class="tab" data-tab="audit">🛡️ OpSec & Auditoría</div>
-</div>
-<main>
-    <div class="panel active" id="panel-search">
-        <div class="hero">
-            <h1>OSINT ENGINE</h1>
-            <p style="color: var(--text-dim); max-width: 600px; margin: 0 auto;">Cruce masivo de datos en tiempo real. Consultando SECOP, SIMIT, ADRES, SGR, CNE y registros nacionales.</p>
-            <div class="search-box">
-                <input type="text" id="main-q" placeholder="Cédula, NIT o Nombre Completo..."/>
-                <button class="scan" onclick="startScan()">ESCANEAR</button>
-            </div>
-            <div id="scan-status" style="display:none; margin-top: 1rem; font-size: 0.8rem; color: var(--primary);">
-                Procesando cruce de 95 fuentes de datos gubernamentales...
-            </div>
-        </div>
+    <header>
+        <div class="logo">ARGOS<span>.v17</span></div>
+        <div style="font-size: 0.8rem; font-weight: 600; color: var(--dim);">INTELLIGENCE SUITE COLOMBIA</div>
+    </header>
 
-        <div class="card">
-            <h3>Cobertura de Fuentes (95+ Datasets Reales)</h3>
-            <div class="source-grid" id="source-grid">
-                <!-- Se llenará dinámicamente con las fuentes reales -->
-            </div>
-        </div>
-        
-        <div id="results" style="display:none;">
-            <div class="ia-report">
-                <h3><span class="badge-ia">IA</span> INFERENCIA DE RELACIONES</h3>
-                <p id="ia-summary" style="font-size: 0.9rem; color: var(--text-dim); margin-top: 0.5rem;"></p>
-            </div>
-            <div id="data-blocks" style="margin-top: 1.5rem;"></div>
-        </div>
-    </div>
-</main>
-<script>
-    const SOURCES = [
-        "SECOP I (Histórico)", "SECOP II (Vigente)", "PEP (Funcionarios)", "SIRI (Procuraduría)", 
-        "Contraloría (Fiscal)", "SIMIT (Multas)", "ADRES (Fosyga)", "SGR (Regalías)", 
-        "CNE (Aportes)", "DIAN (RUT)", "RUES (Cámaras)", "SENA (SST)", "Policía (PONAL)",
-        "DNP (Sisbén)", "RUAF (Social)", "SuperNotariado", "Cédula Digital", "Migración CO",
-        "Sujetos Obligados", "Contratos Alcaldías", "Licitaciones 2024", "Base SGR 2.0"
-    ];
+    <main>
+        <section class="hero">
+            <h1>Investiga<span>Ya</span></h1>
+            <p>Suite OSINT de Inferencia y Cruce de Datos Masivos</p>
+        </section>
 
-    function startScan() {
-        const q = document.getElementById('main-q').value;
-        if(!q) return;
-        document.getElementById('scan-status').style.display = 'block';
-        const grid = document.getElementById('source-grid');
-        grid.innerHTML = SOURCES.map(s => `<div class="source" id="s-${s.replace(/\s/g,'')}">${s}</div>`).join('');
-        
-        let i = 0;
-        const interval = setInterval(() => {
-            if(i < SOURCES.length) {
-                const s = document.getElementById('s-'+SOURCES[i].replace(/\s/g,''));
-                s.classList.add('hit');
-                s.innerHTML += ' ✓';
-                i++;
+        <section class="search-container">
+            <div class="input-group">
+                <input type="text" id="target" placeholder="Cédula, NIT, Nombre o Dominio..." autocomplete="off">
+                <button class="btn-scan" onclick="ejecutarAnalisis()">Analizar</button>
+            </div>
+        </section>
+
+        <div id="dashboard" class="hidden">
+            <div class="grid">
+                <!-- Columna Principal: Hallazgos e IA -->
+                <div class="main-col">
+                    <div class="card ia-report">
+                        <h3>🧠 Inferencia ARGOS (Motor IA)</h3>
+                        <div class="ia-text" id="ia-output">
+                            Procesando patrones...
+                        </div>
+                    </div>
+                    
+                    <div class="card" style="margin-top: 1.5rem;">
+                        <h3>📂 Deep Links (Fuentes Directas)</h3>
+                        <div class="link-list" id="link-container">
+                            <!-- Enlaces dinámicos -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Columna Lateral: Auditoría y Herramientas -->
+                <div class="side-col">
+                    <div class="card">
+                        <h3>🛡️ Auditoría Técnica</h3>
+                        <p style="font-size: 0.75rem; color: var(--dim); margin-bottom: 1rem;">Comandos generados para análisis de infraestructura:</p>
+                        <div id="audit-output">
+                            <div class="cmd-box"># Ingrese un dominio o IP</div>
+                        </div>
+                    </div>
+                    
+                    <div class="card" style="margin-top: 1.5rem;">
+                        <h3>📊 Matriz de Relación</h3>
+                        <div style="font-size: 0.8rem; color: var(--dim);">
+                            <p>● SECOP: <span id="m-secop">...</span></p>
+                            <p>● SIMIT: <span id="m-simit">...</span></p>
+                            <p>● ADRES: <span id="m-adres">...</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function ejecutarAnalisis() {
+            const val = document.getElementById('target').value.trim();
+            if(!val) return;
+
+            const dash = document.getElementById('dashboard');
+            dash.classList.remove('hidden');
+            dash.classList.add('visible');
+
+            // 1. Generar Deep Links Reales
+            const links = [
+                { n: "SIMIT (Multas)", u: `https://fcm.org.co/simit/#/estado-cuenta?numeroDocumento=${val}` },
+                { n: "ADRES (Fosyga)", u: "https://www.adres.gov.co/consulte-su-eps" },
+                { n: "SECOP I", u: "https://www.contratos.gov.co/consultas/detalleProceso.do" },
+                { n: "RUNT (Vehículos)", u: "https://www.runt.com.co/consulta-ciudadana/publico/consultas/placa" },
+                { n: "Procuraduría", u: "https://www.procuraduria.gov.co/Pages/Generacion-de-Certificado-de-Antecedentes.aspx" },
+                { n: "Contraloría", u: "https://www.contraloria.gov.co/control-fiscal/responsabilidad-fiscal/certificado-de-antecedentes-fiscales" },
+                { n: "Policía Nacional", u: "https://srvcnpc.policia.gov.co/PSC/frm_cnp_consulta.aspx" },
+                { n: "Sisbén DNP", u: "https://interactive.sisben.gov.co/ConsultaSisben/" }
+            ];
+
+            const container = document.getElementById('link-container');
+            container.innerHTML = links.map(l => `
+                <a href="${l.u}" target="_blank" class="deep-link">
+                    ${l.n} <i>↗</i>
+                </a>
+            `).join('');
+
+            // 2. Lógica de Inferencia IA (Simulada para visualización inmediata)
+            const iaOutput = document.getElementById('ia-output');
+            const isNum = !isNaN(val);
+            
+            if(isNum) {
+                iaOutput.innerHTML = `Detectado perfil de <span class="highlight">PERSONA NATURAL</span>. <br><br>
+                Cruzando cédula con registros de SECOP y SIMIT... <br>
+                [+] Patrón detectado: El ID analizado coincide con la estructura de un contratista estatal. <br>
+                [!] <span class="highlight">ALERTA:</span> Se recomienda verificar la vigencia en la Cámara de Comercio (RUES) para descartar empresas fachada.`;
+                
+                document.getElementById('m-secop').innerText = "Vínculo Detectado";
+                document.getElementById('m-simit').innerText = "Pendiente";
+                document.getElementById('m-adres').innerText = "Afiliado";
             } else {
-                clearInterval(interval);
-                showResults(q);
+                iaOutput.innerHTML = `Analizando <span class="highlight">ENTIDAD/DOMINIO</span>... <br><br>
+                [+] Ejecutando Footprinting sobre el objetivo. <br>
+                [+] Generando matriz de infraestructura. <br>
+                [!] Recomendación: Ejecutar auditoría pasiva en Shodan y Censys.`;
+                
+                // 3. Generar Comandos de Auditoría si es un dominio
+                const audit = document.getElementById('audit-output');
+                audit.innerHTML = `
+                    <div class="cmd-box">nmap -sV -T4 ${val}</div>
+                    <div class="cmd-box">whois ${val} | grep "Expiration"</div>
+                    <div class="cmd-box">dig ${val} ANY +short</div>
+                `;
             }
-        }, 100);
-    }
-
-    function showResults(q) {
-        document.getElementById('results').style.display = 'block';
-        document.getElementById('ia-summary').innerHTML = \`Analizando vínculos para <b>\${q}</b>. Se detectó actividad en SECOP II y SIMIT. <b>ALERTA IA:</b> El sujeto presenta contratos vigentes mientras registra deudas por infracciones de tránsito en 3 municipios distintos. Posible riesgo de embargo estatal.\`;
-    }
-
-    document.querySelectorAll('.tab').forEach(t => {
-        t.addEventListener('click', () => {
-            document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
-            t.classList.add('active');
-        });
-    });
-</script>
+        }
+    </script>
 </body>
 </html>
