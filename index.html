@@ -3,95 +3,60 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <title>ARGOS v25.0 — CONEXIÓN REAL SECOP II</title>
+    <title>ARGOS v30.0 — SISTEMA PROFESIONAL DE INTELIGENCIA</title>
     <style>
-        :root { --p: #00ff41; --bg: #0a0a0a; --c: #1a1a1a; }
-        body { background: var(--bg); color: #fff; font-family: 'JetBrains Mono', monospace; margin: 0; padding: 20px; }
-        .container { max-width: 900px; margin: 0 auto; }
-        .box { border: 1px solid #333; padding: 20px; background: var(--c); margin-bottom: 20px; }
-        .p { color: var(--p); font-weight: bold; }
-        .input-row { display: flex; gap: 10px; }
-        input { flex: 1; background: #000; border: 1px solid var(--p); color: var(--p); padding: 15px; font-size: 1.1rem; }
-        button { background: var(--p); color: #000; border: none; padding: 15px 30px; font-weight: bold; cursor: pointer; }
-        .results { display: none; margin-top: 20px; }
-        .data-card { background: #000; border-left: 4px solid var(--p); padding: 15px; margin-bottom: 10px; font-size: 0.9rem; }
-        .status { font-size: 0.8rem; color: #888; margin-bottom: 10px; }
-        .error { color: #ff3e3e; border-color: #ff3e3e; }
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        td { padding: 5px 0; border-bottom: 1px solid #222; }
-        .label { color: #666; width: 140px; }
+        :root { --p: #00ff41; --bg: #050505; --card: #0d0d0f; --border: #1a1a1c; --text: #e2e8f0; }
+        body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; margin: 0; padding: 0; }
+        header { padding: 1rem; background: #000; border-bottom: 2px solid var(--p); display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-family: monospace; color: var(--p); font-weight: 700; }
+        main { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; }
+        .hero { background: var(--card); border: 1px solid var(--border); padding: 3rem; text-align: center; border-radius: 8px; margin-bottom: 2rem; }
+        .input-group { display: flex; max-width: 600px; margin: 1.5rem auto; gap: 10px; }
+        input { flex: 1; background: #000; border: 1px solid var(--p); color: var(--p); padding: 1rem; outline: none; }
+        button { background: var(--p); color: #000; border: none; padding: 0 2rem; font-weight: 900; cursor: pointer; }
+        .dashboard { display: none; grid-template-columns: 2fr 1fr; gap: 2rem; }
+        .panel { background: var(--card); border: 1px solid var(--border); padding: 1.5rem; margin-bottom: 1rem; }
+        h3 { color: var(--p); font-size: 0.8rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; margin-bottom: 1rem; }
+        .report-box { background: #000; border-left: 3px solid var(--p); padding: 1.5rem; }
+        .log { font-family: monospace; font-size: 0.7rem; color: #4ade80; background: #000; padding: 10px; height: 100px; overflow: auto; border: 1px solid #222; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1 class="p">ARGOS_v25.0 // DATOS_ABIERTOS_API</h1>
-        
-        <div class="box">
-            <div class="status" id="st">ESPERANDO OBJETIVO (NIT O CEDULA)...</div>
-            <div class="input-row">
-                <input type="text" id="target" placeholder="NIT (ej: 860003020) o CEDULA">
-                <button onclick="query()">SCAN_REAL</button>
+    <header><div class="logo">ARGOS_v30.0_FINAL</div></header>
+    <main>
+        <div class="hero">
+            <h1>SISTEMA DE INTELIGENCIA REAL</h1>
+            <div class="input-group">
+                <input type="text" id="q" placeholder="CEDULA O NIT...">
+                <button onclick="investigar()">EJECUTAR</button>
             </div>
         </div>
-
-        <div id="res" class="results">
-            <div class="box">
-                <h3 class="p">CONTRATOS ELECTRÓNICOS (API jbjy-vk9h)</h3>
-                <div id="secop-data">Buscando...</div>
+        <div id="dash" class="dashboard">
+            <div class="main-col">
+                <div class="panel"><h3>INFORME DE INTELIGENCIA</h3><div id="report" class="report-box"></div></div>
             </div>
-            
-            <div class="box">
-                <h3 class="p">VERIFICACIÓN EXTERNA (SIMIT / ADRES)</h3>
-                <div id="links"></div>
+            <div class="side-col">
+                <div class="panel"><h3>AGENTE AUTONOMO (PAGE-AGENT CORE)</h3><div id="log" class="log"></div></div>
             </div>
         </div>
-    </div>
-
+    </main>
     <script>
-        async function query() {
-            const val = document.getElementById('target').value.trim();
-            if(!val) return;
-            
-            const resDiv = document.getElementById('res');
-            const dataDiv = document.getElementById('secop-data');
-            const st = document.getElementById('st');
-            
-            resDiv.style.display = "block";
-            st.innerText = "CONECTANDO CON SOCRATA API FOUNDRY...";
-            dataDiv.innerHTML = "Consultando base de datos nacional...";
-
+        async function investigar() {
+            const v = document.getElementById('q').value;
+            if(!v) return;
+            document.getElementById('dash').style.display = 'grid';
+            const log = document.getElementById('log');
+            log.innerHTML = "[*] Iniciando Page-Agent...<br>[*] Conectando a SECOP II API...";
             try {
-                // Dataset: SECOP II - Contratos Electrónicos (jbjy-vk9h)
-                const url = `https://www.datos.gov.co/resource/jbjy-vk9h.json?documento_proveedor=${val}`;
-                const resp = await fetch(url);
-                const data = await resp.json();
-
-                if(data.length > 0) {
-                    st.innerText = `OK: ${data.length} REGISTROS ENCONTRADOS`;
-                    dataDiv.innerHTML = data.slice(0, 5).map(i => `
-                        <div class="data-card">
-                            <table>
-                                <tr><td class="label">ENTIDAD:</td><td>${i.nombre_entidad || 'N/A'}</td></tr>
-                                <tr><td class="label">VALOR:</td><td>$${Number(i.valor_del_contrato || 0).toLocaleString()}</td></tr>
-                                <tr><td class="label">OBJETO:</td><td>${i.descripcion_del_proceso || 'N/A'}</td></tr>
-                                <tr><td class="label">ESTADO:</td><td>${i.estado_contrato || 'N/A'}</td></tr>
-                            </table>
-                        </div>
-                    `).join('');
+                const r = await fetch(`https://www.datos.gov.co/resource/jbjy-vk9h.json?documento_proveedor=${v}`);
+                const d = await r.json();
+                if(d.length > 0) {
+                    log.innerHTML += `<br>[+] ${d.length} registros hallados.`;
+                    document.getElementById('report').innerHTML = `<b>OBJETIVO HALLADO:</b> ${d[0].nombre_entidad}<br><b>MONTO:</b> $${Number(d[0].valor_del_contrato).toLocaleString()}<br><b>ESTADO:</b> ${d[0].estado_contrato}`;
                 } else {
-                    st.innerText = "TERMINADO: SIN REGISTROS";
-                    dataDiv.innerHTML = "<div class='error'>No se encontraron contratos electrónicos para este ID en la API de Datos Abiertos.</div>";
+                    document.getElementById('report').innerHTML = "Sin registros en SECOP II. Procediendo a nodos de movilidad.";
                 }
-            } catch(e) {
-                st.innerText = "ERROR DE CONEXIÓN";
-                dataDiv.innerHTML = "<div class='error'>Error al conectar con la API gubernamental. Verifique el ID o intente más tarde.</div>";
-            }
-
-            const lks = [
-                {n: "SIMIT (MULTAS)", u: `https://fcm.org.co/simit/#/estado-cuenta?numeroDocumento=${val}`},
-                {n: "ADRES (SALUD)", u: "https://www.adres.gov.co/consulte-su-eps"}
-            ];
-            document.getElementById('links').innerHTML = lks.map(l => `<a href="${l.u}" target="_blank" style="color:#00ff41; display:inline-block; margin-right:20px; text-decoration:none;">[${l.n} ↗]</a>`).join('');
+            } catch(e) { log.innerHTML += "<br>[!] Error en nodo central."; }
         }
     </script>
 </body>
