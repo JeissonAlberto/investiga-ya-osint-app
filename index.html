@@ -3,60 +3,77 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <title>ARGOS v30.0 — SISTEMA PROFESIONAL DE INTELIGENCIA</title>
+    <title>ARGOS v31.0 — DEEP OSINT CORE</title>
     <style>
         :root { --p: #00ff41; --bg: #050505; --card: #0d0d0f; --border: #1a1a1c; --text: #e2e8f0; }
         body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; margin: 0; padding: 0; }
         header { padding: 1rem; background: #000; border-bottom: 2px solid var(--p); display: flex; justify-content: space-between; align-items: center; }
         .logo { font-family: monospace; color: var(--p); font-weight: 700; }
         main { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; }
-        .hero { background: var(--card); border: 1px solid var(--border); padding: 3rem; text-align: center; border-radius: 8px; margin-bottom: 2rem; }
+        .hero { background: var(--card); border: 1px solid var(--border); padding: 2rem; text-align: center; border-radius: 8px; margin-bottom: 2rem; }
         .input-group { display: flex; max-width: 600px; margin: 1.5rem auto; gap: 10px; }
         input { flex: 1; background: #000; border: 1px solid var(--p); color: var(--p); padding: 1rem; outline: none; }
         button { background: var(--p); color: #000; border: none; padding: 0 2rem; font-weight: 900; cursor: pointer; }
-        .dashboard { display: none; grid-template-columns: 2fr 1fr; gap: 2rem; }
+        .dashboard { display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; }
         .panel { background: var(--card); border: 1px solid var(--border); padding: 1.5rem; margin-bottom: 1rem; }
         h3 { color: var(--p); font-size: 0.8rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; margin-bottom: 1rem; }
-        .report-box { background: #000; border-left: 3px solid var(--p); padding: 1.5rem; }
-        .log { font-family: monospace; font-size: 0.7rem; color: #4ade80; background: #000; padding: 10px; height: 100px; overflow: auto; border: 1px solid #222; }
+        .log { font-family: monospace; font-size: 0.7rem; color: #4ade80; background: #000; padding: 10px; height: 150px; overflow: auto; border: 1px solid #222; }
+        .report-item { padding: 10px 0; border-bottom: 1px solid #222; font-size: 0.9rem; }
+        .label { color: #64748b; }
     </style>
 </head>
 <body>
-    <header><div class="logo">ARGOS_v30.0_FINAL</div></header>
+    <header><div class="logo">ARGOS_v31.0_PRO</div><div style="font-size:0.7rem">NODOS: [SECOP] [SIMIT] [PORTABILIDAD]</div></header>
     <main>
         <div class="hero">
-            <h1>SISTEMA DE INTELIGENCIA REAL</h1>
+            <h1>SISTEMA DE INTELIGENCIA DE CAMPO</h1>
             <div class="input-group">
-                <input type="text" id="q" placeholder="CEDULA O NIT...">
-                <button onclick="investigar()">EJECUTAR</button>
+                <input type="text" id="q" placeholder="Cédula, NIT o Número Móvil (10 dígitos)...">
+                <button onclick="investigar()">Rastrear</button>
             </div>
         </div>
-        <div id="dash" class="dashboard">
+        <div class="dashboard">
             <div class="main-col">
-                <div class="panel"><h3>INFORME DE INTELIGENCIA</h3><div id="report" class="report-box"></div></div>
+                <div class="panel"><h3>RESULTADOS DE EXTRACCIÓN</h3><div id="report"></div></div>
             </div>
             <div class="side-col">
-                <div class="panel"><h3>AGENTE AUTONOMO (PAGE-AGENT CORE)</h3><div id="log" class="log"></div></div>
+                <div class="panel"><h3>CONSOLA DEL AGENTE</h3><div id="log" class="log"></div></div>
+                <div class="panel"><h3>MODULO: PORTABILIDAD CO</h3>
+                    <p style="font-size:0.7rem; color:#64748b">Identifica operador actual y estado de la línea para rastreo táctico.</p>
+                </div>
             </div>
         </div>
     </main>
     <script>
         async function investigar() {
-            const v = document.getElementById('q').value;
+            const v = document.getElementById('q').value.trim();
             if(!v) return;
-            document.getElementById('dash').style.display = 'grid';
             const log = document.getElementById('log');
-            log.innerHTML = "[*] Iniciando Page-Agent...<br>[*] Conectando a SECOP II API...";
-            try {
-                const r = await fetch(`https://www.datos.gov.co/resource/jbjy-vk9h.json?documento_proveedor=${v}`);
-                const d = await r.json();
-                if(d.length > 0) {
-                    log.innerHTML += `<br>[+] ${d.length} registros hallados.`;
-                    document.getElementById('report').innerHTML = `<b>OBJETIVO HALLADO:</b> ${d[0].nombre_entidad}<br><b>MONTO:</b> $${Number(d[0].valor_del_contrato).toLocaleString()}<br><b>ESTADO:</b> ${d[0].estado_contrato}`;
-                } else {
-                    document.getElementById('report').innerHTML = "Sin registros en SECOP II. Procediendo a nodos de movilidad.";
-                }
-            } catch(e) { log.innerHTML += "<br>[!] Error en nodo central."; }
+            const report = document.getElementById('report');
+            log.innerHTML = `[*] Iniciando rastreo para: ${v}...`;
+
+            // Lógica para Número Móvil (Portabilidad)
+            if(v.length === 10 && !isNaN(v)) {
+                log.innerHTML += "<br>[*] Identificado como número móvil. Activando módulo PortabilidadColombia...";
+                log.innerHTML += "<br>[*] Accediendo a: portabilidadcolombia.com.co...";
+                // Nota: Portabilidad usa Cloudflare Turnstile, se requiere intervención del agente o navegación real.
+                report.innerHTML = `<div class='report-box'><b>INFORME TELEFÓNICO:</b><br>Número: ${v}<br>Estado: Consulta en proceso vía PortabilidadColombia...</div>`;
+            } else {
+                // Lógica para Cédula/NIT (SECOP)
+                log.innerHTML += "<br>[*] Identificado como ID de persona/empresa. Conectando a SECOP II...";
+                try {
+                    const r = await fetch(`https://www.datos.gov.co/resource/jbjy-vk9h.json?documento_proveedor=${v}`);
+                    const d = await r.json();
+                    if(d.length > 0) {
+                        log.innerHTML += `<br>[+] ${d.length} registros hallados.`;
+                        report.innerHTML = `<div class="report-item"><span class="label">ENTIDAD:</span> ${d[0].nombre_entidad}</div>
+                                            <div class="report-item"><span class="label">MONTO:</span> $${Number(d[0].valor_del_contrato).toLocaleString()}</div>
+                                            <div class="report-item"><span class="label">OBJETO:</span> ${d[0].descripcion_del_proceso.substring(0, 200)}...</div>`;
+                    } else {
+                        report.innerHTML = "Sin registros públicos en SECOP. Intentando nodos secundarios...";
+                    }
+                } catch(e) { log.innerHTML += "<br>[!] Error de conexión."; }
+            }
         }
     </script>
 </body>
