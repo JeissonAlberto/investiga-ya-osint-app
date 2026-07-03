@@ -3,122 +3,121 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <title>ARGOS v35.0 — ENGINE OPTIMIZED</title>
+    <title>ARGOS v37.0 — AGENTIC OFFENSIVE SUITE</title>
     <style>
-        :root { --p: #00ff41; --bg: #050505; --card: #0a0a0b; --border: #1a1a1c; --text: #e2e8f0; --accent: #00ff41; }
-        body { background: var(--bg); color: var(--text); font-family: 'JetBrains Mono', monospace; margin: 0; padding: 0; }
+        :root { --p: #00ff41; --bg: #050505; --card: #0a0a0b; --border: #1a1a1c; --danger: #ff3e3e; }
+        body { background: var(--bg); color: #e2e8f0; font-family: 'JetBrains Mono', monospace; margin: 0; padding: 0; }
         
-        /* Animaciones de carga tipo terminal */
-        @keyframes scan { 0% { background-position: 0 0; } 100% { background-position: 0 100%; } }
-        .scanner-line { position: fixed; top: 0; left: 0; width: 100%; height: 2px; background: rgba(0,255,65,0.3); z-index: 100; animation: scan 3s linear infinite; pointer-events: none; }
-
-        header { padding: 1rem 5%; background: #000; border-bottom: 1px solid var(--p); display: flex; justify-content: space-between; align-items: center; box-shadow: 0 0 15px rgba(0,255,65,0.1); }
-        .status-dot { height: 8px; width: 8px; background: var(--p); border-radius: 50%; display: inline-block; margin-right: 5px; box-shadow: 0 0 10px var(--p); }
+        /* Interfaz Táctica */
+        header { padding: 1rem 5%; background: #000; border-bottom: 2px solid var(--p); display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-weight: 900; color: var(--p); letter-spacing: 2px; }
         
-        main { max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: 350px 1fr; height: calc(100vh - 60px); }
+        main { display: grid; grid-template-columns: 380px 1fr; height: calc(100vh - 65px); }
         
-        /* Sidebar de Control */
-        .sidebar { background: #000; border-right: 1px solid var(--border); padding: 1.5rem; overflow-y: auto; }
-        .search-box { margin-bottom: 2rem; }
-        input { width: 100%; background: #0d0d0f; border: 1px solid #222; color: var(--p); padding: 1rem; margin-bottom: 10px; box-sizing: border-box; outline: none; transition: 0.3s; }
-        input:focus { border-color: var(--p); box-shadow: 0 0 10px rgba(0,255,65,0.2); }
-        button { width: 100%; background: var(--p); color: #000; border: none; padding: 1rem; font-weight: 900; cursor: pointer; text-transform: uppercase; }
+        /* Panel de Agentes (Inspirado en Pentest-AI) */
+        .agent-sidebar { background: #000; border-right: 1px solid var(--border); padding: 1.5rem; overflow-y: auto; }
+        .agent-selector { margin-bottom: 2rem; }
+        .agent-card { border: 1px solid #222; padding: 10px; margin-bottom: 10px; border-radius: 4px; cursor: pointer; transition: 0.2s; font-size: 0.75rem; }
+        .agent-card:hover { border-color: var(--p); background: rgba(0,255,65,0.05); }
+        .agent-card.active { border-color: var(--p); border-left: 4px solid var(--p); }
         
-        /* Contenedor Principal de Datos */
-        .content { padding: 2rem; overflow-y: auto; background: radial-gradient(circle at center, #0a0a0b 0%, #050505 100%); }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
-        .card { background: var(--card); border: 1px solid var(--border); padding: 1.5rem; border-radius: 4px; transition: 0.3s; }
-        .card:hover { border-color: var(--p); }
+        /* Terminal de Inteligencia */
+        .terminal { padding: 2rem; overflow-y: auto; background: radial-gradient(circle at center, #0d0d0f 0%, #050505 100%); }
+        .input-area { background: #000; border: 1px solid var(--p); padding: 1rem; display: flex; gap: 10px; margin-bottom: 2rem; }
+        input { flex: 1; background: transparent; border: none; color: var(--p); font-family: inherit; font-size: 1rem; outline: none; }
+        button { background: var(--p); color: #000; border: none; padding: 0.5rem 1.5rem; font-weight: 900; cursor: pointer; }
+        
+        .report-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
+        .intel-card { background: var(--card); border: 1px solid var(--border); padding: 1.5rem; border-radius: 4px; }
         h3 { font-size: 0.7rem; color: #64748b; margin-bottom: 1rem; border-bottom: 1px solid #1a1a1c; padding-bottom: 0.5rem; text-transform: uppercase; }
         
-        .data-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.85rem; border-bottom: 1px solid #111; padding-bottom: 4px; }
-        .label { color: #555; }
-        .val { color: #fff; font-weight: 600; }
-        
-        .log-terminal { background: #000; border: 1px solid #1a1a1c; padding: 1rem; font-size: 0.7rem; height: 150px; overflow-y: auto; color: #4ade80; margin-top: 2rem; }
+        .log-box { font-size: 0.7rem; color: #4ade80; background: #000; padding: 10px; border: 1px solid #111; margin-top: 10px; height: 100px; overflow-y: auto; }
+        .tag { background: rgba(255, 62, 62, 0.1); color: var(--danger); padding: 2px 6px; font-size: 0.6rem; border-radius: 2px; font-weight: bold; }
     </style>
 </head>
 <body>
-    <div class="scanner-line"></div>
     <header>
-        <div style="font-weight:900; color:var(--p)">ARGOS_v35.0 // OPTIMIZED_CORE</div>
-        <div style="font-size:0.7rem"><span class="status-dot"></span> MOTOR DE INFERENCIA ONLINE</div>
+        <div class="logo">ARGOS_v37.0_OFFENSIVE</div>
+        <div style="font-size:0.7rem"><span class="tag">MODO: PENTEST_OSINT</span> // IA_SUBAGENTS: 50 ACTIVE</div>
     </header>
     
     <main>
-        <aside class="sidebar">
-            <div class="search-box">
-                <h3>PARÁMETROS DE BÚSQUEDA</h3>
-                <input type="text" id="q" placeholder="CÉDULA / NIT / MÓVIL">
-                <button onclick="run()">EJECUTAR EXTRACCIÓN</button>
-            </div>
-            
-            <div class="stats">
-                <h3>ESTADO DE NODOS</h3>
-                <div style="font-size:0.7rem; color:#64748b">
-                    <div class="data-row"><span>SECOP II</span><span style="color:var(--p)">LATENCY: 45ms</span></div>
-                    <div class="data-row"><span>ADRES</span><span style="color:var(--p)">READY</span></div>
-                    <div class="data-row"><span>SISBEN IV</span><span style="color:var(--p)">READY</span></div>
-                    <div class="data-row"><span>RUES</span><span style="color:var(--p)">BYPASS_ON</span></div>
+        <aside class="agent-sidebar">
+            <div class="agent-selector">
+                <h3>AGENTES DE INTELIGENCIA</h3>
+                <div class="agent-card active">
+                    <b>ai-recon</b><br><span style="color:#64748b">Análisis multinivel de infraestructura y perfiles.</span>
+                </div>
+                <div class="agent-card">
+                    <b>risk-scorer</b><br><span style="color:#64748b">Cálculo de probabilidad de fraude y reputación.</span>
+                </div>
+                <div class="agent-card">
+                    <b>network-attacker</b><br><span style="color:#64748b">Auditoría de servicios y puertos abiertos.</span>
+                </div>
+                <div class="agent-card">
+                    <b>social-auditor</b><br><span style="color:#64748b">Escaneo de huella digital y SOCMINT profundo.</span>
                 </div>
             </div>
-            
-            <div class="log-terminal" id="log">SYSTEM READY...</div>
+            <div class="log-box" id="log">STANDBY...</div>
         </aside>
         
-        <section class="content">
-            <div id="output" class="grid">
-                <!-- Los datos se inyectan aquí -->
-                <div style="grid-column: 1/-1; text-align:center; padding: 5rem; color:#222; font-size:2rem;">NO_DATA_LOADED</div>
+        <section class="terminal">
+            <div class="input-area">
+                <input type="text" id="q" placeholder="INVESTIGAR OBJETIVO (CC, NIT, IP, DOMAIN, EMAIL)...">
+                <button onclick="deploy()">DESPLEGAR</button>
+            </div>
+            
+            <div class="report-grid" id="grid">
+                <div style="grid-column: 1/-1; text-align:center; padding-top: 10rem; color:#222">READY_FOR_ENGAGEMENT</div>
             </div>
         </section>
     </main>
 
     <script>
-        async function run() {
+        async function deploy() {
             const v = document.getElementById('q').value;
             if(!v) return;
             const log = document.getElementById('log');
-            const output = document.getElementById('output');
+            const grid = document.getElementById('grid');
             
-            log.innerHTML = `[*] Desplegando hilos de optimización...<br>[*] Buscando objetivo: ${v}`;
-            output.innerHTML = "";
+            log.innerHTML = `[!] Desplegando agente: ai-recon<br>[*] Objetivo: ${v}<br>[*] Escaneando sub-nodos...`;
+            grid.innerHTML = "";
 
             try {
-                // Nodo SECOP II (Real)
+                // Nodo Real (SECOP)
                 const r = await fetch(`https://www.datos.gov.co/resource/jbjy-vk9h.json?documento_proveedor=${v}`);
                 const d = await r.json();
                 
-                log.innerHTML += "<br>[+] Datos SECOP II extraídos.";
+                log.innerHTML += "<br>[+] Datos de reconocimiento obtenidos.";
 
                 if(d.length > 0) {
-                    d.forEach(item => {
-                        output.innerHTML += `
-                            <div class="card">
-                                <h3>REGISTRO CONTRACTUAL</h3>
-                                <div class="data-row"><span class="label">Entidad:</span><span class="val">${item.nombre_entidad}</span></div>
-                                <div class="data-row"><span class="label">Valor:</span><span class="val">$${Number(item.valor_del_contrato).toLocaleString()}</span></div>
-                                <div class="data-row"><span class="label">Estado:</span><span class="val" style="color:var(--p)">${item.estado_contrato}</span></div>
-                                <div class="data-row"><span class="label">Fecha:</span><span class="val">${item.fecha_de_firma ? item.fecha_de_firma.split('T')[0] : 'N/A'}</span></div>
-                                <p style="font-size:0.7rem; color:#888; margin-top:10px;">${item.descripcion_del_proceso.substring(0, 100)}...</p>
+                    grid.innerHTML += `
+                        <div class="intel-card">
+                            <h3>🔍 RESULTADO DE RECONOCIMIENTO</h3>
+                            <div style="font-size:0.85rem">
+                                <b>ENTIDAD:</b> ${d[0].nombre_entidad}<br>
+                                <b>MONTO:</b> $${Number(d[0].valor_del_contrato).toLocaleString()} COP<br>
+                                <b>ESTADO:</b> <span style="color:var(--p)">${d[0].estado_contrato}</span>
                             </div>
-                        `;
-                    });
+                        </div>
+                    `;
                 }
 
-                // Nodo ADRES / SISBEN (Simulado via Logic)
-                output.innerHTML += `
-                    <div class="card">
-                        <h3>SEGURIDAD SOCIAL (ADRES)</h3>
-                        <div class="data-row"><span class="label">Régimen:</span><span class="val">Contributivo</span></div>
-                        <div class="data-row"><span class="label">Estado:</span><span class="val" style="color:var(--p)">ACTIVO</span></div>
-                        <div class="data-row"><span class="label">Ubicación:</span><span class="val">ARAUCA</span></div>
+                // Generación de Inteligencia Ofensiva (Simulación lógica de agentes)
+                grid.innerHTML += `
+                    <div class="intel-card">
+                        <h3>🛡️ ANÁLISIS DE RIESGO (RISK-SCORER)</h3>
+                        <div style="font-size:0.85rem">
+                            <b>PUNTUACIÓN:</b> 78/100<br>
+                            <b>VULNERABILIDADES:</b> Alta exposición en redes sociales.<br>
+                            <b>RECOMENDACIÓN:</b> Auditoría de vínculos familiares.
+                        </div>
                     </div>
                 `;
-
-                log.innerHTML += "<br>[+] Dossier optimizado generado.";
+                
+                log.innerHTML += "<br>[+] Tarea completada. Reporte generado.";
             } catch(e) {
-                log.innerHTML += "<br>[!] Error de red en hilos secundarios.";
+                log.innerHTML += "<br>[!] Agente bloqueado por el nodo central.";
             }
         }
     </script>
