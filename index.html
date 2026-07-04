@@ -3,123 +3,71 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <title>ARGOS v37.0 — AGENTIC OFFENSIVE SUITE</title>
+    <title>ARGOS v38.0 — GHOST OSINT MANAGEMENT</title>
     <style>
-        :root { --p: #00ff41; --bg: #050505; --card: #0a0a0b; --border: #1a1a1c; --danger: #ff3e3e; }
-        body { background: var(--bg); color: #e2e8f0; font-family: 'JetBrains Mono', monospace; margin: 0; padding: 0; }
-        
-        /* Interfaz Táctica */
-        header { padding: 1rem 5%; background: #000; border-bottom: 2px solid var(--p); display: flex; justify-content: space-between; align-items: center; }
-        .logo { font-weight: 900; color: var(--p); letter-spacing: 2px; }
-        
-        main { display: grid; grid-template-columns: 380px 1fr; height: calc(100vh - 65px); }
-        
-        /* Panel de Agentes (Inspirado en Pentest-AI) */
-        .agent-sidebar { background: #000; border-right: 1px solid var(--border); padding: 1.5rem; overflow-y: auto; }
-        .agent-selector { margin-bottom: 2rem; }
-        .agent-card { border: 1px solid #222; padding: 10px; margin-bottom: 10px; border-radius: 4px; cursor: pointer; transition: 0.2s; font-size: 0.75rem; }
-        .agent-card:hover { border-color: var(--p); background: rgba(0,255,65,0.05); }
-        .agent-card.active { border-color: var(--p); border-left: 4px solid var(--p); }
-        
-        /* Terminal de Inteligencia */
-        .terminal { padding: 2rem; overflow-y: auto; background: radial-gradient(circle at center, #0d0d0f 0%, #050505 100%); }
-        .input-area { background: #000; border: 1px solid var(--p); padding: 1rem; display: flex; gap: 10px; margin-bottom: 2rem; }
-        input { flex: 1; background: transparent; border: none; color: var(--p); font-family: inherit; font-size: 1rem; outline: none; }
-        button { background: var(--p); color: #000; border: none; padding: 0.5rem 1.5rem; font-weight: 900; cursor: pointer; }
-        
-        .report-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
-        .intel-card { background: var(--card); border: 1px solid var(--border); padding: 1.5rem; border-radius: 4px; }
-        h3 { font-size: 0.7rem; color: #64748b; margin-bottom: 1rem; border-bottom: 1px solid #1a1a1c; padding-bottom: 0.5rem; text-transform: uppercase; }
-        
-        .log-box { font-size: 0.7rem; color: #4ade80; background: #000; padding: 10px; border: 1px solid #111; margin-top: 10px; height: 100px; overflow-y: auto; }
-        .tag { background: rgba(255, 62, 62, 0.1); color: var(--danger); padding: 2px 6px; font-size: 0.6rem; border-radius: 2px; font-weight: bold; }
+        :root { --p: #00ff41; --bg: #050505; --card: #0d0d0f; --border: #1a1a1c; }
+        body { background: var(--bg); color: #e2e8f0; font-family: sans-serif; margin: 0; display: flex; height: 100vh; overflow: hidden; }
+        .sidebar { width: 260px; background: #000; border-right: 1px solid var(--border); display: flex; flex-direction: column; }
+        .logo { padding: 1.5rem; font-family: monospace; font-weight: 900; color: var(--p); border-bottom: 1px solid var(--border); }
+        .nav { flex: 1; padding: 1rem; }
+        .nav-item { padding: 10px; margin-bottom: 5px; color: #888; cursor: pointer; font-size: 0.8rem; }
+        .nav-item.active { background: #111; color: var(--p); border-left: 3px solid var(--p); }
+        .main { flex: 1; display: flex; flex-direction: column; background: #080808; }
+        .top { height: 60px; background: #000; border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 1.5rem; justify-content: space-between; }
+        .content { flex: 1; padding: 2rem; overflow-y: auto; }
+        .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 2rem; }
+        .stat-card { background: var(--card); border: 1px solid var(--border); padding: 1rem; border-radius: 4px; }
+        .blocks { display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; }
+        .block { background: var(--card); border: 1px solid var(--border); border-radius: 4px; margin-bottom: 1.5rem; }
+        .block-h { padding: 0.8rem; background: #111; border-bottom: 1px solid var(--border); font-size: 0.7rem; color: var(--p); font-weight: bold; }
+        .block-b { padding: 1rem; }
+        .timeline { border-left: 2px solid #222; padding-left: 1rem; margin-left: 0.5rem; }
+        .t-item { margin-bottom: 1rem; font-size: 0.8rem; }
+        .t-item b { display: block; color: var(--p); }
     </style>
 </head>
 <body>
-    <header>
-        <div class="logo">ARGOS_v37.0_OFFENSIVE</div>
-        <div style="font-size:0.7rem"><span class="tag">MODO: PENTEST_OSINT</span> // IA_SUBAGENTS: 50 ACTIVE</div>
-    </header>
-    
-    <main>
-        <aside class="agent-sidebar">
-            <div class="agent-selector">
-                <h3>AGENTES DE INTELIGENCIA</h3>
-                <div class="agent-card active">
-                    <b>ai-recon</b><br><span style="color:#64748b">Análisis multinivel de infraestructura y perfiles.</span>
-                </div>
-                <div class="agent-card">
-                    <b>risk-scorer</b><br><span style="color:#64748b">Cálculo de probabilidad de fraude y reputación.</span>
-                </div>
-                <div class="agent-card">
-                    <b>network-attacker</b><br><span style="color:#64748b">Auditoría de servicios y puertos abiertos.</span>
-                </div>
-                <div class="agent-card">
-                    <b>social-auditor</b><br><span style="color:#64748b">Escaneo de huella digital y SOCMINT profundo.</span>
-                </div>
+    <div class="sidebar">
+        <div class="logo">ARGOS // GHOST_CRM</div>
+        <div class="nav">
+            <div class="nav-item active">📂 Expedientes Activos</div>
+            <div class="nav-item">👥 Sujetos</div>
+            <div class="nav-item">🕸️ Mapeo de Redes</div>
+        </div>
+    </div>
+    <div class="main">
+        <div class="top">
+            <div style="font-size:0.8rem">EXPEDIENTE: <span style="color:var(--p)">#1094269851</span></div>
+            <div style="font-size:0.7rem">OPERADOR: JEISSON_ALBERTO</div>
+        </div>
+        <div class="content">
+            <div class="stats">
+                <div class="stat-card"><div style="font-size:0.6rem; color:#555">CONTRATOS</div><div style="font-weight:bold">$34.3M</div></div>
+                <div class="stat-card"><div style="font-size:0.6rem; color:#555">SIMIT</div><div style="font-weight:bold; color:var(--p)">LIMPIO</div></div>
+                <div class="stat-card"><div style="font-size:0.6rem; color:#555">ADRES</div><div style="font-weight:bold">ACTIVO</div></div>
+                <div class="stat-card"><div style="font-size:0.6rem; color:#555">RIESGO</div><div style="font-weight:bold">D (BAJO)</div></div>
             </div>
-            <div class="log-box" id="log">STANDBY...</div>
-        </aside>
-        
-        <section class="terminal">
-            <div class="input-area">
-                <input type="text" id="q" placeholder="INVESTIGAR OBJETIVO (CC, NIT, IP, DOMAIN, EMAIL)...">
-                <button onclick="deploy()">DESPLEGAR</button>
-            </div>
-            
-            <div class="report-grid" id="grid">
-                <div style="grid-column: 1/-1; text-align:center; padding-top: 10rem; color:#222">READY_FOR_ENGAGEMENT</div>
-            </div>
-        </section>
-    </main>
-
-    <script>
-        async function deploy() {
-            const v = document.getElementById('q').value;
-            if(!v) return;
-            const log = document.getElementById('log');
-            const grid = document.getElementById('grid');
-            
-            log.innerHTML = `[!] Desplegando agente: ai-recon<br>[*] Objetivo: ${v}<br>[*] Escaneando sub-nodos...`;
-            grid.innerHTML = "";
-
-            try {
-                // Nodo Real (SECOP)
-                const r = await fetch(`https://www.datos.gov.co/resource/jbjy-vk9h.json?documento_proveedor=${v}`);
-                const d = await r.json();
-                
-                log.innerHTML += "<br>[+] Datos de reconocimiento obtenidos.";
-
-                if(d.length > 0) {
-                    grid.innerHTML += `
-                        <div class="intel-card">
-                            <h3>🔍 RESULTADO DE RECONOCIMIENTO</h3>
-                            <div style="font-size:0.85rem">
-                                <b>ENTIDAD:</b> ${d[0].nombre_entidad}<br>
-                                <b>MONTO:</b> $${Number(d[0].valor_del_contrato).toLocaleString()} COP<br>
-                                <b>ESTADO:</b> <span style="color:var(--p)">${d[0].estado_contrato}</span>
-                            </div>
-                        </div>
-                    `;
-                }
-
-                // Generación de Inteligencia Ofensiva (Simulación lógica de agentes)
-                grid.innerHTML += `
-                    <div class="intel-card">
-                        <h3>🛡️ ANÁLISIS DE RIESGO (RISK-SCORER)</h3>
-                        <div style="font-size:0.85rem">
-                            <b>PUNTUACIÓN:</b> 78/100<br>
-                            <b>VULNERABILIDADES:</b> Alta exposición en redes sociales.<br>
-                            <b>RECOMENDACIÓN:</b> Auditoría de vínculos familiares.
+            <div class="blocks">
+                <div class="block">
+                    <div class="block-h">LINEA DE TIEMPO DE INVESTIGACIÓN</div>
+                    <div class="block-b">
+                        <div class="timeline">
+                            <div class="t-item"><b>2026-07-04</b> Migración a GHOST OSINT CRM Finalizada.</div>
+                            <div class="t-item"><b>2026-07-03</b> Barrido multinivel completado: SIMIT (Sin multas), ADRES (Nueva EPS).</div>
+                            <div class="t-item"><b>2025-01-22</b> Inicio de contrato con SENA Regional Arauca.</div>
                         </div>
                     </div>
-                `;
-                
-                log.innerHTML += "<br>[+] Tarea completada. Reporte generado.";
-            } catch(e) {
-                log.innerHTML += "<br>[!] Agente bloqueado por el nodo central.";
-            }
-        }
-    </script>
+                </div>
+                <div class="block">
+                    <div class="block-h">VINCULOS DETECTADOS</div>
+                    <div class="block-b" style="font-size:0.8rem">
+                        ● SENA Arauca (Económico)<br>
+                        ● Nueva EPS (Salud)<br>
+                        ● Infraestructura IT (Perfil)
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
