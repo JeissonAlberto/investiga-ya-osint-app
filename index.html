@@ -3,84 +3,91 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <title>ARGOS v60.0 — RF & HARDWARE AUDIT CORE</title>
+    <title>ARGOS v70.0 — RED TEAM ARSENAL (A-poc)</title>
     <style>
-        :root { --p: #00ff41; --bg: #050505; --card: #0d0d0f; --border: #1a1a1c; --rf: #ff00ff; }
+        :root { --p: #00ff41; --bg: #050505; --card: #0d0d0f; --border: #1a1a1c; --red: #ff3e3e; }
+        * { box-sizing: border-box; }
         body { background: var(--bg); color: #e2e8f0; font-family: 'JetBrains Mono', monospace; margin: 0; display: flex; height: 100vh; overflow: hidden; }
         .sidebar { width: 280px; background: #000; border-right: 1px solid var(--border); display: flex; flex-direction: column; }
-        .logo { padding: 1.5rem; font-weight: 900; color: var(--p); border-bottom: 1px solid var(--border); text-align: center; }
-        .nav { flex: 1; padding: 1rem; }
-        .nav-item { padding: 12px; margin-bottom: 5px; color: #555; cursor: pointer; font-size: 0.75rem; border-radius: 4px; }
-        .nav-item.active { background: #111; color: var(--p); border-left: 3px solid var(--p); }
+        .logo { padding: 2rem 1.5rem; font-weight: 900; color: var(--p); border-bottom: 1px solid var(--border); text-align: center; font-size: 1.2rem; letter-spacing: 3px; }
+        .nav { flex: 1; padding: 1rem; overflow-y: auto; }
+        .nav-item { padding: 12px; margin-bottom: 5px; color: #555; cursor: pointer; font-size: 0.75rem; border-radius: 4px; display: flex; align-items: center; }
+        .nav-item.active { background: #111; color: var(--red); border-left: 3px solid var(--red); }
         .main { flex: 1; display: flex; flex-direction: column; background: #080808; overflow: hidden; }
         .top-bar { height: 60px; background: #000; border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 1.5rem; justify-content: space-between; }
         .content { flex: 1; padding: 2rem; overflow-y: auto; }
-        .module { background: var(--card); border: 1px solid var(--border); border-radius: 4px; overflow: hidden; margin-bottom: 1.5rem; }
-        .module-h { padding: 0.7rem; background: #111; border-bottom: 1px solid var(--border); font-size: 0.7rem; color: var(--p); font-weight: bold; display: flex; justify-content: space-between; }
-        .module-b { padding: 1.2rem; font-size: 0.85rem; }
-        .terminal { background: #000; color: #4ade80; padding: 1rem; font-size: 0.7rem; border-radius: 4px; border: 1px solid #111; height: 180px; overflow-y: auto; }
-        .badge { padding: 2px 6px; border-radius: 2px; font-size: 0.6rem; font-weight: bold; background: var(--rf); color: #fff; }
-        .rf-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+        
+        .arsenal-header { background: var(--card); border: 1px solid var(--red); padding: 1.5rem; border-radius: 4px; margin-bottom: 2rem; display: flex; align-items: center; gap: 20px; }
+        .arsenal-icon { width: 60px; height: 60px; background: var(--red); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: #000; font-weight: 900; }
+        
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
+        .module { background: var(--card); border: 1px solid var(--border); border-radius: 4px; overflow: hidden; }
+        .module-h { padding: 0.8rem; background: #111; border-bottom: 1px solid var(--border); font-size: 0.7rem; color: var(--red); font-weight: bold; }
+        .module-b { padding: 1.2rem; font-size: 0.8rem; }
+        
+        .tool-link { display: block; color: #fff; text-decoration: none; margin-bottom: 8px; font-size: 0.75rem; border-left: 2px solid #333; padding-left: 10px; }
+        .tool-link:hover { border-left-color: var(--red); color: var(--red); background: rgba(255,62,62,0.05); }
+        .badge { padding: 2px 6px; border-radius: 2px; font-size: 0.6rem; font-weight: bold; background: var(--red); color: #fff; margin-left: 5px; }
+        
+        .terminal { background: #000; border: 1px solid #111; padding: 1rem; color: #ff3e3e; font-size: 0.7rem; height: 150px; overflow-y: auto; margin-top: 1rem; border-radius: 4px; }
     </style>
 </head>
 <body>
     <aside class="sidebar">
-        <div class="logo">ARGOS_v60_ESP_HACK</div>
+        <div class="logo">ARGOS_v70_RED</div>
         <div class="nav">
-            <div class="nav-item">MASTER_DASHBOARD</div>
-            <div class="nav-item active">RF_PENTESTING</div>
-            <div class="nav-item">HARDWARE_AUDIT</div>
             <div class="nav-item">OSINT_CORE</div>
+            <div class="nav-item active">RED_TEAM_ARSENAL</div>
+            <div class="nav-item">EXFILTRATION</div>
+            <div class="nav-item">POST_EXPLOIT</div>
         </div>
     </aside>
     <main class="main">
         <div class="top-bar">
-            <div style="font-size:0.8rem">SESIÓN: <span style="color:var(--p)">JEISSON_ALBERTO</span></div>
-            <div style="font-size:0.7rem">MODO: <span style="color:var(--rf)">ESP32_RF_INJECTION</span></div>
+            <div style="font-size:0.8rem">OPERADOR: <span style="color:var(--p)">JEISSON_ALBERTO</span></div>
+            <div style="font-size:0.7rem">MODO: <span style="color:var(--red)">OFFENSIVE_OPERATIONS</span></div>
         </div>
         <div class="content">
-            <div class="module">
-                <div class="module-h">ESP-HACK INTEGRATION: RF & HARDWARE PENTESTING <span class="badge">ESP32_CORE_ACTIVE</span></div>
-                <div class="module-b">
-                    <p style="color:#888; font-size:0.75rem; margin-bottom:1rem;">Inyectando lógica de ESP-HACK para auditoría de redes inalámbricas y dispositivos IoT (ESP32/ESP8266).</p>
-                    <div class="terminal" id="rf-log">
-                        [ESP-HACK] Initializing RF Intelligence Module...<br>
-                        [ESP-HACK] Detecting ESP32 Hardware nodes...<br>
-                        [ESP-HACK] Scanning 2.4GHz spectrum for vulnerable APs...<br>
-                        [ESP-HACK] Modules loaded: Deauther, Captive Portal, Beacon Spammer, Packet Sniffer.<br>
-                        [ESP-HACK] Ready for wireless hardware orchestration.
+            <div class="arsenal-header">
+                <div class="arsenal-icon">RT</div>
+                <div>
+                    <h2 style="margin:0; font-size:1.1rem; color:var(--red);">RED TEAM ARSENAL (A-poc)</h2>
+                    <p style="margin:5px 0 0; font-size:0.75rem; color:#666;">Inyectando +150 herramientas ofensivas de élite al algoritmo ARGOS.</p>
+                </div>
+            </div>
+
+            <div class="grid">
+                <div class="module">
+                    <div class="module-h">INITIAL ACCESS / DELIVERY <span class="badge">TACTICAL</span></div>
+                    <div class="module-b">
+                        <a href="#" class="tool-link">● HTML Smuggling (Advanced)</a>
+                        <a href="#" class="tool-link">● Phishing Frameworks</a>
+                        <a href="#" class="tool-link">● Payload Obfuscators</a>
+                    </div>
+                </div>
+                <div class="module">
+                    <div class="module-h">EXFILTRATION <span class="badge">STOLEN_DATA</span></div>
+                    <div class="module-b">
+                        <a href="#" class="tool-link">● Goshs (HTTP/S File Server)</a>
+                        <a href="#" class="tool-link">● DNS Tunneling Tools</a>
+                        <a href="#" class="tool-link">● Cloud Exfiltration Scripts</a>
+                    </div>
+                </div>
+                <div class="module">
+                    <div class="module-h">POST-EXPLOITATION <span class="badge">LOOTING</span></div>
+                    <div class="module-b">
+                        <a href="#" class="tool-link">● Credential Dumpers</a>
+                        <a href="#" class="tool-link">● Privilege Escalation (Win/Lin)</a>
+                        <a href="#" class="tool-link">● Persistence Mechanisms</a>
                     </div>
                 </div>
             </div>
-            <div class="rf-grid">
-                <div class="module">
-                    <div class="module-h">AUDITORÍA INALÁMBRICA</div>
-                    <div class="module-b">
-                        <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
-                            <span style="color:#64748b; font-size:0.75rem;">Status:</span><span style="color:var(--p); font-weight:bold;">LISTO</span>
-                        </div>
-                        <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
-                            <span style="color:#64748b; font-size:0.75rem;">Modo Deauth:</span><span style="color:#fff;">STANDBY</span>
-                        </div>
-                        <div style="display:flex; justify-content:space-between;">
-                            <span style="color:#64748b; font-size:0.75rem;">Sniffing:</span><span style="color:#fff;">ENABLED</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="module">
-                    <div class="module-h">CAPA FÍSICA / HARDWARE</div>
-                    <div class="module-b">
-                        <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
-                            <span style="color:#64748b; font-size:0.75rem;">Flash Size:</span><span style="color:#fff;">4MB / 8MB</span>
-                        </div>
-                        <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
-                            <span style="color:#64748b; font-size:0.75rem;">Protocolo:</span><span style="color:var(--rf);">802.11 b/g/n</span>
-                        </div>
-                        <div style="display:flex; justify-content:space-between;">
-                            <span style="color:#64748b; font-size:0.75rem;">Intercepción:</span><span style="color:#fff;">PROMISCUOUS_MODE</span>
-                        </div>
-                    </div>
-                </div>
+
+            <div class="terminal" id="red-log">
+                [RED-TEAM] Loading Arsenal from A-poc/RedTeam-Tools...<br>
+                [RED-TEAM] 150+ Resources mapped and categorized.<br>
+                [RED-TEAM] Initializing exfiltration node: Goshs integration ready.<br>
+                [RED-TEAM] All offensive modules: DEPLOYED.
             </div>
         </div>
     </main>
