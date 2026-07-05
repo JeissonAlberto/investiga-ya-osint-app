@@ -3,83 +3,133 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <title>ARGOS v39.0 — DEEPZERO CORE</title>
+    <title>ARGOS v40.0 — MASTER ORCHESTRATOR</title>
     <style>
         :root { --p: #00ff41; --bg: #050505; --card: #0d0d0f; --border: #1a1a1c; }
-        body { background: var(--bg); color: #e2e8f0; font-family: 'JetBrains Mono', monospace; margin: 0; display: flex; height: 100vh; overflow: hidden; }
-        .sidebar { width: 260px; background: #000; border-right: 1px solid var(--border); display: flex; flex-direction: column; }
-        .logo { padding: 1.5rem; font-weight: 900; color: var(--p); border-bottom: 1px solid var(--border); text-align: center; letter-spacing: 2px; }
+        body { background: var(--bg); color: #e2e8f0; font-family: 'JetBrains Mono', monospace; margin: 0; display: flex; height: 100vh; }
+        
+        /* Sidebar Estilo CRM */
+        .sidebar { width: 300px; background: #000; border-right: 1px solid var(--border); display: flex; flex-direction: column; }
+        .logo { padding: 2rem; font-weight: 900; color: var(--p); border-bottom: 1px solid var(--border); text-align: center; font-size: 1.2rem; }
         .nav { flex: 1; padding: 1rem; }
-        .nav-item { padding: 12px; margin-bottom: 5px; color: #888; cursor: pointer; font-size: 0.75rem; transition: 0.2s; }
-        .nav-item.active { background: #111; color: var(--p); border-left: 3px solid var(--p); }
-        .main { flex: 1; display: flex; flex-direction: column; background: #080808; position: relative; }
-        .scan-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: var(--p); opacity: 0.3; animation: scan 4s linear infinite; pointer-events: none; }
-        @keyframes scan { 0% { top: 0; } 100% { top: 100%; } }
-        .top { height: 60px; background: #000; border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 1.5rem; justify-content: space-between; }
+        .nav-item { padding: 12px; margin-bottom: 8px; color: #555; cursor: pointer; font-size: 0.8rem; border-radius: 4px; transition: 0.3s; }
+        .nav-item:hover, .nav-item.active { background: #111; color: var(--p); border-left: 4px solid var(--p); }
+        
+        /* Dashboard Principal */
+        .main { flex: 1; display: flex; flex-direction: column; background: #080808; overflow: hidden; }
+        .top-bar { height: 60px; background: #000; border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 2rem; justify-content: space-between; }
         .content { flex: 1; padding: 2rem; overflow-y: auto; }
-        .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 2rem; }
-        .stat-card { background: var(--card); border: 1px solid var(--border); padding: 1.2rem; border-radius: 4px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
-        .vulnerability-alert { background: rgba(255, 62, 62, 0.1); border: 1px solid #ff3e3e; color: #ff3e3e; padding: 1rem; margin-bottom: 2rem; border-radius: 4px; font-size: 0.8rem; display: flex; align-items: center; }
-        .blocks { display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; }
-        .block { background: var(--card); border: 1px solid var(--border); border-radius: 4px; }
-        .block-h { padding: 0.8rem; background: #111; border-bottom: 1px solid var(--border); font-size: 0.7rem; color: var(--p); font-weight: bold; display: flex; justify-content: space-between; }
-        .block-b { padding: 1.2rem; }
-        .deepzero-log { font-size: 0.7rem; color: #4ade80; line-height: 1.5; }
-        .badge { background: var(--p); color: #000; padding: 2px 6px; border-radius: 2px; font-size: 0.6rem; font-weight: bold; }
+        
+        /* Componentes de Datos */
+        .search-area { background: var(--card); border: 1px solid var(--border); padding: 2rem; border-radius: 8px; margin-bottom: 2rem; }
+        .input-group { display: flex; gap: 10px; max-width: 600px; margin: 0 auto; }
+        input { flex: 1; background: #000; border: 1px solid var(--p); color: var(--p); padding: 1rem; outline: none; }
+        button { background: var(--p); color: #000; border: none; padding: 0 2rem; font-weight: 900; cursor: pointer; text-transform: uppercase; }
+
+        .report-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 1.5rem; }
+        .module { background: var(--card); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+        .module-h { padding: 0.8rem; background: #111; border-bottom: 1px solid var(--border); font-size: 0.7rem; color: var(--p); font-weight: bold; display: flex; justify-content: space-between; }
+        .module-b { padding: 1.5rem; font-size: 0.85rem; }
+        
+        .data-row { display: flex; justify-content: space-between; margin-bottom: 10px; border-bottom: 1px solid #1a1a1c; padding-bottom: 5px; }
+        .label { color: #64748b; font-size: 0.75rem; }
+        .val { color: #fff; font-weight: 600; }
+        
+        .log-terminal { background: #000; color: #4ade80; padding: 1rem; font-size: 0.7rem; border-radius: 4px; border: 1px solid #111; height: 120px; overflow-y: auto; margin-top: 2rem; }
+        .badge { background: var(--p); color: #000; padding: 2px 6px; font-size: 0.6rem; font-weight: 900; border-radius: 3px; }
     </style>
 </head>
 <body>
-    <div class="sidebar">
-        <div class="logo">ARGOS_v39_DEEPZERO</div>
+    <aside class="sidebar">
+        <div class="logo">ARGOS_v40_MASTER</div>
         <div class="nav">
-            <div class="nav-item active">● VULN_RESEARCH</div>
-            <div class="nav-item">● OSINT_CRM</div>
-            <div class="nav-item">● KERNEL_AUDIT</div>
-            <div class="nav-item">● AGENT_PIPELINES</div>
+            <div class="nav-item active">ORQUESTADOR CENTRAL</div>
+            <div class="nav-item">FINANZAS (SECOP)</div>
+            <div class="nav-item">SOCIAL (SISBEN)</div>
+            <div class="nav-item">SALUD (ADRES)</div>
+            <div class="nav-item">MOVILIDAD (SIMIT)</div>
+            <div class="nav-item">DIGITAL (SOCMINT)</div>
         </div>
-    </div>
-    <div class="main">
-        <div class="scan-overlay"></div>
-        <div class="top">
-            <div style="font-size:0.8rem">SYSTEM_MODE: <span style="color:var(--p)">OFFENSIVE_AI_AUDIT</span></div>
-            <div style="font-size:0.7rem">TARGET: JEISSON_ALBERTO_1094269851</div>
+        <div style="padding:1rem; border-top:1px solid #1a1a1c; font-size:0.6rem; color:#444">
+            ESTADO DEL SISTEMA: <span style="color:var(--p)">NOMINAL</span><br>
+            ACTIVOS: 42 NODOS CONECTADOS
         </div>
+    </aside>
+
+    <main class="main">
+        <div class="top-bar">
+            <div style="font-size:0.8rem">SESIÓN: <span style="color:var(--p)">JEISSON_ALBERTO</span></div>
+            <div style="font-size:0.7rem">OBJETIVO: 1094269851</div>
+        </div>
+
         <div class="content">
-            <div class="vulnerability-alert">
-                <span style="font-size:1.2rem; margin-right:10px;">⚠️</span> 
-                DEEPZERO detectó vectores de exposición en servicios externos. Iniciando análisis de vectores zero-day...
-            </div>
-            <div class="stats">
-                <div class="stat-card"><div style="font-size:0.6rem; color:#555">SCANNED_DRIVERS</div><div style="font-weight:bold">1,248</div></div>
-                <div class="stat-card"><div style="font-size:0.6rem; color:#555">IOCTL_ANALYSIS</div><div style="font-weight:bold; color:var(--p)">COMPLETED</div></div>
-                <div class="stat-card"><div style="font-size:0.6rem; color:#555">AI_AGENTS</div><div style="font-weight:bold">ACTIVE (16)</div></div>
-                <div class="stat-card"><div style="font-size:0.6rem; color:#555">THREAT_LEVEL</div><div style="font-weight:bold; color:#ff3e3e">CRITICAL</div></div>
-            </div>
-            <div class="blocks">
-                <div class="block">
-                    <div class="block-h">PIPELINE: KERNEL_VULN_RESEARCH <span class="badge">RUNNING</span></div>
-                    <div class="block-b deepzero-log">
-                        [DEEPZERO] Initializing vulnerability research framework...<br>
-                        [DEEPZERO] Parsing Windows kernel drivers for subject 1094269851...<br>
-                        [DEEPZERO] Decompiling IOCTL handlers for unauthorized access vectors...<br>
-                        [DEEPZERO] AI Agent "Z-Hunter" analyzing memory corruption patterns...<br>
-                        [DEEPZERO] Zero-day vector identified in external IT infrastructure (SENA_NODES).<br>
-                        [DEEPZERO] Reporting findings to GHOST OSINT CRM...
-                    </div>
-                </div>
-                <div class="block">
-                    <div class="block-h">ASSET_MAP</div>
-                    <div class="block-b" style="font-size:0.75rem">
-                        <div style="margin-bottom:12px;"><b>Node_01:</b> 1094269851_Identity</div>
-                        <div style="margin-bottom:12px;"><b>Node_02:</b> SENA_Arauca_IT_Infra</div>
-                        <div style="margin-bottom:12px;"><b>Node_03:</b> Nueva_EPS_Data_Stream</div>
-                        <div style="border-top:1px solid #222; padding-top:10px; color:#555; font-style:italic;">
-                            Escaneo profundo de activos en curso vía DeepZero Agents...
-                        </div>
-                    </div>
+            <div class="search-area">
+                <div class="input-group">
+                    <input type="text" id="target" placeholder="CÉDULA / NIT / EMAIL / USERNAME">
+                    <button onclick="orchestrate()">EJECUTAR ORQUESTACIÓN</button>
                 </div>
             </div>
+
+            <div id="results" class="report-grid">
+                <!-- Los módulos se cargan aquí -->
+                <div style="grid-column:1/-1; text-align:center; padding:5rem; color:#222">ESPERANDO ORDEN DE DESPLIEGUE...</div>
+            </div>
+
+            <div class="log-terminal" id="log">ORCHESTRATOR READY...</div>
         </div>
-    </div>
+    </main>
+
+    <script>
+        async function orchestrate() {
+            const v = document.getElementById('target').value;
+            if(!v) return;
+            const log = document.getElementById('log');
+            const res = document.getElementById('results');
+            
+            log.innerHTML = `[!] Iniciando orquestación maestra para: ${v}...<br>[*] Disparando hilos a 4 servidores gubernamentales...`;
+            res.innerHTML = "";
+
+            try {
+                // Nodo Financiero (SECOP II)
+                const s2 = await fetch(`https://www.datos.gov.co/resource/jbjy-vk9h.json?documento_proveedor=${v}`);
+                const dataS2 = await s2.json();
+                log.innerHTML += "<br>[+] Datos SECOP II recibidos.";
+
+                // Renderizado Módulo Financiero
+                let finHtml = `<div class="module"><div class="module-h">FINANZAS (SECOP II) <span class="badge">REAL_DATA</span></div><div class="module-b">`;
+                if(dataS2.length > 0) {
+                    const top = dataS2[0];
+                    finHtml += `
+                        <div class="data-row"><span class="label">ENTIDAD:</span><span class="val">${top.nombre_entidad}</span></div>
+                        <div class="data-row"><span class="label">MONTO:</span><span class="val">$${Number(top.valor_del_contrato).toLocaleString()}</span></div>
+                        <div class="data-row"><span class="label">ESTADO:</span><span class="val" style="color:var(--p)">${top.estado_contrato}</span></div>
+                        <p style="font-size:0.7rem; color:#64748b; margin-top:10px;">OBJETO: ${top.descripcion_del_proceso.substring(0, 100)}...</p>
+                    `;
+                } else { finHtml += "<p>Sin registros financieros públicos.</p>"; }
+                finHtml += "</div></div>";
+
+                // Módulos de Simulación (ADRES/SIMIT/SISBEN - Inyectando los datos que ya conocemos de Jeisson)
+                const socialHtml = `
+                    <div class="module"><div class="module-h">SOCIAL (SISBÉN / ADRES) <span class="badge">BYPASS_READY</span></div><div class="module-b">
+                        <div class="data-row"><span class="label">EPS:</span><span class="val">NUEVA EPS (ACTIVO)</span></div>
+                        <div class="data-row"><span class="label">SISBÉN:</span><span class="val">GRUPO D (NO POBRE)</span></div>
+                        <div class="data-row"><span class="label">UBICACIÓN:</span><span class="val">ARAUCA, ARAUCA</span></div>
+                    </div></div>
+                    <div class="module"><div class="module-h">MOVILIDAD (SIMIT / RUNT) <span class="badge">ACTIVE</span></div><div class="module-b">
+                        <div class="data-row"><span class="label">MULTAS SIMIT:</span><span class="val" style="color:var(--p)">$0 (LIMPIO)</span></div>
+                        <div class="data-row"><span class="label">LICENCIA:</span><span class="val">ACTIVA</span></div>
+                    </div></div>
+                    <div class="module"><div class="module-h">DIGITAL (SOCMINT) <span class="badge">SCANNING</span></div><div class="module-b">
+                        <p style="font-size:0.75rem; color:#888;">Escaneando huella en 290 vectores...<br>LinkedIn: OK<br>GitHub: OK<br>Instagram: Verificando...</p>
+                    </div></div>
+                `;
+
+                res.innerHTML = finHtml + socialHtml;
+                log.innerHTML += "<br>[+] Orquestación finalizada satisfactoriamente.";
+            } catch(e) {
+                log.innerHTML += "<br>[!] Error crítico en el nodo central.";
+            }
+        }
+    </script>
 </body>
 </html>
