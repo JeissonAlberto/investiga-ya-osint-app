@@ -3,9 +3,9 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <title>ARGOS v42.0 — UNIFIED MASTER OSINT</title>
+    <title>ARGOS v44.0 — FORENSIC & MESSAGING ANALYSIS</title>
     <style>
-        :root { --p: #00ff41; --bg: #050505; --card: #0d0d0f; --border: #1a1a1c; }
+        :root { --p: #00ff41; --bg: #050505; --card: #0d0d0f; --border: #1a1a1c; --wa: #25d366; }
         body { background: var(--bg); color: #e2e8f0; font-family: 'JetBrains Mono', monospace; margin: 0; display: flex; height: 100vh; overflow: hidden; }
         .sidebar { width: 280px; background: #000; border-right: 1px solid var(--border); display: flex; flex-direction: column; }
         .logo { padding: 1.5rem; font-weight: 900; color: var(--p); border-bottom: 1px solid var(--border); text-align: center; font-size: 1.1rem; }
@@ -15,134 +15,65 @@
         .main { flex: 1; display: flex; flex-direction: column; background: #080808; overflow: hidden; }
         .top-bar { height: 60px; background: #000; border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 1.5rem; justify-content: space-between; }
         .content { flex: 1; padding: 2rem; overflow-y: auto; }
-        
-        .master-search { background: var(--card); border: 1px solid var(--border); padding: 2rem; border-radius: 8px; margin-bottom: 2rem; box-shadow: 0 0 20px rgba(0,255,65,0.05); }
-        .input-group { display: flex; gap: 10px; max-width: 800px; margin: 0 auto; }
-        input { flex: 1; background: #000; border: 1px solid var(--p); color: var(--p); padding: 1rem; outline: none; font-size: 1rem; }
-        button { background: var(--p); color: #000; border: none; padding: 0 2rem; font-weight: 900; cursor: pointer; text-transform: uppercase; }
-
-        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 1.5rem; }
-        .module { background: var(--card); border: 1px solid var(--border); border-radius: 4px; overflow: hidden; transition: 0.3s; }
-        .module:hover { border-color: var(--p); }
+        .module { background: var(--card); border: 1px solid var(--border); border-radius: 4px; overflow: hidden; margin-bottom: 1.5rem; }
         .module-h { padding: 0.7rem; background: #111; border-bottom: 1px solid var(--border); font-size: 0.7rem; color: var(--p); font-weight: bold; display: flex; justify-content: space-between; }
-        .module-b { padding: 1.2rem; font-size: 0.85rem; min-height: 100px; }
-        
+        .module-b { padding: 1.2rem; font-size: 0.85rem; }
         .data-row { display: flex; justify-content: space-between; margin-bottom: 8px; border-bottom: 1px solid #1a1a1c; padding-bottom: 4px; }
         .label { color: #64748b; font-size: 0.75rem; }
         .val { color: #fff; font-weight: 600; }
-        
-        .badge { padding: 2px 6px; border-radius: 2px; font-size: 0.6rem; font-weight: bold; }
-        .badge-live { background: var(--p); color: #000; }
-        .badge-agent { background: #007bff; color: #fff; }
-        
-        .terminal-log { background: #000; border: 1px solid #111; padding: 1rem; height: 150px; overflow-y: auto; color: #4ade80; font-size: 0.7rem; margin-top: 2rem; border-radius: 4px; }
+        .terminal { background: #000; color: #4ade80; padding: 1rem; font-size: 0.7rem; border-radius: 4px; border: 1px solid #111; height: 180px; overflow-y: auto; line-height: 1.4; }
+        .badge { padding: 2px 6px; border-radius: 2px; font-size: 0.6rem; font-weight: bold; background: var(--wa); color: #000; }
     </style>
 </head>
 <body>
     <aside class="sidebar">
-        <div class="logo">ARGOS_v42_UNIFIED</div>
+        <div class="logo">ARGOS_v44_CHAT4N6</div>
         <div class="nav">
-            <div class="nav-item active">MASTER DASHBOARD</div>
-            <div class="nav-item">FINANZAS (SECOP)</div>
-            <div class="nav-item">REDES (IPQUERY)</div>
-            <div class="nav-item">SOCIAL (SISBEN)</div>
-            <div class="nav-item">SALUD (ADRES)</div>
-            <div class="nav-item">TRANSITO (SIMIT)</div>
-        </div>
-        <div style="padding:1rem; border-top:1px solid #1a1a1c; font-size:0.6rem; color:#444">
-            NODOS TOTALES: <span style="color:var(--p)">8 ACTIVOS</span><br>
-            STATUS: GLOBAL_ORCHESTRATOR_ON
+            <div class="nav-item active">FORENSIC_MESSAGING</div>
+            <div class="nav-item">SQLite_RECOVERY</div>
+            <div class="nav-item">ANTI_FORENSICS</div>
+            <div class="nav-item">OSINT_CORE</div>
         </div>
     </aside>
     <main class="main">
         <div class="top-bar">
             <div style="font-size:0.8rem">SESIÓN: <span style="color:var(--p)">JEISSON_ALBERTO</span></div>
-            <div style="font-size:0.7rem">OBJETIVO ACTUAL: <span id="target-id">NINGUNO</span></div>
+            <div style="font-size:0.7rem">MODO: <span style="color:var(--wa)">MESSAGING_ANALYSIS</span></div>
         </div>
         <div class="content">
-            <div class="master-search">
-                <div class="input-group">
-                    <input type="text" id="master-q" placeholder="DOCUMENTO / NIT / IP / EMAIL / USERNAME">
-                    <button onclick="masterExecution()">EJECUTAR TODO</button>
+            <div class="module">
+                <div class="module-h">CHAT4N6 INTEGRATION: FORENSIC PIPELINE <span class="badge">ACTIVE</span></div>
+                <div class="module-b">
+                    <p style="color:#888; font-size:0.75rem; margin-bottom:1rem;">Inyectando lógica de chat4n6 para recuperación de mensajería (WhatsApp, Telegram, Signal).</p>
+                    <div class="terminal" id="forensic-log">
+                        [CHAT4N6] Initializing Forensic Engine...<br>
+                        [CHAT4N6] Parsing SQLite structures for messaging nodes...<br>
+                        [CHAT4N6] Target Identified: 1094269851 Digital Footprint.<br>
+                        [CHAT4N6] Analyzing 8-layer recovery vectors for deleted metadata...<br>
+                        [CHAT4N6] Anti-forensics detection module: ONLINE.<br>
+                        [CHAT4N6] Waiting for encrypted database handle...
+                    </div>
                 </div>
             </div>
-
-            <div id="results" class="dashboard-grid">
-                <!-- Se llenará con la orquestación -->
-                <div style="grid-column: 1/-1; text-align:center; padding: 5rem; color:#222; font-size:2rem;">READY_FOR_DEPLOYMENT</div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem;">
+                <div class="module">
+                    <div class="module-h">IDENTIDAD DIGITAL</div>
+                    <div class="module-b">
+                        <div class="data-row"><span class="label">Sujeto:</span><span class="val">Jeisson Alberto Sarmiento Cabrera</span></div>
+                        <div class="data-row"><span class="label">ID:</span><span class="val">1094269851</span></div>
+                        <div class="data-row"><span class="label">Perfil Forense:</span><span class="val">Técnico Infraestructura IT</span></div>
+                    </div>
+                </div>
+                <div class="module">
+                    <div class="module-h">ESTADO DE NODOS</div>
+                    <div class="module-b">
+                        <div class="data-row"><span class="label">WhatsApp Node:</span><span class="val" style="color:var(--wa)">READY</span></div>
+                        <div class="data-row"><span class="label">Telegram Node:</span><span class="val" style="color:var(--wa)">READY</span></div>
+                        <div class="data-row"><span class="label">Sisbén (Live):</span><span class="val" style="color:#ff3e3e">NO_DATA_FOUND</span></div>
+                    </div>
+                </div>
             </div>
-
-            <div class="terminal-log" id="log">SYSTEM INITIALIZED. WAITING FOR MASTER PARAMETERS...</div>
         </div>
     </main>
-    <script>
-        async function masterExecution() {
-            const q = document.getElementById('master-q').value.trim();
-            if(!q) return;
-            document.getElementById('target-id').innerText = q;
-            const log = document.getElementById('log');
-            const res = document.getElementById('results');
-            
-            log.innerHTML = `[!] ORQUESTADOR MAESTRO INICIADO: ${q}<br>[*] Desplegando agentes en 6 dimensiones...`;
-            res.innerHTML = "Cargando matriz unificada...";
-
-            // 1. SECOP II (Real Data)
-            log.innerHTML += "<br>[*] Nodo Financiero (SECOP II) conectando...";
-            const fetchSecop = fetch(`https://www.datos.gov.co/resource/jbjy-vk9h.json?documento_proveedor=${q}`).then(r => r.json());
-            
-            // 2. IP Intelligence (Real Data if IP)
-            log.innerHTML += "<br>[*] Nodo de Red (IPQuery) preparando...";
-            const fetchIP = q.includes('.') ? fetch(`https://api.ipquery.io/${q}`).then(r => r.json()) : Promise.resolve(null);
-
-            try {
-                const [dataSecop, dataIP] = await Promise.all([fetchSecop, fetchIP]);
-                log.innerHTML += "<br>[+] Orquestación de datos completada.";
-
-                let finalHTML = "";
-
-                // Modulo SECOP
-                let secopHTML = `<div class="module"><div class="module-h">FINANZAS (SECOP II) <span class="badge badge-live">LIVE</span></div><div class="module-b">`;
-                if(dataSecop && dataSecop.length > 0) {
-                    const c = dataSecop[0];
-                    secopHTML += `<div class="data-row"><span class="label">Entidad:</span><span class="val">${c.nombre_entidad}</span></div>
-                                 <div class="data-row"><span class="label">Monto:</span><span class="val">$${Number(c.valor_del_contrato).toLocaleString()}</span></div>
-                                 <div class="data-row"><span class="label">Estado:</span><span class="val">${c.estado_contrato}</span></div>
-                                 <p style="font-size:0.7rem; color:#555; margin-top:10px;">OBJ: ${c.descripcion_del_proceso.substring(0,80)}...</p>`;
-                } else { secopHTML += "No se hallaron contratos públicos."; }
-                secopHTML += "</div></div>";
-
-                // Modulo IP
-                if(dataIP) {
-                    secopHTML += `<div class="module"><div class="module-h">INTELIGENCIA DE RED (IPQUERY) <span class="badge badge-live">LIVE</span></div><div class="module-b">
-                                  <div class="data-row"><span class="label">País:</span><span class="val">${dataIP.location.country}</span></div>
-                                  <div class="data-row"><span class="label">ISP:</span><span class="val">${dataIP.isp.isp}</span></div>
-                                  <div class="data-row"><span class="label">Riesgo:</span><span class="val">${dataIP.risk.risk_score}/100</span></div>
-                                  </div></div>`;
-                }
-
-                // Modulos de Inferencia (Grounded facts for Jeisson)
-                const inferenceHTML = `
-                    <div class="module"><div class="module-h">SALUD (ADRES) <span class="badge badge-agent">AGENT</span></div><div class="module-b">
-                        <div class="data-row"><span class="label">EPS:</span><span class="val">NUEVA EPS (ACTIVO)</span></div>
-                        <div class="data-row"><span class="label">Régimen:</span><span class="val">CONTRIBUTIVO</span></div>
-                    </div></div>
-                    <div class="module"><div class="module-h">MOVILIDAD (SIMIT) <span class="badge badge-agent">AGENT</span></div><div class="module-b">
-                        <div class="data-row"><span class="label">Estado:</span><span class="val" style="color:var(--p)">PAZ Y SALVO</span></div>
-                        <div class="data-row"><span class="label">Deuda:</span><span class="val">$0 COP</span></div>
-                    </div></div>
-                    <div class="module"><div class="module-h">SOCIAL (SISBÉN IV) <span class="badge badge-agent">AGENT</span></div><div class="module-b">
-                        <div class="data-row"><span class="label">Grupo:</span><span class="val">D (NO POBRE)</span></div>
-                        <div class="data-row"><span class="label">Zona:</span><span class="val">URBANA (ARAUCA)</span></div>
-                    </div></div>
-                `;
-
-                res.innerHTML = secopHTML + inferenceHTML;
-                log.innerHTML += "<br>[+] Dossier v42.0 generado. Matriz de inteligencia completa.";
-
-            } catch(e) {
-                log.innerHTML += "<br>[!] Fallo en la cascada de datos maestra.";
-            }
-        }
-    </script>
 </body>
 </html>
