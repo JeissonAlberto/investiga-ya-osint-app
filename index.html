@@ -3,103 +3,103 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <title>ARGOS v110.0 — INVESTIGATOR ULTIMATE (Mr.Holmes)</title>
+    <title>ARGOS v120.0 — AI OSINT EYE (Aliens_eye)</title>
     <style>
-        :root { --p: #00ff41; --bg: #020202; --card: #08080a; --border: #1a1a1c; --holmes: #f39c12; }
+        :root { --p: #00ff41; --bg: #010101; --card: #080808; --border: #141414; --alien: #2ecc71; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { background: var(--bg); color: #e2e8f0; font-family: 'JetBrains Mono', monospace; display: flex; height: 100vh; overflow: hidden; }
         .sidebar { width: 300px; background: #000; border-right: 1px solid var(--border); display: flex; flex-direction: column; }
-        .logo { padding: 2rem 1.5rem; font-weight: 900; color: var(--holmes); border-bottom: 1px solid var(--border); text-align: center; font-size: 1.4rem; letter-spacing: 5px; }
+        .logo { padding: 2rem 1.5rem; font-weight: 900; color: var(--alien); border-bottom: 1px solid var(--border); text-align: center; font-size: 1.4rem; letter-spacing: 5px; }
         .nav { flex: 1; padding: 1.5rem; overflow-y: auto; }
-        .nav-item { padding: 12px; margin-bottom: 6px; color: #555; cursor: pointer; font-size: 0.75rem; border-radius: 4px; border: 1px solid transparent; }
-        .nav-item.active { background: #0a0a0a; color: var(--holmes); border-color: var(--holmes); }
-        .main { flex: 1; display: flex; flex-direction: column; background: #050505; }
+        .nav-item { padding: 12px; margin-bottom: 6px; color: #444; cursor: pointer; font-size: 0.75rem; border-radius: 4px; }
+        .nav-item.active { background: #0a0a0a; color: var(--alien); border-left: 3px solid var(--alien); }
+        .main { flex: 1; display: flex; flex-direction: column; background: #030303; position: relative; }
         .top-bar { height: 70px; background: #000; border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 2rem; justify-content: space-between; }
         .content { flex: 1; padding: 2.5rem; overflow-y: auto; }
-        .search-container { max-width: 1000px; margin: 0 auto; display: flex; gap: 15px; background: var(--card); padding: 2rem; border-radius: 8px; border: 1px solid var(--border); }
-        input { flex: 1; background: #000; border: 1px solid #333; color: var(--holmes); padding: 1.2rem; outline: none; font-size: 1.1rem; }
-        button { background: var(--holmes); color: #000; border: none; padding: 0 3rem; font-weight: 900; cursor: pointer; text-transform: uppercase; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; margin-top: 2rem; }
-        .module { background: var(--card); border: 1px solid var(--border); border-radius: 4px; overflow: hidden; }
-        .module-h { padding: 1rem; background: #111; border-bottom: 1px solid var(--border); font-size: 0.75rem; color: var(--holmes); font-weight: 900; }
-        .module-b { padding: 1.5rem; font-size: 0.8rem; }
-        .data-row { display: flex; justify-content: space-between; margin-bottom: 10px; border-bottom: 1px solid #111; padding-bottom: 5px; }
-        .label { color: #555; text-transform: uppercase; font-size: 0.65rem; }
-        .val { color: #fff; font-weight: 600; }
-        .terminal { background: #000; border: 1px solid #111; padding: 1.2rem; height: 180px; overflow-y: auto; color: #f39c12; font-size: 0.75rem; margin-top: 2rem; border-left: 5px solid var(--holmes); }
+        
+        .alien-scan-area { background: var(--card); border: 1px solid var(--alien); padding: 2.5rem; border-radius: 8px; margin-bottom: 2rem; position: relative; overflow: hidden; }
+        .alien-scan-area::after { content: "AI_OSINT_V4"; position: absolute; top: 10px; right: 10px; font-size: 0.5rem; color: #111; }
+        .input-group { max-width: 900px; margin: 0 auto; display: flex; gap: 15px; }
+        input { flex: 1; background: #000; border: 1px solid #222; color: var(--alien); padding: 1.2rem; outline: none; font-size: 1.1rem; }
+        button { background: var(--alien); color: #000; border: none; padding: 0 3rem; font-weight: 900; cursor: pointer; text-transform: uppercase; }
+        
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
+        .module { background: var(--card); border: 1px solid var(--border); border-radius: 4px; overflow: hidden; transition: 0.3s; }
+        .module:hover { border-color: var(--alien); transform: translateY(-5px); }
+        .module-h { padding: 0.8rem; background: #0a0a0a; border-bottom: 1px solid var(--border); font-size: 0.7rem; color: var(--alien); font-weight: 900; }
+        .module-b { padding: 1.2rem; font-size: 0.8rem; line-height: 1.6; }
+        
+        .terminal { background: #000; border: 1px solid #111; padding: 1rem; height: 180px; overflow-y: auto; color: #2ecc71; font-size: 0.75rem; border-left: 5px solid var(--alien); margin-top: 2rem; }
     </style>
 </head>
 <body>
     <aside class="sidebar">
-        <div class="logo">ARGOS_HOLMES</div>
+        <div class="logo">ARGOS_ALIEN</div>
         <div class="nav">
-            <div class="nav-item active">● DETECTIVE_CORE</div>
-            <div class="nav-item">● TARGET_PROFILING</div>
-            <div class="nav-item">● METADATA_CRACKER</div>
-            <div class="nav-item">● UNIVERSAL_OSINT</div>
+            <div class="nav-item active">● AI_RECONNAISSANCE</div>
+            <div class="nav-item">● ACCOUNT_HUNTER</div>
+            <div class="nav-item">● CORRELATION_AI</div>
+            <div class="nav-item">● OSINT_MASTER</div>
         </div>
     </aside>
     <main class="main">
         <div class="top-bar">
-            <div style="font-size:0.8rem">SESIÓN: <span style="color:var(--holmes)">JEISSON_ALBERTO</span></div>
-            <div style="font-size:0.7rem; color:#444">ENGINE: <span style="color:var(--holmes)">MR_HOLMES_ULITMATE</span></div>
+            <div style="font-size:0.8rem">OPERADOR: <span style="color:var(--alien)">JEISSON_ALBERTO</span></div>
+            <div style="font-size:0.7rem; color:#444">ENGINE: <span style="color:var(--alien)">ALIENS_EYE_AI_OSINT_V4</span></div>
         </div>
         <div class="content">
-            <div class="search-container">
-                <input type="text" id="target-q" placeholder="CUALQUIER DATO PARA INVESTIGACIÓN PROFUNDA...">
-                <button onclick="holmesInvestigate()">INVESTIGAR</button>
+            <div class="alien-scan-area">
+                <div class="input-group">
+                    <input type="text" id="alien-q" placeholder="HUNTER_MODE: USERNAME / EMAIL / PROFILE_ALIAS">
+                    <button onclick="alienHunt()">HUNT_NOW</button>
+                </div>
             </div>
-            <div id="results-grid" class="grid"></div>
-            <div class="terminal" id="log">
-                [SYSTEM] ARGOS v110.0: Mr. Holmes Detective Engine Loaded.<br>
-                [SYSTEM] Waiting for investigative parameters...
+            <div id="alien-results" class="grid"></div>
+            <div class="terminal" id="alien-log">
+                [ALIEN-EYE] AI OSINT V4 Engine Online.<br>
+                [ALIEN-EYE] Database loaded: 840+ Social Networks.<br>
+                [ALIEN-EYE] Ready for high-velocity account correlation.
             </div>
         </div>
     </main>
     <script>
-        async function holmesInvestigate() {
-            const q = document.getElementById('target-q').value.trim();
+        async function alienHunt() {
+            const q = document.getElementById('alien-q').value.trim();
             if(!q) return;
-            const log = document.getElementById('log');
-            const grid = document.getElementById('results-grid');
+            const log = document.getElementById('alien-log');
+            const res = document.getElementById('alien-results');
             
-            log.innerHTML = `[HOLMES] Iniciando investigación deductiva sobre: ${q}<br>[*] Accediendo a nodos de huella digital profunda...`;
+            log.innerHTML = `[ALIEN-EYE] Hunting down accounts for: ${q}...<br>[ALIEN-EYE] AI Correlation clusters activating...`;
             
-            // Simulación basada en Mr. Holmes logic para Jeisson Alberto
+            // Simulación táctica de Aliens_eye para JeissonAlberto
             setTimeout(() => {
-                log.innerHTML += `<br>[+] Hallazgos en 4 dimensiones de inteligencia detectados.`;
-                grid.innerHTML = `
+                log.innerHTML += `<br>[ALIEN-EYE] Found 8+ high-confidence matches across 840+ nodes.`;
+                res.innerHTML = `
                     <div class="module">
-                        <div class="module-h">DATOS DE IDENTIDAD (DETECTIVE_MODE)</div>
+                        <div class="module-h">MAIN_CLUSTERS (High Confidence)</div>
                         <div class="module-b">
-                            <div class="data-row"><span class="label">Sujeto:</span><span class="val">Jeisson A. Sarmiento</span></div>
-                            <div class="data-row"><span class="label">Ubicación:</span><span class="val">Arauca, CO</span></div>
-                            <div class="data-row"><span class="label">Ocupación:</span><span class="val">Soporte Técnico SENA</span></div>
+                            <span style="color:var(--alien)">● GitHub: JeissonAlberto</span><br>
+                            <span style="color:var(--alien)">● LinkedIn: Jeisson Sarmiento</span><br>
+                            <span style="color:var(--alien)">● Instagram: @jeissonalberto</span>
                         </div>
                     </div>
                     <div class="module">
-                        <div class="module-h">HUELLA DIGITAL (OSINT)</div>
+                        <div class="module-h">TECH_NODES (Correlation)</div>
                         <div class="module-b">
-                            <div class="data-row"><span class="label">Repositorios:</span><span class="val">GitHub (Activo)</span></div>
-                            <div class="data-row"><span class="label">Alias Detectados:</span><span class="val">JeissonAlberto, jasoll</span></div>
+                            <span>● Gravatar: jasoll@...</span><br>
+                            <span>● WordPress: jasoll-infra</span><br>
+                            <span>● StackOverflow: JeissonS</span>
                         </div>
                     </div>
                     <div class="module">
-                        <div class="module-h">FINANZAS & GOBIERNO</div>
+                        <div class="module-h">SOCIAL_FOOTPRINT</div>
                         <div class="module-b">
-                            <div class="data-row"><span class="label">Contratos:</span><span class="val">1 Vigente ($34M)</span></div>
-                            <div class="data-row"><span class="label">Salud:</span><span class="val">Nueva EPS (ACTIVO)</span></div>
-                        </div>
-                    </div>
-                    <div class="module">
-                        <div class="module-h">ESTADO SOCIAL</div>
-                        <div class="module-b">
-                            <div class="data-row"><span class="label">SIMIT:</span><span class="val">Paz y Salvo</span></div>
-                            <div class="data-row"><span class="label">Sisbén:</span><span class="val" style="color:#ff3e3e">SIN_REGISTRO</span></div>
+                            <span>● X/Twitter: @jeissonalberto</span><br>
+                            <span>● Facebook: Jeisson Alberto S.</span>
                         </div>
                     </div>
                 `;
-            }, 1500);
+            }, 1800);
         }
     </script>
 </body>
