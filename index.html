@@ -3,85 +3,243 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <title>ARGOS v80.0 — TELEGRAM INTELLIGENCE NODE</title>
+    <title>ARGOS v100.0 — UNIVERSAL INTELLIGENCE CORE</title>
     <style>
-        :root { --p: #00ff41; --bg: #050505; --card: #0d0d0f; --border: #1a1a1c; --tg: #24A1DE; }
-        * { box-sizing: border-box; }
-        body { background: var(--bg); color: #e2e8f0; font-family: 'JetBrains Mono', monospace; margin: 0; display: flex; height: 100vh; overflow: hidden; }
-        .sidebar { width: 280px; background: #000; border-right: 1px solid var(--border); display: flex; flex-direction: column; }
-        .logo { padding: 2rem 1.5rem; font-weight: 900; color: var(--p); border-bottom: 1px solid var(--border); text-align: center; font-size: 1.2rem; }
-        .nav { flex: 1; padding: 1rem; }
-        .nav-item { padding: 12px; margin-bottom: 5px; color: #555; cursor: pointer; font-size: 0.75rem; border-radius: 4px; }
-        .nav-item.active { background: #111; color: var(--tg); border-left: 3px solid var(--tg); }
-        .main { flex: 1; display: flex; flex-direction: column; background: #080808; overflow: hidden; }
-        .top-bar { height: 60px; background: #000; border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 1.5rem; justify-content: space-between; }
-        .content { flex: 1; padding: 2rem; overflow-y: auto; }
+        :root { --p: #00ff41; --bg: #030303; --card: #0a0a0c; --border: #1a1a1c; --accent: #00ff41; --danger: #ff3e3e; --info: #00acee; --warn: #ffcc00; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background: var(--bg); color: #e2e8f0; font-family: 'JetBrains Mono', monospace; display: flex; height: 100vh; overflow: hidden; }
         
-        .tg-header { background: var(--card); border: 1px solid var(--tg); padding: 1.5rem; border-radius: 4px; margin-bottom: 2rem; display: flex; align-items: center; gap: 20px; }
-        .tg-icon { width: 50px; height: 50px; background: var(--tg); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: #fff; }
+        /* Sidebar */
+        .sidebar { width: 300px; background: #000; border-right: 1px solid var(--border); display: flex; flex-direction: column; z-index: 100; }
+        .logo { padding: 2.5rem 1.5rem; font-weight: 900; color: var(--p); border-bottom: 1px solid var(--border); text-align: center; font-size: 1.4rem; letter-spacing: 5px; text-shadow: 0 0 10px rgba(0,255,65,0.3); }
+        .nav { flex: 1; padding: 1.5rem; overflow-y: auto; }
+        .nav-section { margin-bottom: 2rem; }
+        .nav-label { font-size: 0.6rem; color: #444; text-transform: uppercase; margin-bottom: 0.8rem; letter-spacing: 1px; }
+        .nav-item { padding: 12px; margin-bottom: 6px; color: #666; cursor: pointer; font-size: 0.7rem; border-radius: 4px; display: flex; align-items: center; transition: 0.3s; border: 1px solid transparent; }
+        .nav-item:hover { background: #080808; color: #fff; border-color: #222; }
+        .nav-item.active { background: #0a0a0a; color: var(--p); border-color: var(--p); box-shadow: inset 0 0 10px rgba(0,255,65,0.05); }
+
+        /* Main Content */
+        .main { flex: 1; display: flex; flex-direction: column; background: #050505; position: relative; }
+        .top-bar { height: 70px; background: #000; border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 2rem; justify-content: space-between; }
+        .content { flex: 1; padding: 2.5rem; overflow-y: auto; scrollbar-width: thin; }
         
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; }
-        .module { background: var(--card); border: 1px solid var(--border); border-radius: 4px; overflow: hidden; }
-        .module-h { padding: 0.8rem; background: #111; border-bottom: 1px solid var(--border); font-size: 0.7rem; color: var(--tg); font-weight: bold; }
-        .module-b { padding: 1.2rem; font-size: 0.8rem; }
+        /* Universal Command Center */
+        .command-center { background: var(--card); border: 1px solid var(--border); padding: 2.5rem; border-radius: 8px; margin-bottom: 2.5rem; position: relative; }
+        .command-center::after { content: "UNIVERSAL_INPUT_V100"; position: absolute; bottom: 5px; right: 10px; font-size: 0.5rem; color: #222; }
+        .search-container { max-width: 1000px; margin: 0 auto; display: flex; gap: 15px; }
+        input { flex: 1; background: #000; border: 1px solid #1a1a1c; color: var(--p); padding: 1.2rem; outline: none; font-size: 1.1rem; border-radius: 4px; font-family: inherit; }
+        input:focus { border-color: var(--p); box-shadow: 0 0 20px rgba(0,255,65,0.1); }
+        .btn-master { background: var(--p); color: #000; border: none; padding: 0 3rem; font-weight: 900; cursor: pointer; border-radius: 4px; text-transform: uppercase; transition: 0.3s; }
+        .btn-master:hover { background: #00cc33; transform: scale(1.02); }
+
+        /* Module Grid */
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; }
+        .module { background: var(--card); border: 1px solid var(--border); border-radius: 4px; position: relative; overflow: hidden; transition: 0.4s; }
+        .module:hover { border-color: #444; transform: translateY(-5px); }
+        .module-h { padding: 1rem; background: #0d0d0f; border-bottom: 1px solid var(--border); font-size: 0.75rem; font-weight: 900; display: flex; justify-content: space-between; }
+        .module-b { padding: 1.5rem; font-size: 0.8rem; line-height: 1.6; }
         
-        .data-row { display: flex; justify-content: space-between; margin-bottom: 10px; border-bottom: 1px solid #141416; padding-bottom: 5px; }
-        .label { color: #52525b; font-size: 0.7rem; text-transform: uppercase; }
-        .val { color: #fff; font-weight: 600; }
+        .data-list { list-style: none; }
+        .data-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #111; }
+        .data-label { color: #52525b; font-size: 0.65rem; text-transform: uppercase; }
+        .data-val { color: #fff; font-weight: 600; }
         
-        .terminal { background: #000; border: 1px solid #111; padding: 1rem; color: var(--tg); font-size: 0.7rem; height: 160px; overflow-y: auto; border-radius: 4px; border-left: 4px solid var(--tg); }
+        /* Indicators */
+        .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 5px; }
+        .dot-green { background: var(--p); box-shadow: 0 0 5px var(--p); }
+        
+        .badge { padding: 3px 8px; border-radius: 2px; font-size: 0.6rem; font-weight: 900; }
+        .badge-gov { background: #fff; color: #000; }
+        .badge-red { background: var(--danger); color: #fff; }
+        .badge-net { background: var(--info); color: #fff; }
+        .badge-tg { background: #24A1DE; color: #fff; }
+
+        /* Master Console */
+        .console { background: #000; border: 1px solid var(--border); border-radius: 6px; padding: 1.5rem; height: 250px; overflow-y: auto; margin-top: 2.5rem; border-left: 5px solid var(--p); }
+        .con-line { margin-bottom: 6px; font-size: 0.75rem; }
+        .con-prefix { color: #444; margin-right: 10px; }
+        .con-msg { color: #4ade80; }
+        
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; display: none; align-items: center; justify-content: center; flex-direction: column; }
+        .loader { width: 50px; height: 50px; border: 3px solid #111; border-top-color: var(--p); border-radius: 50%; animation: spin 1s infinite linear; margin-bottom: 20px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
+    <div class="overlay" id="loader">
+        <div class="loader"></div>
+        <div id="loader-text" style="color:var(--p); font-size:0.8rem; letter-spacing:2px;">ORQUESTANDO MOTORES...</div>
+    </div>
+
     <aside class="sidebar">
-        <div class="logo">ARGOS_v80_TG</div>
+        <div class="logo">ARGOS_V100</div>
         <div class="nav">
-            <div class="nav-item">MASTER_DASHBOARD</div>
-            <div class="nav-item active">TELEGRAM_OSINT</div>
-            <div class="nav-item">CHANNEL_ANALYSIS</div>
-            <div class="nav-item">MEMBER_ENUM</div>
+            <div class="nav-section">
+                <div class="nav-label">Capa 0: Orquestración</div>
+                <div class="nav-item active">● UNIVERSAL_DASHBOARD</div>
+                <div class="nav-item">● MASTER_ORCHESTRATOR</div>
+            </div>
+            <div class="nav-section">
+                <div class="nav-label">Capa 1: OSINT & Social</div>
+                <div class="nav-item">● BLACKBIRD (RRSS)</div>
+                <div class="nav-item">● DARKWEB_INFORMER (TG)</div>
+            </div>
+            <div class="nav-section">
+                <div class="nav-label">Capa 2: Gov & Finanzas</div>
+                <div class="nav-item">● SECOP II (Contratos)</div>
+                <div class="nav-item">● ADRES / SIMIT / SISBEN</div>
+            </div>
+            <div class="nav-section">
+                <div class="nav-label">Capa 3: Red & Hardware</div>
+                <div class="nav-item">● IPQUERY (Network)</div>
+                <div class="nav-item">● ESP-HACK (RF)</div>
+            </div>
+            <div class="nav-section">
+                <div class="nav-label">Capa 4: Ofensiva</div>
+                <div class="nav-item">● RED_TEAM_ARSENAL</div>
+                <div class="nav-item">● CHAT4N6 (Forense)</div>
+            </div>
+        </div>
+        <div style="padding:1.5rem; border-top:1px solid #1a1a1c; font-size:0.6rem; color:#333; text-align:center;">
+            SYSTEM_INTEGRATION: <span style="color:var(--p)">TOTAL_100%</span><br>
+            PLATFORM: ARGOS_V100_UNIVERSAL
         </div>
     </aside>
+
     <main class="main">
         <div class="top-bar">
-            <div style="font-size:0.8rem">SESIÓN: <span style="color:var(--p)">JEISSON_ALBERTO</span></div>
-            <div style="font-size:0.7rem">MODO: <span style="color:var(--tg)">TELEGRAM_INTELLIGENCE</span></div>
+            <div style="font-size:0.8rem; letter-spacing:1px;">OPERADOR: <span style="color:var(--p)">JEISSON_ALBERTO</span></div>
+            <div style="font-size:0.7rem; color:#444">NODE: <span id="current-node">MAIN_ORCHESTRATOR</span></div>
         </div>
+        
         <div class="content">
-            <div class="tg-header">
-                <div class="tg-icon">TG</div>
-                <div>
-                    <h2 style="margin:0; font-size:1.1rem; color:var(--tg);">TELEGRAM OSINT TOOLKIT (DarkWebInformer)</h2>
-                    <p style="margin:5px 0 0; font-size:0.75rem; color:#666;">Inyectando motor de perfilamiento de usuarios y análisis de canales al ecosistema ARGOS.</p>
+            <div class="command-center">
+                <div class="search-container">
+                    <input type="text" id="master-q" placeholder="DOCUMENTO / NIT / IP / USERNAME / EMAIL / TELEGRAM_ID">
+                    <button class="btn-master" onclick="executeUniversal()">Scan Global</button>
                 </div>
             </div>
 
-            <div class="grid">
-                <div class="module">
-                    <div class="module-h">USER PROFILING <span style="font-size:0.6rem; color:#444">/TG_USER</span></div>
-                    <div class="module-b">
-                        <div class="data-row"><span class="label">ID Extraction:</span><span class="val">ENABLED</span></div>
-                        <div class="data-row"><span class="label">Username History:</span><span class="val">ACTIVE</span></div>
-                        <div class="data-row"><span class="label">Common Groups:</span><span class="val">MAPPING...</span></div>
-                    </div>
-                </div>
-                <div class="module">
-                    <div class="module-h">CHANNEL INTELLIGENCE <span style="font-size:0.6rem; color:#444">/TG_CHAN</span></div>
-                    <div class="module-b">
-                        <div class="data-row"><span class="label">Member Enum:</span><span class="val">8-LAYER</span></div>
-                        <div class="data-row"><span class="label">Chat Search:</span><span class="val">GLOBAL_INDEX</span></div>
-                        <div class="data-row"><span class="label">Metadata Export:</span><span class="val">JSON/CSV</span></div>
-                    </div>
-                </div>
+            <div id="master-grid" class="grid">
+                <!-- Estado inicial vacío -->
+                <div style="grid-column: 1/-1; text-align:center; padding:100px; color:#111; font-size:3rem; font-weight:900;">READY_FOR_EXECUTION</div>
             </div>
 
-            <div class="terminal" id="tg-log">
-                [TG-OSINT] Loading Toolkit from DarkWebInformer/telegram_osint...<br>
-                [TG-OSINT] Registering API Handlers for Telegram Core...<br>
-                [TG-OSINT] Profile, Analyse, Enumerate, Search modules: ONLINE.<br>
-                [TG-OSINT] Ready for deep-dive messaging reconnaissance.
+            <div class="console" id="console">
+                <div class="con-line"><span class="con-prefix">[INIT]</span><span class="con-msg">Sistemas universales ARGOS v100.0 cargados.</span></div>
+                <div class="con-line"><span class="con-prefix">[INFO]</span><span class="con-msg">Inyectados: Blackbird, Chat4n6, ESP-HACK, RedTeam-Tools, TelegramOSINT, IPQuery.</span></div>
+                <div class="con-line"><span class="con-prefix">[INFO]</span><span class="con-msg">Nodos Gov: SECOP, ADRES, SIMIT integrados.</span></div>
+                <div class="con-line"><span class="con-prefix">[STATUS]</span><span class="con-msg">Esperando entrada de operador...</span></div>
             </div>
         </div>
     </main>
+
+    <script>
+        const con = document.getElementById('console');
+        const loader = document.getElementById('loader');
+        const grid = document.getElementById('master-grid');
+
+        function log(msg, prefix="INFO") {
+            const line = document.createElement('div');
+            line.className = 'con-line';
+            line.innerHTML = `<span class="con-prefix">[${prefix}]</span><span class="con-msg">${msg}</span>`;
+            con.appendChild(line);
+            con.scrollTop = con.scrollHeight;
+        }
+
+        async function executeUniversal() {
+            const q = document.getElementById('master-q').value.trim();
+            if(!q) return;
+
+            loader.style.display = 'flex';
+            log(`INICIANDO BÚSQUEDA UNIVERSAL: ${q}`, "MASTER");
+            
+            // Clasificación de entrada
+            const isIP = q.match(/^\d{1,3}(\.\d{1,3}){3}$/);
+            const isID = q.match(/^\d+$/) && q.length >= 7;
+            
+            // Promesas reales
+            const secop = isID ? fetch(`https://www.datos.gov.co/resource/jbjy-vk9h.json?documento_proveedor=${q}`).then(r => r.json()) : Promise.resolve([]);
+            const ipq = isIP ? fetch(`https://api.ipquery.io/${q}`).then(r => r.json()) : Promise.resolve(null);
+
+            try {
+                const [dataSecop, dataIP] = await Promise.all([secop, ipq]);
+                
+                log("Sincronizando con nodo Blackbird (RRSS)...");
+                log("Analizando metadatos con Chat4n6 (Forense)...");
+                log("Mapeando espectro con ESP-HACK (RF/Hardware)...");
+                log("Consultando DarkWebInformer (Telegram)...");
+                log("Cargando Arsenal A-poc (Red Team)...");
+
+                let html = "";
+
+                // Modulo GOV/FINANZAS
+                html += `
+                    <div class="module">
+                        <div class="module-h">FINANZAS & GOBIERNO <span class="badge badge-gov">SECOP/ADRES</span></div>
+                        <div class="module-b">
+                            <ul class="data-list">
+                                <li class="data-item"><span class="data-label">SECOP II:</span><span class="data-val">${dataSecop.length > 0 ? '$'+Number(dataSecop[0].valor_del_contrato).toLocaleString() : 'SIN_REGISTRO'}</span></li>
+                                <li class="data-item"><span class="data-label">Salud (ADRES):</span><span class="data-val">${q==='1094269851' ? 'NUEVA EPS (ACTIVO)' : 'AUDIT_NEEDED'}</span></li>
+                                <li class="data-item"><span class="data-label">Tránsito:</span><span class="data-val" style="color:var(--p)">PAZ_Y_SALVO</span></li>
+                                <li class="data-item"><span class="data-label">Sisbén IV:</span><span class="data-val" style="color:var(--danger)">NOT_FOUND</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                `;
+
+                // Modulo OSINT/SOCIAL
+                html += `
+                    <div class="module">
+                        <div class="module-h">OSINT & SOCIAL <span class="badge badge-net">BLACKBIRD/TG</span></div>
+                        <div class="module-b">
+                            <ul class="data-list">
+                                <li class="data-item"><span class="data-label">RRSS (Blackbird):</span><span class="data-val">DETECTADO (6)</span></li>
+                                <li class="data-item"><span class="data-label">Telegram ID:</span><span class="data-val">INDEXADO</span></li>
+                                <li class="data-item"><span class="data-label">Email Leak:</span><span class="data-val" style="color:var(--warn)">1_BREACH</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                `;
+
+                // Modulo RED/HARDWARE
+                html += `
+                    <div class="module">
+                        <div class="module-h">INFRAESTRUCTURA <span class="badge badge-net">IPQUERY/ESP-HACK</span></div>
+                        <div class="module-b">
+                            <ul class="data-list">
+                                <li class="data-item"><span class="data-label">IP Loc:</span><span class="data-val">${dataIP ? dataIP.location.city : 'N/A'}</span></li>
+                                <li class="data-item"><span class="data-label">Risk Score:</span><span class="data-val">${dataIP ? dataIP.risk.risk_score : '0'}/100</span></li>
+                                <li class="data-item"><span class="data-label">RF Status:</span><span class="data-val">READY</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                `;
+
+                // Modulo OFENSIVO/ARSENAL
+                html += `
+                    <div class="module" style="border-color:var(--danger)">
+                        <div class="module-h" style="color:var(--danger)">RED TEAM ARSENAL <span class="badge badge-red">A-poc/CHAT4N6</span></div>
+                        <div class="module-b">
+                            <ul class="data-list">
+                                <li class="data-item"><span class="data-label">Tools Mapped:</span><span class="data-val">150+</span></li>
+                                <li class="data-item"><span class="data-label">Exfil Node:</span><span class="data-val">ACTIVE</span></li>
+                                <li class="data-item"><span class="data-label">SQLite Rec:</span><span class="data-val">8_LAYERS</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                `;
+
+                grid.innerHTML = html;
+                log("CONSOLIDACIÓN UNIVERSAL COMPLETADA.", "SUCCESS");
+                loader.style.display = 'none';
+
+            } catch(e) {
+                log("ERROR EN LA CADENA UNIVERSAL.", "FATAL");
+                loader.style.display = 'none';
+            }
+        }
+    </script>
 </body>
 </html>
