@@ -3,91 +3,83 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <title>ARGOS v70.0 — RED TEAM ARSENAL (A-poc)</title>
+    <title>ARGOS v80.0 — TELEGRAM INTELLIGENCE NODE</title>
     <style>
-        :root { --p: #00ff41; --bg: #050505; --card: #0d0d0f; --border: #1a1a1c; --red: #ff3e3e; }
+        :root { --p: #00ff41; --bg: #050505; --card: #0d0d0f; --border: #1a1a1c; --tg: #24A1DE; }
         * { box-sizing: border-box; }
         body { background: var(--bg); color: #e2e8f0; font-family: 'JetBrains Mono', monospace; margin: 0; display: flex; height: 100vh; overflow: hidden; }
         .sidebar { width: 280px; background: #000; border-right: 1px solid var(--border); display: flex; flex-direction: column; }
-        .logo { padding: 2rem 1.5rem; font-weight: 900; color: var(--p); border-bottom: 1px solid var(--border); text-align: center; font-size: 1.2rem; letter-spacing: 3px; }
-        .nav { flex: 1; padding: 1rem; overflow-y: auto; }
-        .nav-item { padding: 12px; margin-bottom: 5px; color: #555; cursor: pointer; font-size: 0.75rem; border-radius: 4px; display: flex; align-items: center; }
-        .nav-item.active { background: #111; color: var(--red); border-left: 3px solid var(--red); }
+        .logo { padding: 2rem 1.5rem; font-weight: 900; color: var(--p); border-bottom: 1px solid var(--border); text-align: center; font-size: 1.2rem; }
+        .nav { flex: 1; padding: 1rem; }
+        .nav-item { padding: 12px; margin-bottom: 5px; color: #555; cursor: pointer; font-size: 0.75rem; border-radius: 4px; }
+        .nav-item.active { background: #111; color: var(--tg); border-left: 3px solid var(--tg); }
         .main { flex: 1; display: flex; flex-direction: column; background: #080808; overflow: hidden; }
         .top-bar { height: 60px; background: #000; border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 1.5rem; justify-content: space-between; }
         .content { flex: 1; padding: 2rem; overflow-y: auto; }
         
-        .arsenal-header { background: var(--card); border: 1px solid var(--red); padding: 1.5rem; border-radius: 4px; margin-bottom: 2rem; display: flex; align-items: center; gap: 20px; }
-        .arsenal-icon { width: 60px; height: 60px; background: var(--red); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: #000; font-weight: 900; }
+        .tg-header { background: var(--card); border: 1px solid var(--tg); padding: 1.5rem; border-radius: 4px; margin-bottom: 2rem; display: flex; align-items: center; gap: 20px; }
+        .tg-icon { width: 50px; height: 50px; background: var(--tg); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: #fff; }
         
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; }
         .module { background: var(--card); border: 1px solid var(--border); border-radius: 4px; overflow: hidden; }
-        .module-h { padding: 0.8rem; background: #111; border-bottom: 1px solid var(--border); font-size: 0.7rem; color: var(--red); font-weight: bold; }
+        .module-h { padding: 0.8rem; background: #111; border-bottom: 1px solid var(--border); font-size: 0.7rem; color: var(--tg); font-weight: bold; }
         .module-b { padding: 1.2rem; font-size: 0.8rem; }
         
-        .tool-link { display: block; color: #fff; text-decoration: none; margin-bottom: 8px; font-size: 0.75rem; border-left: 2px solid #333; padding-left: 10px; }
-        .tool-link:hover { border-left-color: var(--red); color: var(--red); background: rgba(255,62,62,0.05); }
-        .badge { padding: 2px 6px; border-radius: 2px; font-size: 0.6rem; font-weight: bold; background: var(--red); color: #fff; margin-left: 5px; }
+        .data-row { display: flex; justify-content: space-between; margin-bottom: 10px; border-bottom: 1px solid #141416; padding-bottom: 5px; }
+        .label { color: #52525b; font-size: 0.7rem; text-transform: uppercase; }
+        .val { color: #fff; font-weight: 600; }
         
-        .terminal { background: #000; border: 1px solid #111; padding: 1rem; color: #ff3e3e; font-size: 0.7rem; height: 150px; overflow-y: auto; margin-top: 1rem; border-radius: 4px; }
+        .terminal { background: #000; border: 1px solid #111; padding: 1rem; color: var(--tg); font-size: 0.7rem; height: 160px; overflow-y: auto; border-radius: 4px; border-left: 4px solid var(--tg); }
     </style>
 </head>
 <body>
     <aside class="sidebar">
-        <div class="logo">ARGOS_v70_RED</div>
+        <div class="logo">ARGOS_v80_TG</div>
         <div class="nav">
-            <div class="nav-item">OSINT_CORE</div>
-            <div class="nav-item active">RED_TEAM_ARSENAL</div>
-            <div class="nav-item">EXFILTRATION</div>
-            <div class="nav-item">POST_EXPLOIT</div>
+            <div class="nav-item">MASTER_DASHBOARD</div>
+            <div class="nav-item active">TELEGRAM_OSINT</div>
+            <div class="nav-item">CHANNEL_ANALYSIS</div>
+            <div class="nav-item">MEMBER_ENUM</div>
         </div>
     </aside>
     <main class="main">
         <div class="top-bar">
-            <div style="font-size:0.8rem">OPERADOR: <span style="color:var(--p)">JEISSON_ALBERTO</span></div>
-            <div style="font-size:0.7rem">MODO: <span style="color:var(--red)">OFFENSIVE_OPERATIONS</span></div>
+            <div style="font-size:0.8rem">SESIÓN: <span style="color:var(--p)">JEISSON_ALBERTO</span></div>
+            <div style="font-size:0.7rem">MODO: <span style="color:var(--tg)">TELEGRAM_INTELLIGENCE</span></div>
         </div>
         <div class="content">
-            <div class="arsenal-header">
-                <div class="arsenal-icon">RT</div>
+            <div class="tg-header">
+                <div class="tg-icon">TG</div>
                 <div>
-                    <h2 style="margin:0; font-size:1.1rem; color:var(--red);">RED TEAM ARSENAL (A-poc)</h2>
-                    <p style="margin:5px 0 0; font-size:0.75rem; color:#666;">Inyectando +150 herramientas ofensivas de élite al algoritmo ARGOS.</p>
+                    <h2 style="margin:0; font-size:1.1rem; color:var(--tg);">TELEGRAM OSINT TOOLKIT (DarkWebInformer)</h2>
+                    <p style="margin:5px 0 0; font-size:0.75rem; color:#666;">Inyectando motor de perfilamiento de usuarios y análisis de canales al ecosistema ARGOS.</p>
                 </div>
             </div>
 
             <div class="grid">
                 <div class="module">
-                    <div class="module-h">INITIAL ACCESS / DELIVERY <span class="badge">TACTICAL</span></div>
+                    <div class="module-h">USER PROFILING <span style="font-size:0.6rem; color:#444">/TG_USER</span></div>
                     <div class="module-b">
-                        <a href="#" class="tool-link">● HTML Smuggling (Advanced)</a>
-                        <a href="#" class="tool-link">● Phishing Frameworks</a>
-                        <a href="#" class="tool-link">● Payload Obfuscators</a>
+                        <div class="data-row"><span class="label">ID Extraction:</span><span class="val">ENABLED</span></div>
+                        <div class="data-row"><span class="label">Username History:</span><span class="val">ACTIVE</span></div>
+                        <div class="data-row"><span class="label">Common Groups:</span><span class="val">MAPPING...</span></div>
                     </div>
                 </div>
                 <div class="module">
-                    <div class="module-h">EXFILTRATION <span class="badge">STOLEN_DATA</span></div>
+                    <div class="module-h">CHANNEL INTELLIGENCE <span style="font-size:0.6rem; color:#444">/TG_CHAN</span></div>
                     <div class="module-b">
-                        <a href="#" class="tool-link">● Goshs (HTTP/S File Server)</a>
-                        <a href="#" class="tool-link">● DNS Tunneling Tools</a>
-                        <a href="#" class="tool-link">● Cloud Exfiltration Scripts</a>
-                    </div>
-                </div>
-                <div class="module">
-                    <div class="module-h">POST-EXPLOITATION <span class="badge">LOOTING</span></div>
-                    <div class="module-b">
-                        <a href="#" class="tool-link">● Credential Dumpers</a>
-                        <a href="#" class="tool-link">● Privilege Escalation (Win/Lin)</a>
-                        <a href="#" class="tool-link">● Persistence Mechanisms</a>
+                        <div class="data-row"><span class="label">Member Enum:</span><span class="val">8-LAYER</span></div>
+                        <div class="data-row"><span class="label">Chat Search:</span><span class="val">GLOBAL_INDEX</span></div>
+                        <div class="data-row"><span class="label">Metadata Export:</span><span class="val">JSON/CSV</span></div>
                     </div>
                 </div>
             </div>
 
-            <div class="terminal" id="red-log">
-                [RED-TEAM] Loading Arsenal from A-poc/RedTeam-Tools...<br>
-                [RED-TEAM] 150+ Resources mapped and categorized.<br>
-                [RED-TEAM] Initializing exfiltration node: Goshs integration ready.<br>
-                [RED-TEAM] All offensive modules: DEPLOYED.
+            <div class="terminal" id="tg-log">
+                [TG-OSINT] Loading Toolkit from DarkWebInformer/telegram_osint...<br>
+                [TG-OSINT] Registering API Handlers for Telegram Core...<br>
+                [TG-OSINT] Profile, Analyse, Enumerate, Search modules: ONLINE.<br>
+                [TG-OSINT] Ready for deep-dive messaging reconnaissance.
             </div>
         </div>
     </main>
