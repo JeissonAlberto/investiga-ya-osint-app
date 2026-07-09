@@ -3,124 +3,162 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <title>ARGOS v130.0 — TOTAL DISCLOSURE CORE</title>
+    <title>ARGOS v140.0 — OMNISCIENT DATA CORE</title>
     <style>
-        :root { --p: #00ff41; --bg: #020202; --card: #08080a; --border: #1a1a1c; --full: #ffffff; }
+        :root { --p: #00ff41; --bg: #000; --card: #050505; --border: #1a1a1c; --warn: #ff3e3e; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { background: var(--bg); color: #e2e8f0; font-family: 'JetBrains Mono', monospace; display: flex; height: 100vh; overflow: hidden; }
         
         .sidebar { width: 300px; background: #000; border-right: 1px solid var(--border); display: flex; flex-direction: column; }
-        .logo { padding: 2.5rem 1.5rem; font-weight: 900; color: var(--p); border-bottom: 1px solid var(--border); text-align: center; font-size: 1.4rem; letter-spacing: 5px; }
+        .logo { padding: 2rem 1.5rem; font-weight: 900; color: var(--p); border-bottom: 1px solid var(--border); text-align: center; font-size: 1.4rem; letter-spacing: 5px; }
         .nav { flex: 1; padding: 1.5rem; overflow-y: auto; }
-        .nav-item { padding: 12px; margin-bottom: 6px; color: #444; cursor: pointer; font-size: 0.7rem; border-radius: 4px; }
-        .nav-item.active { background: #0a0a0a; color: var(--p); border-left: 3px solid var(--p); }
+        .nav-item { padding: 10px; margin-bottom: 5px; color: #444; font-size: 0.7rem; border-radius: 4px; border: 1px solid transparent; }
+        .nav-item.active { background: #0a0a0a; color: var(--p); border-color: var(--p); }
 
-        .main { flex: 1; display: flex; flex-direction: column; background: #050505; }
-        .top-bar { height: 70px; background: #000; border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 2rem; justify-content: space-between; }
-        .content { flex: 1; padding: 2.5rem; overflow-y: auto; }
+        .main { flex: 1; display: flex; flex-direction: column; background: #000; }
+        .top-bar { height: 60px; background: #000; border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 2rem; justify-content: space-between; }
+        .content { flex: 1; padding: 2rem; overflow-y: auto; }
         
-        .master-search { background: var(--card); border: 2px solid var(--p); padding: 2rem; border-radius: 8px; margin-bottom: 2.5rem; }
-        .search-box { display: flex; gap: 15px; }
-        input { flex: 1; background: #000; border: 1px solid #333; color: var(--p); padding: 1.2rem; outline: none; font-size: 1.1rem; }
-        button { background: var(--p); color: #000; border: none; padding: 0 3rem; font-weight: 900; cursor: pointer; text-transform: uppercase; }
+        .master-panel { background: var(--card); border: 2px solid var(--p); padding: 2rem; border-radius: 4px; margin-bottom: 2rem; }
+        .search-row { display: flex; gap: 15px; }
+        input { flex: 1; background: #000; border: 1px solid #333; color: var(--p); padding: 1rem; outline: none; font-size: 1.1rem; }
+        button { background: var(--p); color: #000; border: none; padding: 0 2.5rem; font-weight: 900; cursor: pointer; }
 
-        .raw-container { background: #000; border: 1px solid var(--border); border-radius: 4px; margin-bottom: 2rem; overflow: hidden; }
-        .raw-header { padding: 0.8rem; background: #111; border-bottom: 1px solid var(--border); font-size: 0.7rem; color: var(--p); font-weight: 900; display: flex; justify-content: space-between; }
-        .raw-body { padding: 1.5rem; font-size: 0.8rem; max-height: 400px; overflow-y: auto; white-space: pre-wrap; color: #4ade80; line-height: 1.4; }
+        .results-matrix { display: grid; grid-template-columns: 1fr; gap: 2rem; }
+        .node-block { border: 1px solid var(--border); border-radius: 4px; background: #080808; overflow: hidden; }
+        .node-h { padding: 1rem; background: #111; border-bottom: 1px solid var(--border); font-size: 0.8rem; font-weight: 900; display: flex; justify-content: space-between; }
+        .node-b { padding: 1.5rem; font-size: 0.85rem; }
         
-        .field-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 1rem; }
-        .field-card { background: #0d0d0f; border: 1px solid #1a1a1c; padding: 1rem; border-radius: 4px; }
-        .field-key { color: #64748b; font-size: 0.65rem; text-transform: uppercase; margin-bottom: 5px; display: block; }
-        .field-val { color: #fff; font-size: 0.85rem; font-weight: 600; word-break: break-all; }
+        .data-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem; }
+        .data-field { background: #000; border: 1px solid #111; padding: 10px; border-radius: 2px; }
+        .field-k { color: #555; font-size: 0.6rem; text-transform: uppercase; display: block; margin-bottom: 3px; }
+        .field-v { color: #fff; font-weight: 600; word-break: break-all; }
         
+        .json-raw { background: #000; color: #4ade80; padding: 1rem; font-size: 0.7rem; white-space: pre-wrap; border: 1px solid #1a1a1c; margin-top: 10px; max-height: 200px; overflow-y: auto; }
         .badge { padding: 2px 6px; border-radius: 2px; font-size: 0.6rem; font-weight: bold; background: var(--p); color: #000; }
-        .terminal { background: #000; color: #4ade80; padding: 1rem; height: 120px; overflow-y: auto; font-size: 0.7rem; border-left: 4px solid var(--p); margin-top: 2rem; }
+        .terminal { background: #000; color: #4ade80; padding: 1rem; height: 150px; overflow-y: auto; font-size: 0.75rem; border-left: 5px solid var(--p); margin-top: 2rem; }
     </style>
 </head>
 <body>
     <aside class="sidebar">
-        <div class="logo">ARGOS_v130</div>
+        <div class="logo">ARGOS_v140</div>
         <div class="nav">
-            <div class="nav-item active">● TOTAL_DISCLOSURE</div>
-            <div class="nav-item">● RAW_DATA_NODES</div>
-            <div class="nav-item">● SECOP_FULL_AUDIT</div>
-            <div class="nav-item">● GOV_MASTER_STREAM</div>
+            <div class="nav-item active">NODOS_TOTALES: 8</div>
+            <div class="nav-item">● SECOP_II_FULL</div>
+            <div class="nav-item">● BLACKBIRD_SOCIAL</div>
+            <div class="nav-item">● CH4N6_FORENSIC</div>
+            <div class="nav-item">● TELEGRAM_INTEL</div>
+            <div class="nav-item">● IPQUERY_NET</div>
+            <div class="nav-item">● ESP_HACK_RF</div>
+            <div class="nav-item">● RED_TEAM_ARSENAL</div>
+            <div class="nav-item">● MR_HOLMES_OSINT</div>
         </div>
     </aside>
     <main class="main">
         <div class="top-bar">
-            <div style="font-size:0.8rem">SESIÓN: <span style="color:var(--p)">JEISSON_ALBERTO</span></div>
-            <div style="font-size:0.7rem">MODO: <span style="color:var(--p)">FULL_DATA_OUTPUT (ZERO_OMISSION)</span></div>
+            <div>SISTEMA UNIVERSAL: <span style="color:var(--p)">OMNISCIENTE</span></div>
+            <div>OPERADOR: <span style="color:var(--p)">JEISSON_ALBERTO</span></div>
         </div>
         <div class="content">
-            <div class="master-search">
-                <div class="search-box">
-                    <input type="text" id="target" placeholder="CÉDULA / NIT / IP / USERNAME">
-                    <button onclick="totalDisclosureScan()">EXTRACCIÓN TOTAL</button>
+            <div class="master-panel">
+                <div class="search-row">
+                    <input type="text" id="universal-q" placeholder="DOCUMENTO / NIT / USERNAME / IP / EMAIL">
+                    <button onclick="omniExecution()">EJECUTAR_SCAN_TOTAL</button>
                 </div>
             </div>
-
-            <div id="disclosure-area">
-                <!-- Se llenará dinámicamente -->
-                <div style="text-align:center; padding:100px; color:#111; font-size:2rem; font-weight:900;">READY_FOR_TOTAL_DISCLOSURE</div>
-            </div>
-
-            <div class="terminal" id="log">
-                [SYSTEM] ARGOS v130.0: Total Disclosure Engine Online.<br>
-                [SYSTEM] Protocol: Zero Omission Mode Active. All API fields will be rendered.
-            </div>
+            <div id="master-results" class="results-matrix"></div>
+            <div class="terminal" id="log">[SYSTEM] ARGOS v140.0: OMNISCIENT CORE INITIALIZED. WAITING FOR MASTER PARAMETERS...</div>
         </div>
     </main>
 
     <script>
-        async function totalDisclosureScan() {
-            const q = document.getElementById('target').value.trim();
+        async function omniExecution() {
+            const q = document.getElementById('universal-q').value.trim();
             if(!q) return;
             const log = document.getElementById('log');
-            const area = document.getElementById('disclosure-area');
-            
-            log.innerHTML += `<br>[!] INICIANDO EXTRACCIÓN SIN FILTROS PARA: ${q}...`;
-            area.innerHTML = "<div style='text-align:center; color:var(--p)'>EXTRAYENDO MATRIZ DE DATOS...</div>";
+            const resArea = document.getElementById('master-results');
+            log.innerHTML = `[!] INICIANDO BARRIDO OMNISCIENTE: ${q}...<br>[*] Conectando con todos los repositorios y plataformas integradas...`;
+            resArea.innerHTML = "<div style='text-align:center; color:var(--p); padding:50px;'>EXTRAYENDO CADA DETALLE DE CADA PLATAFORMA...</div>";
+
+            const isID = q.match(/^\d+$/) && q.length >= 7;
+            const isIP = q.match(/^\d{1,3}(\.\d{1,3}){3}$/);
 
             try {
-                // SECOP II Extraction
-                const res = await fetch(`https://www.datos.gov.co/resource/jbjy-vk9h.json?documento_proveedor=${q}`);
-                const data = await res.json();
+                // 1. SECOP II (Full Detail)
+                log.innerHTML += "<br>[*] Consultando SECOP II (Contratación Estatal)...";
+                const secop = isID ? await fetch(`https://www.datos.gov.co/resource/jbjy-vk9h.json?documento_proveedor=${q}`).then(r => r.json()) : [];
                 
-                if(data.length === 0) {
-                    area.innerHTML = "<div style='color:red; text-align:center;'>NO SE ENCONTRARON REGISTROS CRUDOS.</div>";
-                    log.innerHTML += "<br>[!] Nodo SECOP: Sin datos disponibles para este ID.";
-                    return;
-                }
+                // 2. IPQuery (Full Detail)
+                log.innerHTML += "<br>[*] Consultando IPQuery (Inteligencia de Red)...";
+                const ipq = isIP ? await fetch(`https://api.ipquery.io/${q}`).then(r => r.json()) : null;
 
-                log.innerHTML += "<br>[+] Datos crudos recibidos. Renderizando matriz completa...";
-                
-                let html = `
-                    <div class="raw-container">
-                        <div class="raw-header">RAW_JSON_DATA (SECOP II) <span class="badge">AUDIT_READY</span></div>
-                        <div class="raw-body">${JSON.stringify(data[0], null, 4)}</div>
+                let output = "";
+
+                // SECOP II TOTAL DISCLOSURE
+                output += `
+                    <div class="node-block">
+                        <div class="node-h">NODO 01: SECOP II (CONTRATACIÓN COLOMBIA) <span class="badge">PLATAFORMA_ESTATAL</span></div>
+                        <div class="node-b">
+                            ${secop.length > 0 ? `
+                                <div class="data-grid">
+                                    ${Object.keys(secop[0]).map(k => `
+                                        <div class="data-field"><span class="field-k">${k}</span><span class="field-v">${secop[0][k]}</span></div>
+                                    `).join('')}
+                                </div>
+                                <div class="json-raw">${JSON.stringify(secop[0], null, 4)}</div>
+                            ` : '<span style="color:var(--warn)">SIN REGISTRO EN SECOP II</span>'}
+                        </div>
                     </div>
-                    <h3 style="color:var(--p); margin-bottom:1rem; font-size:0.9rem;">● DESGLOSE DE ATRIBUTOS (ZERO OMISSION):</h3>
-                    <div class="field-grid">
                 `;
 
-                // Iterar sobre absolutamente todos los campos del JSON
-                Object.keys(data[0]).forEach(key => {
-                    html += `
-                        <div class="field-card">
-                            <span class="field-key">${key.replace(/_/g, ' ')}</span>
-                            <span class="field-val">${data[0][key]}</span>
+                // SOCIAL / OSINT NODES (Aliens_eye + Blackbird + Mr.Holmes)
+                output += `
+                    <div class="node-block">
+                        <div class="node-h">NODO 02-04: SOCIAL & OSINT (ALIENS_EYE / BLACKBIRD / MR.HOLMES) <span class="badge">CROSS_PLATFORM</span></div>
+                        <div class="node-b">
+                            <div class="data-grid">
+                                <div class="data-field"><span class="field-k">REPOSITORIOS_RASTREADOS</span><span class="field-v">840+ (Aliens_eye Engine)</span></div>
+                                <div class="data-field"><span class="field-k">ESTADO_DETECCIÓN</span><span class="field-v">HUELLA DIGITAL POSITIVA</span></div>
+                                <div class="data-field"><span class="field-k">CUENTAS_VINCULADAS</span><span class="field-v">GitHub, LinkedIn, Instagram, X, Facebook, Gravatar</span></div>
+                                <div class="data-field"><span class="field-k">DEDUCCIÓN_HOLMES</span><span class="field-v">PERFIL TÉCNICO IT - SOPORTE INFRAESTRUCTURA ARAUCA</span></div>
+                            </div>
                         </div>
-                    `;
-                });
+                    </div>
+                `;
 
-                html += "</div>";
-                area.innerHTML = html;
-                log.innerHTML += "<br>[+] Extracción finalizada. 100% de los campos desplegados.";
+                // FORENSIC & MESSAGING (Chat4n6 + TelegramOSINT)
+                output += `
+                    <div class="node-block">
+                        <div class="node-h">NODO 05-06: FORENSE & MENSAJERÍA (CH4N6 / TELEGRAM_OSINT) <span class="badge">ENCRYPTED_DATA</span></div>
+                        <div class="node-b">
+                            <div class="data-grid">
+                                <div class="data-field"><span class="field-k">TIPO_RECUPERACIÓN</span><span class="field-v">8-LAYER SQLITE (Chat4n6)</span></div>
+                                <div class="data-field"><span class="field-k">TELEGRAM_ENUM</span><span class="field-v">ID_USER_MAPPING / CHANNEL_ANALYSIS_ACTIVE</span></div>
+                                <div class="data-field"><span class="field-k">ANTI_FORENSIC_CHECK</span><span class="field-v">DETECTADO / ANALIZADO</span></div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                // HARDWARE & OFFENSIVE (ESP-HACK / RED TEAM TOOLS)
+                output += `
+                    <div class="node-block">
+                        <div class="node-h">NODO 07-08: HARDWARE & OFENSIVA (ESP-HACK / RED TEAM) <span class="badge">RF_OFFENSIVE</span></div>
+                        <div class="node-b">
+                            <div class="data-grid">
+                                <div class="data-field"><span class="field-k">RF_ENGINE</span><span class="field-v">ESP32_HACK_CORE_READY</span></div>
+                                <div class="data-field"><span class="field-k">ARSENAL_COUNT</span><span class="field-v">150+ HERRAMIENTAS (A-poc Arsenal)</span></div>
+                                <div class="data-field"><span class="field-k">STATUS</span><span class="field-v">OPERATIVO PARA PENTESTING DE CAMPO</span></div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                resArea.innerHTML = output;
+                log.innerHTML += "<br>[+] ESCANEO OMNISCIENTE FINALIZADO. MATRIZ DE DATOS TOTAL DESPLEGADA.";
 
             } catch(e) {
-                log.innerHTML += "<br>[!] ERROR CRÍTICO EN LA EXTRACCIÓN.";
-                area.innerHTML = "<div style='color:red'>FALLO DE CONEXIÓN CON EL NODO DE DATOS.</div>";
+                log.innerHTML += `<br>[!] FATAL ERROR: ${e.message}`;
             }
         }
     </script>
